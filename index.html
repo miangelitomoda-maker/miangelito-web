@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <link rel="canonical" href="https://www.miangelitomoda.com/">
+  <!-- FAVICON -->
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+
+<!-- ANDROID / PWA -->
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#f6f3ee">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>Mayorista de Moda en Crevillente | Mi Angelito Moda · Almacén de ropa</title>
+<meta name="description" content="Mayorista de moda en Crevillente. Almacén de ropa italiana para tiendas. Mi Angelito Moda · Venta al por mayor · Contacto directo por WhatsApp.">
+
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<link rel="canonical" href="https://www.miangelitomoda.com/">
+
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_ES">
+<meta property="og:site_name" content="Mi Angelito Moda">
+<meta property="og:title" content="Mayorista de Moda en Crevillente | Mi Angelito Moda">
+<meta property="og:description" content="Mayorista de moda en Crevillente. Almacén de ropa italiana para tiendas. Venta al por mayor. Contacto WhatsApp.">
+<meta property="og:url" content="https://www.miangelitomoda.com/">
+<meta property="og:image" content="https://www.miangelitomoda.com/logo.jpg">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Mayorista de Moda en Crevillente | Mi Angelito Moda">
+<meta name="twitter:description" content="Almacén de ropa italiana · Venta al por mayor para tiendas · Crevillente (Alicante).">
+<meta name="twitter:image" content="https://www.miangelitomoda.com/logo.jpg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ClothingStore",
+  "name": "Mi Angelito Moda",
+  "description": "Mayorista de moda en Crevillente. Almacén de ropa italiana para tiendas (venta al por mayor).",
+  "url": "https://www.miangelitomoda.com/",
+  "telephone": "+34 681 677 777",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Carrer el Terros 17, Pol. Ind. Boch",
+    "addressLocality": "Crevillente",
+    "addressRegion": "Alicante",
+    "postalCode": "03330",
+    "addressCountry": "ES"
+  },
+  "openingHours": "Mo-Sa 09:30-20:00",
+  "sameAs": [
+    "https://www.tiktok.com/@miangelitomoda",
+    "https://www.instagram.com/miangelitomoda/"
+  ]
+}
+</script>
+
+<style>
+:root{
+  --bg1:#0a0a0f; --bg2:#0f1018;
+  --line:rgba(255,255,255,.14);
+  --card:rgba(0,0,0,.50);
+  --text:#fff;
+  --muted:rgba(255,255,255,.78);
+  --muted2:rgba(255,255,255,.62);
+  --cream1:#f3ead3; --cream2:#e6d3a3;
+  --radius:26px;
+}
+
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+
+body{
+  font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial;
+  color:var(--text);
+  background:
+    radial-gradient(1200px 600px at 20% 0%, rgba(230,211,163,.18), transparent 55%),
+    radial-gradient(900px 600px at 85% 15%, rgba(243,234,211,.10), transparent 52%),
+    linear-gradient(180deg,var(--bg1),var(--bg2));
+}
+
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1120px;margin:0 auto;padding:18px}
+
+/* ================= HERO ================= */
+.hero{
+  border-radius:30px;
+  padding:48px 26px 30px;
+  background:
+    linear-gradient(180deg,rgba(0,0,0,.40),rgba(0,0,0,.72)),
+    url('interior-1.png') center/cover no-repeat;
+  border:1px solid var(--line);
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+.hero:after{
+  content:'';
+  position:absolute;inset:0;
+  background:radial-gradient(900px 500px at 50% 0%,rgba(230,211,163,.18),transparent 55%);
+}
+.hero>*{position:relative;z-index:1}
+
+.logo{display:flex;justify-content:center;margin-bottom:14px}
+.logo img{width:180px;max-width:60vw;filter:drop-shadow(0 16px 34px rgba(0,0,0,.35))}
+
+h1{margin:6px 0 0;font-size:34px;letter-spacing:.6px;font-weight:500}
+
+.sub{
+  margin:14px auto 0;
+  max-width:720px;
+  color:var(--muted);
+  font-size:16px;
+  line-height:1.6;
+}
+
+/* ================= CTA ================= */
+.cta{
+  margin-top:22px;
+  display:flex;
+  flex-direction:column;      /* 手机：一行一个 */
+  gap:12px;
+  align-items:center;
+}
+
+.btn{
+  width:100%;
+  max-width:260px;
+  padding:14px 18px;
+  border-radius:18px;
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.08);
+  font-weight:700;
+  font-size:15px;
+  text-align:center;
+  transition:
+    transform .18s ease,
+    filter .18s ease,
+    background-color .18s ease,
+    box-shadow .18s ease;
+}
+
+.btn.primary{
+  background:linear-gradient(135deg,var(--cream2),var(--cream1));
+  color:#111;
+  border:none;
+  box-shadow:0 14px 34px rgba(0,0,0,.35);
+}
+
+/* 💻 电脑端 hover：轻微提亮 + 极小位移 */
+@media (hover:hover) and (pointer:fine){
+  .btn:hover{
+    filter:brightness(1.06);
+    transform:translateY(-2px);
+  }
+}
+
+/* ================= SECTION ================= */
+.section{
+  margin-top:20px;
+  background:var(--card);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:var(--radius);
+  padding:22px;
+}
+
+.section h2{
+  margin:0 0 14px;
+  font-size:20px;
+  text-align:center;
+}
+
+.meta{
+  color:var(--muted);
+  font-size:15px;
+  line-height:1.65;
+}
+
+/* ================= INFO ================= */
+.info-pro{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:16px;
+  text-align:center;
+}
+
+.info-media img{
+  width:100%;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,.14);
+  box-shadow:0 10px 28px rgba(0,0,0,.35);
+  aspect-ratio:4/3;
+  object-fit:cover;
+}
+
+.info-panel{
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:22px;
+  padding:20px;
+  box-shadow:0 12px 30px rgba(0,0,0,.22);
+  backdrop-filter:blur(10px);
+}
+
+.info-panel strong{
+  display:block;
+  font-size:12px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  margin-bottom:4px;
+}
+
+.divider{
+  height:1px;
+  background:rgba(255,255,255,.10);
+  margin:16px 0;
+}
+
+.info-actions{
+  margin:10px 0 14px;
+  display:flex;
+  justify-content:center;
+}
+
+.info-panel .btn.primary{
+  background:rgba(255,255,255,.10);
+  color:#fff;
+  border:1px solid rgba(255,255,255,.18);
+  box-shadow:none;
+  max-width:200px;
+}
+
+/* ================= GALLERY ================= */
+.grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:14px;
+  margin-top:14px;
+}
+.card{
+  border-radius:18px;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.05);
+}
+.card img{width:100%;display:block}
+.cap{
+  padding:10px 12px;
+  font-size:13.5px;
+  color:var(--muted2);
+  text-align:center;
+}
+
+/* ================= FLOATING WHATSAPP ================= */
+.wa-float{
+  position:fixed;
+  right:18px;
+  bottom:calc(22px + env(safe-area-inset-bottom));
+  width:56px;height:56px;
+  border-radius:999px;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(135deg,#25D366,#128C7E);
+  box-shadow:0 14px 36px rgba(0,0,0,.45);
+  border:1px solid rgba(255,255,255,.18);
+  z-index:9999;
+}
+.wa-float svg{width:28px;height:28px;fill:#fff}
+
+.wa-tip{
+  position:fixed;
+  right:18px;
+  bottom:calc(86px + env(safe-area-inset-bottom));
+  padding:10px 12px;
+  border-radius:16px;
+  background:rgba(0,0,0,.62);
+  border:1px solid rgba(255,255,255,.14);
+  color:#fff;
+  font-size:13px;
+  font-weight:700;
+  z-index:9999;
+}
+.wa-tip small{
+  display:block;
+  color:rgba(255,255,255,.65);
+  font-weight:600;
+  margin-top:2px;
+}
+
+/* ================= RESPONSIVE ================= */
+@media (min-width:560px){
+  .grid{grid-template-columns:1fr 1fr}
+}
+
+@media (min-width:900px){
+  h1{font-size:48px}
+
+  /* CTA：宽屏一行居中 */
+  .cta{
+    flex-direction:row;
+    justify-content:center;
+  }
+  .btn{max-width:220px}
+
+  /* 信息区左右等宽 */
+  .info-pro{
+    grid-template-columns:1fr 1fr;
+    gap:22px;
+    text-align:left;
+    align-items:stretch;
+  }
+  .info-actions{justify-content:flex-start}
+
+  .wa-float{right:26px;bottom:26px}
+  .wa-tip{right:26px;bottom:92px}
+}
+
+footer{
+  text-align:center;
+  margin:18px 0 8px;
+  color:rgba(255,255,255,.5);
+  font-size:13px;
+}
+</style>
+</head>
+
+<body>
+<div class="wrap">
+
+<!-- HERO -->
+<section class="hero">
+  <div class="logo"><img src="logo.jpg" alt="Mi Angelito Moda · Mayorista de moda en Crevillente"></div>
+  <h1>Mayorista de moda en Crevillente</h1>
+  <div class="sub">
+    Mayorista de moda en Crevillente · Almacén de ropa italiana<br>
+    Venta al por mayor para tiendas físicas y online<br>
+    📲 Contacto directo por WhatsApp
+  </div>
+  <div class="cta">
+    <a class="btn primary" href="https://wa.me/34681677777">💬 WhatsApp</a>
+    <a class="btn primary" href="tel:+34611877611">📞 Llamar</a>
+    <a class="btn primary" href="https://www.tiktok.com/@miangelitomoda" target="_blank" rel="noopener">🔥 TikTok</a>
+    <a class="btn primary" href="https://www.instagram.com/miangelitomoda/" target="_blank">
+      🆕 Catálogo privado IG
+    </a>
+  </div>
+</section>
+
+<!-- INFORMACIÓN -->
+<section class="section">
+<h2>Información</h2>
+
+<div class="info-pro">
+  <div class="info-media">
+    <img src="fachada.png" alt="Almacén de moda en Crevillente · Mi Angelito Moda">
+    <div style="margin-top:6px;font-size:13px;color:rgba(255,255,255,.65);text-align:center;">
+      Fachada · Acceso y parking delante
+    </div>
+  
+  </div>
+
+  <div class="info-panel">
+    <div class="meta">
+      <p>
+  <strong>Actividad</strong>
+  Almacén y mayorista de moda en Crevillente (Alicante), especializado en ropa italiana para tiendas.
+</p>
+
+<div class="divider"></div>
+<p>
+        <strong>Dirección</strong>
+        Carrer el Terros 17, Pol. Ind. Boch<br>
+        03330 Crevillente, Alicante
+      </p>
+
+      <div class="info-actions">
+        <a class="btn primary"
+           href="https://www.google.com/maps/search/?api=1&query=Carrer%20el%20Terros%2017%2C%20Pol.%20Ind.%20Boch%2C%2003330%20Crevillente%2C%20Alicante"
+           target="_blank" rel="noopener">
+          📍 Cómo llegar
+        </a>
+      </div>
+
+      <div class="divider"></div>
+
+      <p>
+        <strong>Horario</strong>
+        Lunes a Sábado · 09:30–20:00
+      </p>
+
+      <div class="divider"></div>
+
+      <p>
+        <strong>Contacto</strong>
+        WhatsApp: +34 681 677 777<br>
+        Móvil: +34 611 877 611
+      </p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- GALERÍA -->
+<section class="section">
+<h2>Galería</h2>
+<div class="meta" style="text-align:center;">✨ ¡La primavera se lleva puesta!</div>
+
+<div class="grid">
+  <div class="card"><img src="interior-2.png" alt="Almacén de ropa italiana en Crevillente · Mi Angelito Moda"><div class="cap">Showroom · Primavera 2026</div></div>
+  <div class="card"><img src="interior-3.png" alt="Showroom mayorista de moda · Crevillente"><div class="cap">Showroom · Variedad</div></div>
+  <div class="card"><img src="interior-1.png" alt="Mayorista de moda en Crevillente · Detalles del showroom"><div class="cap">Showroom · Detalles</div></div>
+  <div class="card"><img src="interior-4.png" alt="Moda al por mayor en Crevillente · Selección Mi Angelito Moda"><div class="cap">Showroom · Selección</div></div>
+</div>
+</section>
+
+<footer>© <span id="y"></span> Mi Angelito Moda</footer>
+
+</div>
+
+<!-- FLOATING WHATSAPP -->
+<div class="wa-tip">WhatsApp directo<small>Respuesta rápida</small></div>
+<a class="wa-float" href="https://wa.me/34611877611" target="_blank" rel="noopener" aria-label="WhatsApp">
+  <svg viewBox="0 0 32 32">
+    <path d="M16.02 27.3h-.01c-1.9 0-3.77-.51-5.4-1.49l-.39-.23-4.01 1.05 1.07-3.91-.25-.4c-1.06-1.68-1.62-3.62-1.62-5.61 0-5.89 4.79-10.68 10.69-10.68 2.85 0 5.53 1.11 7.55 3.13 2.02 2.02 3.13 4.7 3.13 7.55 0 5.89-4.79 10.68-10.76 10.68z"/>
+  </svg>
+</a>
+
+<script>
+document.getElementById('y').textContent=new Date().getFullYear();
+</script>
+</body>
+</html>
