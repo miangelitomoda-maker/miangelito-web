@@ -4,66 +4,472 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
 
-  <title>Catálogo de ropa italiana y moda outlet | Novedades diarias · Mi Angelito Moda</title>
-  <meta name="description" content="Catálogo de ropa italiana y moda outlet en España. Novedades diarias con fotos reales. Consulta modelos y disponibilidad por WhatsApp · Mi Angelito Moda." />
+  <title>Catálogo | Mi Angelito Moda · Novedades (Instagram)</title>
+  <meta name="description" content="Catálogo actualizado en Instagram. Mi Angelito Moda: almacén mayorista en Crevillente. Consulta disponibilidad y precios por WhatsApp." />
   <meta name="robots" content="index,follow" />
-  <meta name="language" content="es" />
-  <meta name="author" content="Mi Angelito Moda" />
+  <link rel="canonical" href="https://www.miangelitomoda.com/catalogo.html" />
 
-  <meta property="og:type" content="website" />
-  <meta property="og:title" content="Catálogo de ropa italiana · Mi Angelito Moda" />
-  <meta property="og:description" content="Novedades diarias de ropa italiana y moda outlet. Fotos reales. Consulta por WhatsApp." />
-  <meta property="og:url" content="https://www.miangelitomoda.com/catalogo.html" />
+  <!-- 可选：如果你想 catalogo 也统计 GA，就把你首页的 gtag 复制过来（推荐） -->
+  <!-- Google tag (gtag.js) -->
+  <script>
+  // Consent Mode v2 (EU): deny analytics until user grants
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('consent', 'default', {
+    ad_storage: 'denied',
+    ad_user_data: 'denied',
+    ad_personalization: 'denied',
+    analytics_storage: 'denied',
+    functionality_storage: 'granted',
+    personalization_storage: 'granted',
+    security_storage: 'granted',
+    wait_for_update: 500
+  });
+</script>
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-E9Y3NKYKZN"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-E9Y3NKYKZN');
+  </script>
+
+  <!-- FAVICON（沿用你首页那套） -->
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 
   <style>
+    :root{
+      --bg1:#0a0a0f; --bg2:#0f1018;
+      --line:rgba(255,255,255,.14);
+      --card:rgba(0,0,0,.50);
+      --text:#fff;
+      --muted:rgba(255,255,255,.78);
+      --cream1:#f3ead3; --cream2:#e6d3a3;
+      --radius:26px;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
     body{
-      margin:0;
       min-height:100vh;
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 600px at 20% 0%, rgba(230,211,163,.18), transparent 55%),
+        radial-gradient(900px 600px at 85% 15%, rgba(243,234,211,.10), transparent 52%),
+        linear-gradient(180deg,var(--bg1),var(--bg2));
       display:flex;
       align-items:center;
       justify-content:center;
-      background:#0b0b0f;
-      color:#ffffff;
-      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
+      padding:18px;
     }
-    .box{
-      text-align:center;
-      max-width:420px;
-      padding:32px 24px;
+    a{color:inherit;text-decoration:none}
+
+    .panel{
+      width:min(780px, 100%);
+      background:var(--card);
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:30px;
+      padding:22px;
+      box-shadow:0 18px 46px rgba(0,0,0,.35);
+      overflow:hidden;
+      position:relative;
     }
+    .panel:before{
+      content:'';
+      position:absolute; inset:-2px;
+      background:radial-gradient(900px 500px at 30% 0%,rgba(230,211,163,.14),transparent 60%);
+      pointer-events:none;
+      opacity:.9;
+    }
+    .panel>*{position:relative;z-index:1}
+
+    .top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-bottom:12px;
+    }
+    .brand{
+      display:flex; align-items:center; gap:10px;
+      font-weight:800; letter-spacing:.4px;
+    }
+    .logo{
+      width:38px;height:38px;border-radius:12px;
+      background:linear-gradient(135deg,var(--cream2),var(--cream1));
+      color:#111; display:grid; place-items:center;
+      font-weight:900;
+      box-shadow:0 10px 22px rgba(0,0,0,.25);
+    }
+    .nav{
+      display:flex; gap:8px; flex-wrap:wrap;
+    }
+    .pill{
+      padding:10px 12px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.06);
+      font-weight:700;
+      font-size:13px;
+    }
+    .pill:hover{filter:brightness(1.06)}
+
     h1{
-      font-size:22px;
-      margin-bottom:18px;
+      margin:10px 0 6px;
+      font-size:24px;
+      letter-spacing:.4px;
       font-weight:700;
     }
     p{
+      margin:0;
+      color:var(--muted);
       font-size:15px;
-      color:#cccccc;
-      margin-bottom:26px;
+      line-height:1.6;
     }
-    a{
-      display:inline-block;
-      padding:16px 26px;
-      border-radius:14px;
-      background:#ffffff;
-      color:#000000;
-      text-decoration:none;
-      font-size:17px;
-      font-weight:600;
+
+    .cta{
+      margin-top:16px;
+      display:grid;
+      gap:10px;
+      grid-template-columns:1fr;
     }
-    a:hover{
-      opacity:.9;
+    .btn{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      padding:14px 16px;
+      border-radius:18px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.08);
+      font-weight:800;
+      font-size:15px;
+      text-align:center;
     }
+    .btn.primary{
+      background:linear-gradient(135deg,var(--cream2),var(--cream1));
+      color:#111;
+      border:none;
+    }
+    .btn:hover{filter:brightness(1.06)}
+    @media (min-width:720px){
+      .cta{grid-template-columns:1fr 1fr}
+    }
+
+    .meta{
+      margin-top:14px;
+      padding-top:14px;
+      border-top:1px solid rgba(255,255,255,.10);
+      display:grid;
+      gap:10px;
+      color:rgba(255,255,255,.72);
+      font-size:13px;
+      line-height:1.6;
+    }
+    .meta b{color:#fff}
+
+    /* Floating WhatsApp */
+    .wa-float{
+      position:fixed;
+      right:18px;
+      bottom:calc(22px + env(safe-area-inset-bottom));
+      width:56px;height:56px;
+      border-radius:999px;
+      display:grid;
+      place-items:center;
+      background:linear-gradient(135deg,#25D366,#128C7E);
+      box-shadow:0 14px 36px rgba(0,0,0,.45);
+      border:1px solid rgba(255,255,255,.18);
+      z-index:9999;
+    }
+    .wa-float svg{width:28px;height:28px;fill:#fff}
   </style>
+<style id="cookie-consent">
+  .cc[hidden], .cm[hidden]{ display:none !important; }
+  .cc{
+    position:fixed; left:0; right:0; bottom:0;
+    padding:14px;
+    z-index:9999;
+  }
+  .cc__card{
+    max-width:980px; margin:0 auto;
+    background:#ffffff;
+    border:1px solid rgba(0,0,0,.08);
+    border-radius:14px;
+    box-shadow:0 14px 40px rgba(0,0,0,.12);
+    padding:14px 14px 12px;
+    font-family:system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  }
+  .cc__title{ font-weight:800; font-size:16px; margin-bottom:6px; color:#111; }
+  .cc__text{ font-size:13px; line-height:1.5; color:#333; }
+  .cc__text a{ color:#111; text-decoration:underline; }
+  .cc__actions{ display:flex; gap:10px; justify-content:flex-end; margin-top:10px; flex-wrap:wrap; }
+  .cc__btn{
+    border-radius:10px; padding:10px 14px;
+    border:1px solid rgba(0,0,0,.14);
+    background:#fff; cursor:pointer;
+    font-weight:700; font-size:13px;
+  }
+  .cc__btn--ghost:hover{ filter:brightness(.98); }
+  .cc__btn--primary{
+    background:#111; color:#fff; border-color:#111;
+  }
+  .cc__btn--primary:hover{ filter:brightness(1.05); }
+
+  .cm{
+    position:fixed; inset:0;
+    z-index:10000;
+    font-family:system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  }
+  .cm__backdrop{ position:absolute; inset:0; background:rgba(0,0,0,.45); }
+  .cm__card{
+    position:relative;
+    width:min(640px, calc(100% - 28px));
+    margin:70px auto 0;
+    background:#fff;
+    border-radius:14px;
+    box-shadow:0 18px 60px rgba(0,0,0,.18);
+    border:1px solid rgba(0,0,0,.10);
+    padding:14px;
+  }
+  .cm__head{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  .cm__title{ font-weight:900; font-size:16px; color:#111; }
+  .cm__close{
+    border:0; background:transparent; cursor:pointer;
+    font-size:26px; line-height:1; padding:6px 10px; color:#111;
+  }
+  .cm__row{
+    display:flex; align-items:center; justify-content:space-between;
+    gap:12px;
+    padding:12px 0;
+    border-top:1px solid rgba(0,0,0,.08);
+  }
+  .cm__name{ font-weight:800; font-size:14px; color:#111; }
+  .cm__desc{ font-size:12.5px; color:#444; margin-top:2px; }
+  .cm__pill{
+    font-size:12px; font-weight:800;
+    background:rgba(0,0,0,.06);
+    padding:6px 10px; border-radius:999px;
+    white-space:nowrap; color:#111;
+  }
+  .cm__actions{ display:flex; justify-content:flex-end; gap:10px; margin-top:12px; }
+
+  .cm__switch{ position:relative; width:46px; height:26px; display:inline-block; }
+  .cm__switch input{ display:none; }
+  .cm__slider{
+    position:absolute; inset:0; background:rgba(0,0,0,.18);
+    border-radius:999px; transition:.2s;
+  }
+  .cm__slider:before{
+    content:""; position:absolute; width:20px; height:20px;
+    left:3px; top:3px;
+    background:#fff; border-radius:999px; transition:.2s;
+    box-shadow:0 2px 10px rgba(0,0,0,.20);
+  }
+  .cm__switch input:checked + .cm__slider{ background:#111; }
+  .cm__switch input:checked + .cm__slider:before{ transform:translateX(20px); }
+</style>
+
 </head>
 
 <body>
-  <main class="box">
-    <h1>Mi Angelito Moda</h1><br>Catálogo de ropa italiana 
-    <p>Novedades diarias con fotos reales.<br>Haz clic para ver todos los modelos disponibles.</p>
-    <a href="https://www.instagram.com/miangelitomoda/"  target="_blank">
-      👉 Ver catálogo actualizado
-    </a>
-  </main>
+  <main class="panel" role="main">
+    <div class="top">
+      <div class="brand">
+        <div class="logo">MA</div>
+        Mi Angelito Moda
+      </div>
+      <div class="nav" aria-label="Navegación">
+        <a class="pill" href="/">Inicio</a>
+        <a class="pill" href="/nosotros.html">Almacén</a>
+        <a class="pill" href="/catalogo.html" aria-current="page">Catálogo</a>
+      </div>
+    </div>
+
+    <h1>Catálogo actualizado (Instagram)</h1>
+    <p>
+      Novedades frecuentes con fotos reales.<br>
+      Para <b>precios</b> y <b>disponibilidad</b>, escríbenos por WhatsApp.
+    </p>
+
+    <div class="cta">
+      <a class="btn primary" href="https://www.instagram.com/miangelitomoda/" target="_blank" rel="noopener">
+        👉 Ver catálogo actualizado
+      </a>
+      <a class="btn" href="https://wa.me/34681677777?text=Hola%2C%20soy%20profesional%20y%20quiero%20ver%20novedades%20y%20precios.%20Mi%20ciudad%20es%20_____%20y%20busco%20estilo%20_____." target="_blank" rel="noopener">
+        💬 WhatsApp (mayorista)
+      </a>
+      <a class="btn" href="https://www.tiktok.com/@miangelitomoda" target="_blank" rel="noopener">
+        🔥 Ver novedades en TikTok
+      </a>
+      <a class="btn" href="/nosotros.html">
+        📦 Sobre el almacén / Cómo trabajamos
+      </a>
+    </div>
+
+    <div class="meta">
+      <div><b>Ubicación:</b> Carrer el Terros 17, Pol. Ind. Boch · 03330 Crevillente (Alicante)</div>
+      <div><b>Horario:</b> Lunes a Sábado · 09:30–20:00</div>
+      <div><b>Contacto:</b> WhatsApp +34 681 677 777 · Móvil +34 611 877 611</div>
+    </div>
+  
+    <div style="margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.10);text-align:center;font-size:12.5px;color:rgba(255,255,255,.72);line-height:1.6;">
+      © <span id="y"></span> Mi Angelito Moda
+      <div style="margin-top:8px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+        <a href="/aviso-legal.html" style="border-bottom:1px dotted rgba(255,255,255,.35);">Aviso Legal</a>
+        <a href="/privacidad.html" style="border-bottom:1px dotted rgba(255,255,255,.35);">Privacidad</a>
+        <a href="/cookies.html" style="border-bottom:1px dotted rgba(255,255,255,.35);">Cookies</a>
+        <a href="javascript:void(0)" onclick="miangelitoOpenCookieSettings()" style="border-bottom:1px dotted rgba(255,255,255,.35);">Cambiar cookies</a>
+      </div>
+    </div>
+
+</main>
+
+  <!-- Floating WhatsApp（统一成 681） -->
+  <a class="wa-float" href="https://wa.me/34681677777" target="_blank" rel="noopener" aria-label="WhatsApp">
+    <svg viewBox="0 0 32 32">
+      <path d="M16.02 27.3h-.01c-1.9 0-3.77-.51-5.4-1.49l-.39-.23-4.01 1.05 1.07-3.91-.25-.4c-1.06-1.68-1.62-3.62-1.62-5.61 0-5.89 4.79-10.68 10.69-10.68 2.85 0 5.53 1.11 7.55 3.13 2.02 2.02 3.13 4.7 3.13 7.55 0 5.89-4.79 10.68-10.76 10.68z"/>
+    </svg>
+  </a>
+
+<!-- Cookie Consent Banner -->
+<div id="cookieBanner" class="cc" role="dialog" aria-modal="true" aria-label="Preferencias de cookies" hidden>
+  <div class="cc__card">
+    <div class="cc__title">🍪 Cookies</div>
+    <div class="cc__text">
+      Usamos cookies necesarias para el funcionamiento del sitio y, con tu consentimiento, cookies analíticas (Google Analytics)
+      para medir visitas y mejorar la experiencia. Puedes aceptar, rechazar o configurar tus preferencias.
+      <a href="/cookies.html">Más información</a>.
+    </div>
+
+    <div class="cc__actions">
+      <button class="cc__btn cc__btn--ghost" id="ccReject">Rechazar</button>
+      <button class="cc__btn cc__btn--ghost" id="ccSettings">Configurar</button>
+      <button class="cc__btn cc__btn--primary" id="ccAccept">Aceptar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Cookie Settings Modal -->
+<div id="cookieModal" class="cm" role="dialog" aria-modal="true" aria-label="Configuración de cookies" hidden>
+  <div class="cm__backdrop" id="cmBackdrop"></div>
+  <div class="cm__card">
+    <div class="cm__head">
+      <div class="cm__title">Configuración de cookies</div>
+      <button class="cm__close" id="cmClose" aria-label="Cerrar">×</button>
+    </div>
+
+    <div class="cm__row">
+      <div>
+        <div class="cm__name">Necesarias</div>
+        <div class="cm__desc">Imprescindibles para que el sitio funcione correctamente.</div>
+      </div>
+      <div class="cm__pill">Siempre activas</div>
+    </div>
+
+    <div class="cm__row">
+      <div>
+        <div class="cm__name">Analíticas (Google Analytics)</div>
+        <div class="cm__desc">Nos ayudan a entender el uso del sitio para mejorarlo.</div>
+      </div>
+      <label class="cm__switch">
+        <input type="checkbox" id="cmAnalytics">
+        <span class="cm__slider"></span>
+      </label>
+    </div>
+
+    <div class="cm__actions">
+      <button class="cc__btn cc__btn--ghost" id="cmRejectAll">Rechazar</button>
+      <button class="cc__btn cc__btn--primary" id="cmSave">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const STORAGE_KEY = 'miangelito_cookie_consent_v1';
+
+  const banner = document.getElementById('cookieBanner');
+  const modal  = document.getElementById('cookieModal');
+
+  const btnAccept   = document.getElementById('ccAccept');
+  const btnReject   = document.getElementById('ccReject');
+  const btnSettings = document.getElementById('ccSettings');
+
+  const cmAnalytics = document.getElementById('cmAnalytics');
+  const cmSave      = document.getElementById('cmSave');
+  const cmRejectAll = document.getElementById('cmRejectAll');
+  const cmClose     = document.getElementById('cmClose');
+  const cmBackdrop  = document.getElementById('cmBackdrop');
+
+  function safeParse(json){
+    try { return JSON.parse(json); } catch(e){ return null; }
+  }
+
+  function applyConsent(consent){
+    const analyticsGranted = !!consent.analytics;
+
+    // Update Google Consent Mode
+    if (typeof window.gtag === 'function') {
+      window.gtag('consent', 'update', {
+        analytics_storage: analyticsGranted ? 'granted' : 'denied'
+      });
+    }
+
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      analytics: analyticsGranted,
+      ts: Date.now()
+    }));
+  }
+
+  function showBanner(){ if (banner) banner.hidden = false; }
+  function hideBanner(){ if (banner) banner.hidden = true; }
+
+  function openModal(){
+    if (!modal) return;
+    modal.hidden = false;
+    const stored = safeParse(localStorage.getItem(STORAGE_KEY));
+    if (cmAnalytics) cmAnalytics.checked = stored ? !!stored.analytics : false;
+  }
+  function closeModal(){ if (modal) modal.hidden = true; }
+
+  btnAccept?.addEventListener('click', () => { applyConsent({ analytics: true }); hideBanner(); });
+  btnReject?.addEventListener('click', () => { applyConsent({ analytics: false }); hideBanner(); });
+  btnSettings?.addEventListener('click', () => openModal());
+
+  cmSave?.addEventListener('click', () => {
+    applyConsent({ analytics: cmAnalytics ? cmAnalytics.checked : false });
+    closeModal(); hideBanner();
+  });
+
+  cmRejectAll?.addEventListener('click', () => {
+    applyConsent({ analytics: false });
+    closeModal(); hideBanner();
+  });
+
+  cmClose?.addEventListener('click', closeModal);
+  cmBackdrop?.addEventListener('click', closeModal);
+
+  const stored = safeParse(localStorage.getItem(STORAGE_KEY));
+  if (!stored) {
+    showBanner();
+  } else {
+    applyConsent({ analytics: !!stored.analytics });
+    hideBanner();
+  }
+
+  window.miangelitoOpenCookieSettings = function(){
+    openModal();
+    showBanner();
+  };
+})();
+</script>
+
+
+<script>document.getElementById('y').textContent=new Date().getFullYear();</script>
 </body>
 </html>

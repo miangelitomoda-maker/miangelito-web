@@ -1,0 +1,601 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <!-- Consent Mode v2 (default deny analytics until consent) -->
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('consent','default', {
+      ad_storage: 'denied',
+      ad_user_data: 'denied',
+      ad_personalization: 'denied',
+      analytics_storage: 'denied',
+      functionality_storage: 'granted',
+      personalization_storage: 'granted',
+      security_storage: 'granted',
+      wait_for_update: 500
+    });
+  </script>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9Y3NKYKZN"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-E9Y3NKYKZN', { anonymize_ip: true });
+  </script>
+
+  <!-- FAVICON -->
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+
+  <!-- ANDROID / PWA -->
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#f6f3ee">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <title>Contacto · Mi Angelito Moda</title>
+  <meta name="description" content="Contacto de Mi Angelito Moda. Mayorista de moda italiana en Crevillente (Alicante). Dirección, WhatsApp y email.">
+  <meta name="robots" content="index,follow">
+
+  <style>
+    :root{
+      --bg:#f6f3ee;
+      --card:#ffffff;
+      --text:#111827;
+      --muted:#6b7280;
+      --line:rgba(17,24,39,.10);
+      --brand:#111;
+      --shadow: 0 18px 50px rgba(0,0,0,.10);
+      --radius: 16px;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
+    body{
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--text);
+      background:var(--bg);
+      line-height:1.5;
+    }
+    a{color:inherit}
+    .wrap{max-width:1100px;margin:0 auto;padding:0 16px}
+    .topbar{
+      position:sticky; top:0; z-index:50;
+      background:rgba(246,243,238,.85);
+      backdrop-filter: blur(10px);
+      border-bottom:1px solid var(--line);
+    }
+    .topbar__in{display:flex;align-items:center;justify-content:space-between;padding:10px 0;gap:12px}
+    .brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+    .brand img{width:34px;height:34px;border-radius:10px;object-fit:cover}
+    .brand b{letter-spacing:.2px}
+    .nav{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+    .nav a{
+      text-decoration:none;
+      font-weight:700;
+      font-size:13px;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid transparent;
+    }
+    .nav a:hover{border-color:var(--line); background:rgba(255,255,255,.55)}
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      padding:12px 16px;
+      border-radius:999px;
+      font-weight:800;
+      font-size:14px;
+      border:1px solid rgba(17,24,39,.18);
+      background:#fff;
+      text-decoration:none;
+      gap:10px;
+      cursor:pointer;
+      white-space:nowrap;
+    }
+    .btn--primary{background:var(--brand); color:#fff; border-color:var(--brand)}
+    .btn--primary:hover{filter:brightness(1.05)}
+    .btn--ghost:hover{background:rgba(255,255,255,.6)}
+    .hero{padding:28px 0 18px}
+    .hero__grid{
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap:18px;
+      align-items:stretch;
+    }
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+    }
+    .hero__left{padding:22px 20px}
+    .kicker{
+      display:inline-flex; gap:8px; align-items:center;
+      font-weight:800; font-size:12px;
+      color:#111;
+      background:rgba(17,24,39,.06);
+      border:1px solid rgba(17,24,39,.10);
+      padding:6px 10px;
+      border-radius:999px;
+    }
+    h1{margin:12px 0 10px; font-size:34px; line-height:1.08}
+    .lead{color:var(--muted); font-size:15px; margin:0 0 16px}
+    .hero__cta{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .trust{margin-top:14px; display:flex; gap:10px; flex-wrap:wrap}
+    .pill{
+      font-size:12px; font-weight:800;
+      padding:8px 10px;
+      border-radius:999px;
+      background:rgba(17,24,39,.05);
+      border:1px solid rgba(17,24,39,.10);
+      color:#111;
+    }
+    .hero__right{
+      padding:14px;
+      overflow:hidden;
+      position:relative;
+      min-height: 320px;
+      display:flex;
+      align-items:flex-end;
+    }
+    .hero__img{
+      position:absolute; inset:0;
+      background:
+        linear-gradient(180deg, rgba(246,243,238,.10) 0%, rgba(246,243,238,.92) 70%, rgba(246,243,238,1) 100%),
+        url('/fachada.png');
+      background-size:cover;
+      background-position:center;
+      filter:saturate(1.05) contrast(1.05);
+    }
+    .hero__right .hero__note{
+      position:relative;
+      background:rgba(255,255,255,.90);
+      border:1px solid rgba(17,24,39,.10);
+      border-radius:14px;
+      padding:12px 12px;
+      width:100%;
+    }
+    .hero__note b{display:block}
+    .hero__note small{color:var(--muted)}
+    .section{padding:16px 0}
+    .grid3{display:grid; grid-template-columns:repeat(3,1fr); gap:14px}
+    .feat{padding:14px 14px}
+    .feat b{display:block; margin-bottom:6px}
+    .feat p{margin:0; color:var(--muted); font-size:13px}
+    .split{
+      display:grid; grid-template-columns: 1fr 1fr;
+      gap:14px;
+    }
+    .box{padding:16px}
+    .box h2{margin:0 0 8px; font-size:18px}
+    .box p{margin:0; color:var(--muted); font-size:13.5px}
+    .steps{margin-top:12px; display:grid; gap:10px}
+    .step{
+      display:flex; gap:10px; align-items:flex-start;
+      padding:12px;
+      border-radius:14px;
+      border:1px solid rgba(17,24,39,.10);
+      background:rgba(255,255,255,.75);
+    }
+    .step i{
+      width:28px; height:28px; border-radius:10px;
+      display:inline-flex; align-items:center; justify-content:center;
+      background:rgba(17,24,39,.08);
+      font-style:normal; font-weight:900;
+    }
+    .step div{font-size:13px}
+    .step div b{display:block}
+    .map{
+      border-radius:14px;
+      overflow:hidden;
+      border:1px solid rgba(17,24,39,.10);
+      height: 260px;
+      width:100%;
+    }
+    .site-foot{
+      margin: 18px auto 26px;
+      max-width: 1100px;
+      padding: 0 16px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+      text-align: center;
+    }
+    .site-foot a{
+      color: var(--text);
+      text-decoration: none;
+      border-bottom: 1px dotted rgba(17,24,39,.28);
+    }
+    .site-foot a:hover{filter:brightness(.92)}
+    /* Floating WhatsApp */
+    .wa-fab{
+      position:fixed; right:16px; bottom:16px; z-index:60;
+      display:flex; flex-direction:column; gap:8px; align-items:flex-end;
+    }
+    .wa-tip{
+      background:rgba(255,255,255,.92);
+      border:1px solid rgba(17,24,39,.10);
+      border-radius:14px;
+      padding:8px 10px;
+      box-shadow:0 14px 40px rgba(0,0,0,.12);
+      font-size:12px;
+      color:var(--muted);
+    }
+    .wa-btn{
+      width:54px;height:54px;border-radius:16px;
+      background:#25D366;
+      display:inline-flex; align-items:center; justify-content:center;
+      box-shadow:0 14px 40px rgba(0,0,0,.20);
+      border:0;
+      text-decoration:none;
+    }
+    .wa-btn svg{width:28px;height:28px;fill:#fff}
+    /* Cookie banner + modal (from previous) */
+    .cc[hidden], .cm[hidden]{ display:none !important; }
+    .cc{
+      position:fixed; left:0; right:0; bottom:0;
+      padding:14px;
+      z-index:9999;
+    }
+    .cc__card{
+      max-width:1100px; margin:0 auto;
+      background:#ffffff;
+      border:1px solid rgba(0,0,0,.08);
+      border-radius:14px;
+      box-shadow:0 14px 40px rgba(0,0,0,.12);
+      padding:14px 14px 12px;
+    }
+    .cc__title{ font-weight:800; font-size:16px; margin-bottom:6px; }
+    .cc__text{ font-size:13px; line-height:1.5; color:#333; }
+    .cc__text a{ color:#111; text-decoration:underline; }
+    .cc__actions{ display:flex; gap:10px; justify-content:flex-end; margin-top:10px; flex-wrap:wrap; }
+    .cc__btn{
+      border-radius:10px; padding:10px 14px;
+      border:1px solid rgba(0,0,0,.14);
+      background:#fff; cursor:pointer;
+      font-weight:800; font-size:13px;
+    }
+    .cc__btn--ghost:hover{ filter:brightness(.98); }
+    .cc__btn--primary{
+      background:#111; color:#fff; border-color:#111;
+    }
+    .cc__btn--primary:hover{ filter:brightness(1.05); }
+    .cm{
+      position:fixed; inset:0;
+      z-index:10000;
+    }
+    .cm__backdrop{ position:absolute; inset:0; background:rgba(0,0,0,.45); }
+    .cm__card{
+      position:relative;
+      width:min(640px, calc(100% - 28px));
+      margin:70px auto 0;
+      background:#fff;
+      border-radius:14px;
+      box-shadow:0 18px 60px rgba(0,0,0,.18);
+      border:1px solid rgba(0,0,0,.10);
+      padding:14px;
+    }
+    .cm__head{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
+    .cm__title{ font-weight:900; font-size:16px; }
+    .cm__close{
+      border:0; background:transparent; cursor:pointer;
+      font-size:26px; line-height:1; padding:6px 10px;
+    }
+    .cm__row{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:12px;
+      padding:12px 0;
+      border-top:1px solid rgba(0,0,0,.08);
+    }
+    .cm__name{ font-weight:900; font-size:14px; }
+    .cm__desc{ font-size:12.5px; color:#444; margin-top:2px; }
+    .cm__pill{
+      font-size:12px; font-weight:900;
+      background:rgba(0,0,0,.06);
+      padding:6px 10px; border-radius:999px;
+      white-space:nowrap;
+    }
+    .cm__actions{ display:flex; justify-content:flex-end; gap:10px; margin-top:12px; }
+    .cm__switch{ position:relative; width:46px; height:26px; display:inline-block; }
+    .cm__switch input{ display:none; }
+    .cm__slider{
+      position:absolute; inset:0; background:rgba(0,0,0,.18);
+      border-radius:999px; transition:.2s;
+    }
+    .cm__slider:before{
+      content:""; position:absolute; width:20px; height:20px;
+      left:3px; top:3px;
+      background:#fff; border-radius:999px; transition:.2s;
+      box-shadow:0 2px 10px rgba(0,0,0,.20);
+    }
+    .cm__switch input:checked + .cm__slider{ background:#111; }
+    .cm__switch input:checked + .cm__slider:before{ transform:translateX(20px); }
+    @media (max-width: 860px){
+    @media (max-width: 768px){
+
+  /* 顶部导航改为纵向 */
+  .topbar__in{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:8px;
+  }
+
+  .nav{
+    width:100%;
+    justify-content:space-between;
+  }
+
+  .nav a{
+    font-size:12px;
+    padding:6px 8px;
+  }
+
+  /* 主标题缩小 */
+  h1{
+    font-size:24px !important;
+  }
+
+  /* 联系方式卡片改为单列 */
+  .grid3{
+    grid-template-columns:1fr !important;
+  }
+
+  /* 按钮更大更好按 */
+  .btn{
+    width:100%;
+    justify-content:center;
+    font-size:15px;
+    padding:14px 16px;
+  }
+
+  /* 分割区改单列 */
+  .split{
+    grid-template-columns:1fr !important;
+  }
+
+  /* map 高度优化 */
+  .map{
+    height:220px;
+  }
+
+  /* WhatsApp 浮动按钮缩小一点 */
+  .wa-btn{
+    width:48px;
+    height:48px;
+  }
+
+  .wa-btn svg{
+    width:24px;
+    height:24px;
+  }
+
+  .wa-tip{
+    font-size:11px;
+    padding:6px 8px;
+  }
+
+}
+      .hero__grid{grid-template-columns:1fr}
+      .grid3{grid-template-columns:1fr}
+      h1{font-size:30px}
+      .split{grid-template-columns:1fr}
+      .hero__right{min-height:260px}
+    }
+  </style>
+
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap topbar__in">
+      <a class="brand" href="/">
+        <img src="/logo.jpg" alt="Mi Angelito Moda">
+        <div>
+          <b>Mi Angelito Moda</b><br>
+          <small style="color:var(--muted);font-weight:700;font-size:12px">Moda italiana · venta al por mayor</small>
+        </div>
+      </a>
+
+      <nav class="nav" aria-label="Navegación principal">
+        <a href="/catalogo.html">Catálogo</a>
+        <a href="/nosotros.html">Sobre nosotros</a>
+        <a href="/contacto.html">Contacto</a>
+        <a class="btn btn--primary" href="https://wa.me/34611877611?text=">WhatsApp</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap" style="padding:22px 16px 0">
+    <section class="card" style="padding:18px">
+      <span class="kicker">📍 Contacto y ubicación</span>
+      <h1 style="margin:12px 0 8px; font-size:28px; line-height:1.15">Hablemos: mayorista de moda en Crevillente</h1>
+      <p class="lead" style="margin-bottom:14px">
+        Para disponibilidad, condiciones y pedidos al por mayor, lo más rápido es WhatsApp.
+        También puedes escribirnos por email o visitarnos en el almacén.
+      </p>
+
+      <div class="grid3" style="grid-template-columns:repeat(3,1fr); gap:14px">
+        <div class="card feat" style="box-shadow:none">
+          <b>WhatsApp</b>
+          <p><a class="btn btn--primary" href="https://wa.me/34611877611?text=" target="_blank" rel="noopener">Escribir ahora</a></p>
+          <p style="margin-top:8px;color:var(--muted);font-size:13px">Respuesta rápida en horario laboral.</p>
+        </div>
+        <div class="card feat" style="box-shadow:none">
+          <b>Email</b>
+          <p><a class="btn btn--ghost" href="mailto:info@miangelitomoda.com">info@miangelitomoda.com</a></p>
+          <p style="margin-top:8px;color:var(--muted);font-size:13px">Para info general y documentación.</p>
+        </div>
+        <div class="card feat" style="box-shadow:none">
+          <b>Dirección</b>
+          <p style="margin:0;color:var(--muted);font-size:13px">Carrer el Terros 17, Pol. Ind. Boch<br>03330 Crevillente, Alicante</p>
+          <p style="margin-top:10px"><a class="btn btn--ghost" href="https://www.google.com/maps/place/Mi+Angelito+Moda/@38.2510619,-0.7808015,17z/data=!3m1!4b1!4m6!3m5!1s0xd63b9ef222b9c43:0x9896b449ae4f2c59!8m2!3d38.2510619!4d-0.7808015!16s%2Fg%2F11n3wsb1_d?entry=ttu&g_ep=EgoyMDI2MDIwOS4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noopener">Abrir en Google Maps</a></p>
+        </div>
+      </div>
+
+      <div style="margin-top:14px">
+        <iframe class="map"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          src="https://www.google.com/maps?q=Carrer%20el%20Terros%2017,%20Pol.%20Ind.%20Boch,%2003330%20Crevillente,%20Alicante&output=embed"></iframe>
+      </div>
+
+      <div class="split" style="margin-top:14px">
+        <div class="card box" style="box-shadow:none">
+          <h2>Información de empresa</h2>
+          <p>
+      
+            <b style="color:var(--text)">Mi Angelitp Moda</b><br>
+            Tel: 681677777
+            <br>
+            Carrer el Terros 17, Pol. Ind. Boch<br>
+            03330 Crevillente, Alicante<br>
+            Email: <a href="mailto:info@miangelitomoda.com">info@miangelitomoda.com</a>
+          </p>
+        </div>
+
+        <div class="card box" style="box-shadow:none">
+          <h2>Qué incluir en tu mensaje</h2>
+          <p>Para responder más rápido, envíanos:</p>
+          <div class="steps">
+            <div class="step"><i>✓</i><div><b>Tipo de tienda</b><span style="color:var(--muted)">y ciudad / provincia.</span></div></div>
+            <div class="step"><i>✓</i><div><b>Estilo que buscas</b><span style="color:var(--muted)">básicos, fiesta, casual, etc.</span></div></div>
+            <div class="step"><i>✓</i><div><b>Urgencia</b><span style="color:var(--muted)">fecha estimada de reposición.</span></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  
+  <div class="site-foot">
+    © 2026 Mi Angelito Moda<br>
+    <a href="/aviso-legal.html">Aviso Legal</a> ·
+    <a href="/privacidad.html">Política de Privacidad</a> ·
+    <a href="/cookies.html">Política de Cookies</a> ·
+    <a href="javascript:void(0)" onclick="miangelitoOpenCookieSettings()">Cambiar cookies</a>
+    <br>
+    Carrer el Terros 17, Pol. Ind. Boch · 03330 Crevillente, Alicante · <a href="mailto:info@miangelitomoda.com">info@miangelitomoda.com</a>
+  </div>
+
+
+  <div class="wa-fab" aria-label="WhatsApp">
+    <div class="wa-tip">WhatsApp directo<br><small>Respuesta rápida</small></div>
+    <a class="wa-btn" href="https://wa.me/34611877611?text=" target="_blank" rel="noopener" aria-label="Abrir WhatsApp">
+      <svg viewBox="0 0 32 32" aria-hidden="true">
+  <path d="M16.02 27.3h-.01c-1.9 0-3.77-.51-5.4-1.49l-.39-.23-4.01 1.05 1.07-3.91-.25-.4c-1.06-1.68-1.62-3.62-1.62-5.61 0-5.89 4.79-10.68 10.69-10.68 2.85 0 5.53 1.11 7.55 3.13 2.02 2.02 3.13 4.7 3.13 7.55 0 5.89-4.79 10.68-10.76 10.68z"/>
+</svg>
+    </a>
+  </div>
+
+  
+  <!-- Cookie Consent Banner -->
+  <div id="cookieBanner" class="cc" role="dialog" aria-modal="true" aria-label="Preferencias de cookies" hidden>
+    <div class="cc__card">
+      <div class="cc__title">🍪 Cookies</div>
+      <div class="cc__text">
+        Usamos cookies necesarias para el funcionamiento del sitio y, con tu consentimiento, cookies analíticas (Google Analytics)
+        para medir visitas y mejorar la experiencia. Puedes aceptar, rechazar o configurar tus preferencias.
+        <a href="/cookies.html">Más información</a>.
+      </div>
+
+      <div class="cc__actions">
+        <button class="cc__btn cc__btn--ghost" id="ccReject">Rechazar</button>
+        <button class="cc__btn cc__btn--ghost" id="ccSettings">Configurar</button>
+        <button class="cc__btn cc__btn--primary" id="ccAccept">Aceptar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cookie Settings Modal -->
+  <div id="cookieModal" class="cm" role="dialog" aria-modal="true" aria-label="Configuración de cookies" hidden>
+    <div class="cm__backdrop" id="cmBackdrop"></div>
+    <div class="cm__card">
+      <div class="cm__head">
+        <div class="cm__title">Configuración de cookies</div>
+        <button class="cm__close" id="cmClose" aria-label="Cerrar">×</button>
+      </div>
+
+      <div class="cm__row">
+        <div>
+          <div class="cm__name">Necesarias</div>
+          <div class="cm__desc">Imprescindibles para que el sitio funcione correctamente.</div>
+        </div>
+        <div class="cm__pill">Siempre activas</div>
+      </div>
+
+      <div class="cm__row">
+        <div>
+          <div class="cm__name">Analíticas (Google Analytics)</div>
+          <div class="cm__desc">Nos ayudan a entender el uso del sitio para mejorarlo.</div>
+        </div>
+        <label class="cm__switch">
+          <input type="checkbox" id="cmAnalytics">
+          <span class="cm__slider"></span>
+        </label>
+      </div>
+
+      <div class="cm__actions">
+        <button class="cc__btn cc__btn--ghost" id="cmRejectAll">Rechazar</button>
+        <button class="cc__btn cc__btn--primary" id="cmSave">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  
+  <script>
+  (function(){
+    const STORAGE_KEY = 'miangelito_cookie_consent_v1';
+    const banner = document.getElementById('cookieBanner');
+    const modal  = document.getElementById('cookieModal');
+
+    const btnAccept   = document.getElementById('ccAccept');
+    const btnReject   = document.getElementById('ccReject');
+    const btnSettings = document.getElementById('ccSettings');
+
+    const cmAnalytics = document.getElementById('cmAnalytics');
+    const cmSave      = document.getElementById('cmSave');
+    const cmRejectAll = document.getElementById('cmRejectAll');
+    const cmClose     = document.getElementById('cmClose');
+    const cmBackdrop  = document.getElementById('cmBackdrop');
+
+    function safeParse(json){ try { return JSON.parse(json); } catch(e){ return null; } }
+
+    function applyConsent(consent){
+      const analyticsGranted = !!consent.analytics;
+      if (typeof window.gtag === 'function') {
+        window.gtag('consent','update', { analytics_storage: analyticsGranted ? 'granted' : 'denied' });
+      }
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ analytics: analyticsGranted, ts: Date.now() }));
+    }
+
+    function showBanner(){ banner.hidden = false; }
+    function hideBanner(){ banner.hidden = true; }
+    function openModal(){
+      modal.hidden = false;
+      const stored = safeParse(localStorage.getItem(STORAGE_KEY));
+      cmAnalytics.checked = stored ? !!stored.analytics : false;
+    }
+    function closeModal(){ modal.hidden = true; }
+
+    btnAccept?.addEventListener('click', () => { applyConsent({ analytics: true }); hideBanner(); });
+    btnReject?.addEventListener('click', () => { applyConsent({ analytics: false }); hideBanner(); });
+    btnSettings?.addEventListener('click', () => openModal());
+
+    cmSave?.addEventListener('click', () => { applyConsent({ analytics: cmAnalytics.checked }); closeModal(); hideBanner(); });
+    cmRejectAll?.addEventListener('click', () => { applyConsent({ analytics: false }); closeModal(); hideBanner(); });
+
+    cmClose?.addEventListener('click', closeModal);
+    cmBackdrop?.addEventListener('click', closeModal);
+
+    const stored = safeParse(localStorage.getItem(STORAGE_KEY));
+    if (!stored) { showBanner(); }
+    else { applyConsent({ analytics: !!stored.analytics }); hideBanner(); }
+
+    window.miangelitoOpenCookieSettings = function(){ openModal(); showBanner(); };
+  })();
+  </script>
+
+</body>
+</html>
