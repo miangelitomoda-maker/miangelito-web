@@ -1,10 +1,11 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Mi Angelito Moda · Panel del dueño (Cloud)</title>
-  <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>Mi Angelito Moda · Panel del dueño (Cloud)</title>
+<style>
     :root{
       --bg:#f5f5f5;
       --panel:#ffffff;
@@ -71,164 +72,149 @@
     .notice{border:1px dashed var(--line);border-radius:12px;padding:10px;background:#fff;color:var(--muted);font-size:12px;line-height:1.55;}
     .mono{font-family: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;}
   
-    /* modal */
-    .modal.hidden{display:none}
-    .modal{position:fixed;inset:0;z-index:9999}
-    .modal-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.35)}
-    .modal-card{position:relative;max-width:880px;margin:6vh auto;background:#fff;border-radius:16px;box-shadow:0 20px 70px rgba(0,0,0,.25);overflow:hidden}
-    .modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:16px 18px;border-bottom:1px solid #eee}
-    .modal-title{font-weight:800;font-size:18px}
-    .modal-sub{margin-top:2px;color:#666;font-size:12px}
-    .modal-body{padding:16px 18px;max-height:60vh;overflow:auto}
-    .modal-actions{display:flex;flex-wrap:wrap;gap:10px;padding:12px 18px;border-top:1px solid #eee}
-    .modal-note{padding:0 18px 14px;color:#666;font-size:12px}
-    .receipt{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;font-size:12px;white-space:pre-wrap;line-height:1.25}
-    @media print{
-      body *{visibility:hidden}
-      #ticketModal, #ticketModal *{visibility:visible}
-      #ticketModal{position:absolute;inset:auto}
-      .modal-backdrop,.modal-actions,.modal-note,#btnCloseModal{display:none !important}
-      .modal-card{box-shadow:none;margin:0;max-width:none;border-radius:0}
-      .modal-body{max-height:none}
-    }
 
-  </style>
+/* ===== Mobile first: optimized for iPhone 16 Pro Max (430px) ===== */
+.wrap{max-width:520px;margin:0 auto;padding:10px}
+.topbar{padding:10px;border-radius:16px}
+.controls{display:flex;flex-wrap:wrap;gap:8px}
+.controls > *{flex:1 1 auto;min-width:0}
+.controls .btn{padding:10px 12px;border-radius:14px}
+.grid2{display:grid;grid-template-columns:1fr;gap:10px}
+.cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.card{border-radius:16px;padding:12px}
+.tableWrap{overflow:auto;border-radius:16px}
+table{min-width:720px}
+.rowTap{cursor:pointer}
+@media (max-width:520px){
+  body{font-size:15px}
+  h1{font-size:18px}
+  .cards .kpi{font-size:22px}
+  table{min-width:640px}
+  th.colPaid, td.colPaid, th.colChange, td.colChange{display:none}
+}
+/* ===== Receipt modal ===== */
+.modal{position:fixed;inset:0;display:none;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.45);z-index:9999;padding:12px}
+.modal.show{display:flex}
+.modalCard{width:100%;max-width:520px;background:#fff;border-radius:18px;box-shadow:0 10px 30px rgba(0,0,0,.25);overflow:hidden}
+.modalHead{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid #eee}
+.modalHead .title{font-weight:700}
+.modalHead button{border:0;background:transparent;font-size:22px;line-height:1;padding:6px 10px;border-radius:12px}
+.modalBody{padding:12px 14px;max-height:55vh;overflow:auto}
+.modalActions{display:flex;gap:10px;padding:12px 14px;border-top:1px solid #eee}
+.modalActions .btn{flex:1}
+.receiptPre{white-space:pre-wrap;word-break:break-word;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;line-height:1.25;margin:0}
+body.modalOpen{overflow:hidden}
+</style>
 </head>
-
 <body>
-  <div class="wrap">
-    <div class="top">
-      <div class="brand">
-        <img class="logo" src="https://www.miangelitomoda.com/logo.jpg" alt="Mi Angelito MODA" />
-        <div>
-          <div class="title">Panel del dueño</div>
-          <div class="sub">Ventas y tickets · Datos en la nube (Worker + D1)</div>
-        </div>
-      </div>
-
-      <div class="controls">
-        <div class="ctl">
-          <label for="shopId">Tienda</label>
-          <select id="shopId">
-            <option value="miangelito">miangelito</option>
-          </select>
-        </div>
-        <div class="ctl">
-          <label for="dateFrom">Desde</label>
-          <input id="dateFrom" type="date" />
-        </div>
-        <div class="ctl">
-          <label for="dateTo">Hasta</label>
-          <input id="dateTo" type="date" />
-        </div>
-        <button class="btn" id="btnToday">Hoy</button>
-        <button class="btn" id="btnReload">Actualizar</button>
-        <button class="btn" id="btnExportCSV">Exportar CSV</button>
-        <button class="btn" id="btnExportJSON">Exportar JSON</button>
-      </div>
-    </div>
-
-    <div class="grid">
-      <div class="card">
-        <div class="cardHead">
-          <div>
-            <div class="h">Resumen</div>
-            <div class="m" id="rangeLabel">—</div>
-          </div>
-          <div class="pill ok" id="pillWrap"><span class="dot"></span><span id="statusPill">Conectado</span></div>
-        </div>
-        <div class="cardBody">
-          <div class="stats">
-            <div class="stat"><div class="t">Ingresos</div><div class="v" id="kTotal">€ 0.00</div></div>
-            <div class="stat"><div class="t">Tickets</div><div class="v" id="kTickets">0</div></div>
-            <div class="stat"><div class="t">Piezas</div><div class="v" id="kPiezas">0</div></div>
-            <div class="stat"><div class="t">Ticket medio</div><div class="v" id="kAvg">€ 0.00</div></div>
-          </div>
-
-          <div class="hr"></div>
-
-          <div class="kpiRow">
-            <span class="pill"><span class="dot"></span><span>Último ticket: <b id="kLast">—</b></span>
-            <span class="pill"><span class="dot"></span><span>Hora pico: <b id="kPeak">—</b></span>
-            <span class="pill"><span class="dot"></span><span>Fuente: <b class="mono">https://pos123516269.miangelitomoda.workers.dev</b></span>
-          </div>
-
-          <div class="hr"></div>
-
-          <div class="notice">
-            <div><b>Nota:</b> Este panel lee datos desde la nube (Worker + D1).</div>
-            <div class="small">Si hoy ves 0, significa que el POS todavía no está enviando tickets a <span class="mono">/api/bill</span>.</div>
-            <div class="small">Por ahora, la lista se basa en los <b>últimos 100 tickets</b> (límite del API actual).</div>
-          </div>
-
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="cardHead">
-          <div>
-            <div class="h">Estado</div>
-            <div class="m">Conexión y permisos</div>
-          </div>
-          <button class="btn" id="btnPing">Probar conexión</button>
-        </div>
-        <div class="cardBody">
-          <div class="small mono" id="debugBox">—</div>
-        </div>
-      </div>
-    </div>
-
-
-    <div class="card" style="margin-top:12px">
-      <div class="cardHead">
-        <div>
-          <div class="h">Estadísticas</div>
-          <div class="m">Desglose rápido (según los tickets cargados)</div>
-        </div>
-        <button class="btn" id="btnExportStats">Exportar resumen</button>
-      </div>
-      <div class="cardBody">
-        <div id="extraStats" class="grid2"></div>
-      </div>
-    </div>
-
-    <div class="card" style="margin-top:12px">
-      <div class="cardHead">
-        <div>
-          <div class="h">Tickets</div>
-          <div class="m">Últimos tickets (cloud)</div>
-        </div>
-        <div class="small">Mostrar: <b id="listCount">0</b></div>
-      </div>
-      <div class="cardBody" style="padding:0">
-        <div style="max-height:520px;overflow:auto">
-          <table class="table">
-            <colgroup>
-              <col style="width:170px" />
-              <col style="width:220px" />
-              <col style="width:90px" />
-              <col style="width:120px" />
-              <col style="width:120px" />
-              <col style="width:120px" />
-            </colgroup>
-            <thead>
-              <tr>
-                <th>Nº ticket</th>
-                <th>Fecha</th>
-                <th class="tdR">Máq.</th>
-                <th class="tdR">Total</th>
-                <th class="tdR">Pagado</th>
-                <th class="tdR">Cambio</th>
-              </tr>
-            </thead>
-            <tbody id="tbody"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-  </div>
-
+<div class="wrap">
+<div class="top">
+<div class="brand">
+<img alt="Mi Angelito MODA" class="logo" src="https://www.miangelitomoda.com/logo.jpg"/>
+<div>
+<div class="title">Panel del dueño</div>
+<div class="sub">Ventas y tickets · Datos en la nube (Worker + D1)</div>
+</div>
+</div>
+<div class="controls">
+<div class="ctl">
+<label for="shopId">Tienda</label>
+<select id="shopId">
+<option value="miangelito">miangelito</option>
+</select>
+</div>
+<div class="ctl">
+<label for="dateFrom">Desde</label>
+<input id="dateFrom" type="date"/>
+</div>
+<div class="ctl">
+<label for="dateTo">Hasta</label>
+<input id="dateTo" type="date"/>
+</div>
+<button class="btn" id="btnToday">Hoy</button>
+<button class="btn" id="btnReload">Actualizar</button>
+<button class="btn" id="btnExportCSV">Exportar CSV</button>
+<button class="btn" id="btnExportJSON">Exportar JSON</button>
+</div>
+</div>
+<div class="grid">
+<div class="card">
+<div class="cardHead">
+<div>
+<div class="h">Resumen</div>
+<div class="m" id="rangeLabel">—</div>
+</div>
+<div class="pill ok" id="pillWrap"><span class="dot"></span><span id="statusPill">Conectado</span></div>
+</div>
+<div class="cardBody">
+<div class="stats">
+<div class="stat"><div class="t">Ingresos</div><div class="v" id="kTotal">€ 0.00</div></div>
+<div class="stat"><div class="t">Tickets</div><div class="v" id="kTickets">0</div></div>
+<div class="stat"><div class="t">Piezas</div><div class="v" id="kPiezas">0</div></div>
+<div class="stat"><div class="t">Ticket medio</div><div class="v" id="kAvg">€ 0.00</div></div>
+</div>
+<div class="hr"></div>
+<div class="kpiRow">
+<span class="pill"><span class="dot"></span><span>Último ticket: <b id="kLast">—</b></span>
+<span class="pill"><span class="dot"></span><span>Hora pico: <b id="kPeak">—</b></span>
+<span class="pill"><span class="dot"></span><span>Fuente: <b class="mono">https://pos123516269.miangelitomoda.workers.dev</b></span>
+</span></span></span></div>
+<div class="hr"></div>
+<div class="notice">
+<div><b>Nota:</b> Este panel lee datos desde la nube (Worker + D1).</div>
+<div class="small">Si hoy ves 0, significa que el POS todavía no está enviando tickets a <span class="mono">/api/bill</span>.</div>
+<div class="small">Por ahora, la lista se basa en los <b>últimos 100 tickets</b> (límite del API actual).</div>
+</div>
+</div>
+</div>
+<div class="card">
+<div class="cardHead">
+<div>
+<div class="h">Estado</div>
+<div class="m">Conexión y permisos</div>
+</div>
+<button class="btn" id="btnPing">Probar conexión</button>
+</div>
+<div class="cardBody">
+<div class="small mono" id="debugBox">—</div>
+</div>
+</div>
+</div>
+<div class="card" style="margin-top:12px">
+<div class="cardHead">
+<div>
+<div class="h">Tickets</div>
+<div class="m">Últimos tickets (cloud)</div>
+</div>
+<div class="small">Mostrar: <b id="listCount">0</b></div>
+</div>
+<div class="cardBody" style="padding:0">
+<div style="max-height:520px;overflow:auto">
+<table class="table">
+<colgroup>
+<col style="width:170px"/>
+<col style="width:220px"/>
+<col style="width:90px"/>
+<col style="width:120px"/>
+<col style="width:120px"/>
+<col style="width:120px"/>
+</colgroup>
+<thead>
+<tr>
+<th>Nº ticket</th>
+<th>Fecha</th>
+<th class="tdR">Máq.</th>
+<th class="tdR">Total</th>
+<th class="tdR colPaid">Pagado</th>
+<th class="tdR colChange">Cambio</th>
+</tr>
+</thead>
+<tbody id="tbody"></tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
 <script>
 (() => {
   // ===== Cloud config =====
@@ -270,23 +256,26 @@
   }
 
   function parseBillTime(b) {
-    // Prefer ISO-like strings in ts_text (e.g. "2026-02-25 10:30")
+    // ts_text can be "YYYY-MM-DD HH:MM:SS" or "YYYY/M/D HH:MM:SS" etc.
     const s = String(b.ts_text ?? b.ts ?? "").trim();
     if(!s) return null;
 
-    // normalize "YYYY-MM-DD HH:mm(:ss)" => "YYYY-MM-DDTHH:mm(:ss)"
-    const iso = s.includes("T") ? s : s.replace(" ", "T");
-    const t = Date.parse(iso);
-    if(Number.isFinite(t)) return new Date(t);
-
-    // fallback: bill_no yyyymmdd-HHMMSS
-    const bn = String(b.bill_no ?? b.billNo ?? "");
-    const m = bn.match(/^(\d{4})(\d{2})(\d{2})-(\d{2})(\d{2})(\d{2})$/);
-    if(m) {
-      const [_, y, mo, d, hh, mm, ss] = m;
-      return new Date(Number(y), Number(mo)-1, Number(d), Number(hh), Number(mm), Number(ss), 0);
+    const m = s.match(/^(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})(?:[ T](\d{1,2}):(\d{2})(?::(\d{2}))?)?$/);
+    if(m){
+      const y  = Number(m[1]);
+      const mo = Number(m[2]) - 1;
+      const d  = Number(m[3]);
+      const hh = Number(m[4] || 0);
+      const mm = Number(m[5] || 0);
+      const ss = Number(m[6] || 0);
+      const dt = new Date(y, mo, d, hh, mm, ss, 0);
+      return Number.isFinite(dt.getTime()) ? dt : null;
     }
-    return null;
+
+    // Fallback: try ISO normalize for other variants
+    const iso = s.replace(" ", "T").replaceAll("/", "-");
+    const t = Date.parse(iso);
+    return Number.isFinite(t) ? new Date(t) : null;
   }
 
   function withinRange(dateObj, from, to) {
@@ -359,7 +348,6 @@
   // ===== State =====
   let __allBills = [];
   let __filteredBills = [];
-  let __summary = null;
 
   function setStatus(ok, text, extra="") {
     statusPill.textContent = text;
@@ -395,40 +383,20 @@
   function renderSummary() {
     const bills = __filteredBills;
 
-    // Prefer server-side summary if available (more accurate, includes piezas even if /api/bills is minimal)
-    const s = __summary && typeof __summary === "object" ? __summary : null;
-
-    const total = s?.total ?? s?.income ?? s?.ingresos ?? null;
-    const tickets = s?.tickets ?? s?.count ?? s?.num_tickets ?? null;
-    const piezas = s?.piezas ?? s?.sum_qty ?? s?.sumQty ?? s?.qty ?? null;
-
-    let cTotal = 0, cPiezas = 0;
+    let total=0, piezas=0;
     bills.forEach(b=>{
-      cTotal += Number(b.total)||0;
-      cPiezas += Number(b.sum_qty ?? b.sumQty ?? 0)||0;
+      total += Number(b.total)||0;
+      piezas += Number(b.sum_qty ?? b.sumQty ?? 0)||0;
     });
-    const cTickets = bills.length;
+    const tickets = bills.length;
+    const avg = tickets ? total / tickets : 0;
 
-    const finalTotal = (total!=null) ? Number(total)||0 : cTotal;
-    const finalTickets = (tickets!=null) ? Number(tickets)||0 : cTickets;
-    const finalPiezas = (piezas!=null) ? Number(piezas)||0 : cPiezas;
-    const avg = finalTickets ? finalTotal / finalTickets : 0;
-
-    kTotal.textContent = eur(finalTotal);
-    kTickets.textContent = String(finalTickets);
-    kPiezas.textContent = String(finalPiezas);
+    kTotal.textContent = eur(total);
+    kTickets.textContent = String(tickets);
+    kPiezas.textContent = String(piezas);
     kAvg.textContent = eur(avg);
 
-    // Last ticket label: prefer server, fallback to client
-    if (s?.last_bill_no || s?.last_bill || s?.last) {
-      const n = s.last_bill_no ?? s.last_bill ?? s.last;
-      const t = s.last_ts_text ?? s.last_ts ?? s.last_time ?? "";
-      const tot = s.last_total ?? s.last_amount ?? "";
-      kLast.textContent = `Último ticket: #${String(n)} · ${String(t)}${tot!==""?` · ${eur(tot)}`:""}`;
-    } else {
-      kLast.textContent = lastBillLabel(bills);
-    }
-
+    kLast.textContent = lastBillLabel(bills);
     kPeak.textContent = computePeakHour(bills);
   }
 
@@ -448,59 +416,39 @@
 
     bills.forEach(b=>{
       const tr = document.createElement("tr");
-      tr.style.cursor = "pointer";
-      tr.title = "Clic para ver / imprimir";
       tr.innerHTML = `
-        <td><b>#${escapeHtml(String(b.bill_no || ""))}</b></td>
-        <td>${escapeHtml(String(b.ts_text || ""))}</td>
-        <td class="tdC">${escapeHtml(String(b.machine_id || ""))}</td>
+        <td class="mono">#${escapeHtml(b.bill_no ?? b.billNo ?? "—")}</td>
+        <td title="${escapeHtml(b.ts_text ?? "")}">${escapeHtml(b.ts_text ?? "")}</td>
+        <td class="tdR">${escapeHtml(String(b.machine_id ?? ""))}</td>
         <td class="tdR"><b>${eur(b.total)}</b></td>
-        <td class="tdR">${eur(b.paid)}</td>
-        <td class="tdR">${eur(b.change)}</td>
+        <td class="tdR colPaid">${eur(b.paid)}</td>
+        <td class="tdR colChange">${eur(b.change)}</td>
       `;
-      tr.addEventListener("click", ()=>openTicketModal(b));
+      tr.classList.add("rowTap");
+      tr.addEventListener("click", ()=>openReceipt(b));
       tbody.appendChild(tr);
     });
   }
 
   async function loadFromCloud() {
     const shopId = shopIdEl.value || DEFAULT_SHOP_ID;
-    const from = fromEl.value;
-    const to = toEl.value;
-    __summary = null;
-
     setStatus(true, "Cargando…");
 
     try {
-      // 1) Get last 100 bills (API limit) and filter locally by date range
+      // Get last 100 bills (current API limit)
       const bills = await apiFetch(`/api/bills?shop_id=${encodeURIComponent(shopId)}`);
       __allBills = Array.isArray(bills) ? bills : [];
+
       applyFilter();
-
-      // 2) Try to fetch server-side summary (for accurate piezas, etc.)
-      // If the Worker does not support from/to yet, we gracefully fall back to client-side summary.
-      try {
-        const qs = new URLSearchParams({ shop_id: shopId });
-        if (from) qs.set("from", from);
-        if (to) qs.set("to", to);
-        const s = await apiFetch(`/api/summary?${qs.toString()}`);
-        if (s && typeof s === "object") __summary = s;
-      } catch(_) {
-        __summary = null;
-      }
-
       renderSummary();
       renderList();
-      renderExtraStats();
 
       setStatus(true, "Conectado", `OK · tickets recibidos: ${__allBills.length}`);
     } catch(err) {
       __allBills = [];
       __filteredBills = [];
-      __summary = null;
       renderSummary();
       renderList();
-      renderExtraStats();
 
       setStatus(false, "Error", String(err?.message || err));
     }
@@ -532,175 +480,118 @@
   };
 
 
-  // ===== Extra stats (by machine / by hour) =====
-  function renderExtraStats(){
-    const root = document.getElementById("extraStats");
-    if(!root) return;
+  // ===== Receipt preview / print / share (mobile-friendly) =====
+  const modal = document.getElementById("receiptModal");
+  const modalBody = document.getElementById("receiptBody");
+  const modalTitle = document.getElementById("receiptTitle");
+  let __currentBill = null;
 
-    const bills = __filteredBills;
-    if(!bills.length){
-      root.innerHTML = `<div class="note">Sin datos en este rango.</div>`;
-      return;
+  function toast(msg){
+    try{ statusBox.textContent = String(msg); }catch(e){}
+  }
+
+  function esc(s){
+    return String(s ?? "").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;");
+  }
+
+  function buildReceiptText(b){
+    const lines = [];
+    lines.push("Mi Angelito Moda");
+    lines.push("Ticket: " + (b.bill_no ?? ""));
+    lines.push("Fecha: " + (b.ts_text ?? ""));
+    if(b.machine_id) lines.push("Máquina: " + b.machine_id);
+    lines.push("------------------------------");
+
+    let items = [];
+    try{
+      const raw = b.items_json ?? b.items ?? b.payload_items ?? null;
+      if(typeof raw === "string" && raw.trim()) items = JSON.parse(raw);
+      else if(Array.isArray(raw)) items = raw;
+    }catch(e){}
+
+    if(Array.isArray(items) && items.length){
+      items.forEach(it=>{
+        const qty = (it.qty ?? it.q ?? 1);
+        const name = (it.name ?? it.n ?? "ITEM");
+        const price = (it.price ?? it.p ?? it.unit ?? 0);
+        const lineTotal = (it.total ?? (Number(qty)||0) * (Number(price)||0));
+        lines.push(`${qty} x ${name}  €${Number(price).toFixed(2)}  = €${Number(lineTotal).toFixed(2)}`);
+      });
+      lines.push("------------------------------");
     }
 
-    const byMachine = new Map();
-    const byHour = new Map();
-    let total = 0, tickets = 0, piezas = 0;
-
-    bills.forEach(b=>{
-      const m = String(b.machine_id || "-");
-      const t = Number(b.total)||0;
-      const q = Number(b.sum_qty ?? b.sumQty ?? 0)||0;
-      total += t; tickets += 1; piezas += q;
-
-      const mm = byMachine.get(m) || { tickets:0, total:0, piezas:0 };
-      mm.tickets += 1; mm.total += t; mm.piezas += q;
-      byMachine.set(m, mm);
-
-      const h = hourOf(b.ts_text);
-      const hh = byHour.get(h) || { tickets:0, total:0 };
-      hh.tickets += 1; hh.total += t;
-      byHour.set(h, hh);
-    });
-
-    // top hour
-    const hourRows = [...byHour.entries()].sort((a,b)=> b[1].total - a[1].total);
-    const topHour = hourRows[0] ? `${hourRows[0][0]}:00` : "--";
-
-    const machineRows = [...byMachine.entries()].sort((a,b)=> b[1].total - a[1].total);
-
-    root.innerHTML = `
-      <div class="kpi">
-        <div class="kLabel">Máquinas</div>
-        <div class="kValue">${machineRows.length}</div>
-        <div class="kSub">Con tickets en el rango</div>
-      </div>
-      <div class="kpi">
-        <div class="kLabel">Hora top</div>
-        <div class="kValue">${escapeHtml(topHour)}</div>
-        <div class="kSub">Según total vendido</div>
-      </div>
-      <div class="kpi" style="grid-column:1/-1">
-        <div class="kLabel">Desglose por máquina</div>
-        <div class="kSub" style="margin-top:8px">
-          ${machineRows.map(([m, v])=>`
-            <div style="display:flex;gap:10px;justify-content:space-between;padding:6px 0;border-top:1px dashed #e6e6e6">
-              <div><b>${escapeHtml(m)}</b> · ${v.tickets} tickets · ${v.piezas} piezas</div>
-              <div><b>${eur(v.total)}</b></div>
-            </div>
-          `).join("")}
-        </div>
-      </div>
-    `;
+    lines.push("TOTAL: €" + Number(b.total ?? 0).toFixed(2));
+    if(b.paid != null) lines.push("PAGADO: €" + Number(b.paid ?? 0).toFixed(2));
+    if(b.change != null) lines.push("CAMBIO: €" + Number(b.change ?? 0).toFixed(2));
+    if(b.sum_qty != null) lines.push("PIEZAS: " + Number(b.sum_qty ?? 0));
+    lines.push("");
+    lines.push("IVA incluido");
+    return lines.join("\n");
   }
 
-  function hourOf(tsText){
-    // expects "YYYY/MM/DD HH:mm:ss" or similar
-    const m = String(tsText||"").match(/\b(\d{1,2}):\d{2}/);
-    if(!m) return "--";
-    const h = String(m[1]).padStart(2,"0");
-    return h;
+  function buildReceiptHtml(b){
+    const txt = buildReceiptText(b);
+    return `<pre class="receiptPre">${esc(txt)}</pre>`;
   }
 
-  // ===== Ticket modal (preview / print / export / email) =====
-  const modal = document.getElementById("ticketModal");
-  const modalBody = document.getElementById("ticketModalBody");
-  const modalTitle = document.getElementById("ticketModalTitle");
-  const modalSub = document.getElementById("ticketModalSub");
-  const modalNote = document.getElementById("ticketModalNote");
-  const btnCloseModal = document.getElementById("btnCloseModal");
-  const btnPrintTicket = document.getElementById("btnPrintTicket");
-  const btnCopyTicket = document.getElementById("btnCopyTicket");
-  const btnEmailTicket = document.getElementById("btnEmailTicket");
-  const btnExportTicketJson = document.getElementById("btnExportTicketJson");
-  const btnExportStats = document.getElementById("btnExportStats");
-
-  let __activeTicket = null;
-
-  function openTicketModal(b){
-    __activeTicket = b || null;
-    if(!modal) return;
-
-    const shopId = shopIdEl.value || DEFAULT_SHOP_ID;
-    const billNo = b?.bill_no || "";
-    modalTitle.textContent = `Ticket #${billNo}`;
-    modalSub.textContent = `${shopId} · ${b?.ts_text || ""} · Máquina ${b?.machine_id || ""}`;
-    modalNote.textContent = "Nota: si el API no guarda el detalle (líneas), el panel sólo puede previsualizar el resumen.";
-
-    const lines = [];
-    lines.push(`MI ANGELITO MODA`);
-    lines.push(`Tienda: ${shopId}`);
-    lines.push(`Ticket: ${billNo}`);
-    lines.push(`Fecha: ${b?.ts_text || ""}`);
-    lines.push(`Máquina: ${b?.machine_id || ""}`);
-    lines.push(`------------------------------`);
-    if (b?.sum_qty != null) lines.push(`Piezas: ${b.sum_qty}`);
-    if (b?.kinds != null) lines.push(`Modelos: ${b.kinds}`);
-    lines.push(`TOTAL: ${eur(b?.total)}`);
-    if (b?.paid != null) lines.push(`PAGADO: ${eur(b?.paid)}`);
-    if (b?.change != null) lines.push(`CAMBIO: ${eur(b?.change)}`);
-
-    // If the Worker later exposes a detail endpoint, we can enrich here:
-    // try GET /api/bill?shop_id=...&bill_no=...
-    modalBody.innerHTML = `<div class="receipt">${escapeHtml(lines.join("\n"))}</div>`;
-
-    modal.classList.remove("hidden");
+  function openReceipt(b){
+    __currentBill = b;
+    modalTitle.textContent = `Ticket ${b.bill_no ?? ""}`;
+    modalBody.innerHTML = buildReceiptHtml(b);
+    modal.classList.add("show");
+    document.body.classList.add("modalOpen");
   }
 
-  function closeTicketModal(){
-    if(!modal) return;
-    modal.classList.add("hidden");
-    __activeTicket = null;
+  function closeReceipt(){
+    modal.classList.remove("show");
+    document.body.classList.remove("modalOpen");
   }
 
-  if(modal){
-    modal.addEventListener("click", (e)=>{
-      const t = e.target;
-      if(t && (t.dataset?.close === "1")) closeTicketModal();
-    });
-  }
-  if(btnCloseModal) btnCloseModal.onclick = closeTicketModal;
-  document.addEventListener("keydown", (e)=>{
-    if(e.key === "Escape" && modal && !modal.classList.contains("hidden")) closeTicketModal();
+  document.getElementById("receiptClose").addEventListener("click", closeReceipt);
+  modal.addEventListener("click", (e)=>{ if(e.target === modal) closeReceipt(); });
+
+  document.getElementById("btnPrintReceipt").addEventListener("click", ()=>{
+    if(!__currentBill) return;
+    const w = window.open("", "_blank");
+    const html = `
+<!doctype html><html><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ticket ${esc(__currentBill.bill_no ?? "")}</title>
+<style>
+  body{margin:0;padding:14px;font-family:ui-monospace,Menlo,Consolas,monospace;background:#fff;color:#111}
+  pre{white-space:pre-wrap;word-break:break-word;font-size:14px;line-height:1.25}
+  @media print{body{padding:0}pre{font-size:12px}}
+</style>
+</head><body>${buildReceiptHtml(__currentBill)}</body></html>`;
+    w.document.open(); w.document.write(html); w.document.close();
+    w.focus();
+    setTimeout(()=>{ try{ w.print(); }catch(e){} }, 350);
   });
 
-  if(btnPrintTicket) btnPrintTicket.onclick = ()=>window.print();
-  if(btnCopyTicket) btnCopyTicket.onclick = async ()=>{
+  document.getElementById("btnShareReceipt").addEventListener("click", async ()=>{
+    if(!__currentBill) return;
+    const text = buildReceiptText(__currentBill);
+    const title = `Ticket ${__currentBill.bill_no ?? ""}`;
     try{
-      const txt = modalBody?.innerText || "";
-      await navigator.clipboard.writeText(txt);
-      modalNote.textContent = "Copiado al portapapeles.";
-    }catch(_){
-      modalNote.textContent = "No se pudo copiar (permiso del navegador).";
+      if(navigator.share){
+        await navigator.share({ title, text });
+        return;
+      }
+    }catch(e){}
+    try{
+      await navigator.clipboard.writeText(text);
+      toast("Copiado al portapapeles");
+    }catch(e){
+      alert(text);
     }
-  };
-  if(btnEmailTicket) btnEmailTicket.onclick = ()=>{
-    const b = __activeTicket;
-    if(!b) return;
-    const subj = encodeURIComponent(`Ticket ${b.bill_no} · Mi Angelito Moda`);
-    const body = encodeURIComponent((modalBody?.innerText||"") + "\n\n— Enviado desde Boss Panel");
-    // Opens the user's email client
-    window.location.href = `mailto:?subject=${subj}&body=${body}`;
-  };
-  if(btnExportTicketJson) btnExportTicketJson.onclick = ()=>{
-    const b = __activeTicket;
-    if(!b) return;
-    downloadText(`ticket_${String(b.bill_no||"")}.json`, JSON.stringify(b, null, 2), "application/json");
-  };
+  });
 
-  if(btnExportStats) btnExportStats.onclick = ()=>{
-    const shopId = shopIdEl.value || DEFAULT_SHOP_ID;
-    const from = fromEl.value;
-    const to = toEl.value;
-    const payload = {
-      shop_id: shopId,
-      from, to,
-      summary: __summary,
-      tickets: __filteredBills
-    };
-    downloadText(`resumen_cloud_${shopId}_${from}_${to}.json`, JSON.stringify(payload, null, 2), "application/json");
-  };
-
+  document.getElementById("btnEmailReceipt").addEventListener("click", ()=>{
+    if(!__currentBill) return;
+    const subject = encodeURIComponent(`Ticket ${__currentBill.bill_no ?? ""} - Mi Angelito Moda`);
+    const body = encodeURIComponent(buildReceiptText(__currentBill));
+    window.location.href = `mailto:?subject=${subject}&body=${body}`;
+  });
 
   // ===== Init =====
   shopIdEl.value = DEFAULT_SHOP_ID;
@@ -709,27 +600,19 @@
 })();
 </script>
 
-  <!-- Ticket preview modal -->
-  <div id="ticketModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="ticketModalTitle">
-    <div class="modal-backdrop" data-close="1"></div>
-    <div class="modal-card">
-      <div class="modal-head">
-        <div>
-          <div id="ticketModalTitle" class="modal-title">Ticket</div>
-          <div id="ticketModalSub" class="modal-sub"></div>
-        </div>
-        <button class="btn" id="btnCloseModal" title="Cerrar">✕</button>
-      </div>
-      <div class="modal-body" id="ticketModalBody"></div>
-      <div class="modal-actions">
-        <button class="btn" id="btnPrintTicket">Imprimir</button>
-        <button class="btn" id="btnCopyTicket">Copiar</button>
-        <button class="btn" id="btnEmailTicket">Email</button>
-        <button class="btn" id="btnExportTicketJson">Exportar JSON</button>
-      </div>
-      <div class="modal-note" id="ticketModalNote"></div>
-    </div>
-  </div>
-
+<div aria-hidden="true" class="modal" id="receiptModal">
+<div class="modalCard">
+<div class="modalHead">
+<div class="title" id="receiptTitle">Ticket</div>
+<button aria-label="Cerrar" id="receiptClose">✕</button>
+</div>
+<div class="modalBody" id="receiptBody"></div>
+<div class="modalActions">
+<button class="btn" id="btnPrintReceipt">Imprimir / PDF</button>
+<button class="btn" id="btnShareReceipt">Compartir / Copiar</button>
+<button class="btn" id="btnEmailReceipt">Email</button>
+</div>
+</div>
+</div>
 </body>
 </html>
