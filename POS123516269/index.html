@@ -1823,6 +1823,7 @@ function settleNoPrint(){
     // 记录上一笔 + 历史（统计用）
     saveLastBill({ billNo: payload.billNo, ts: payload.ts, total: payload.total, paid: payload.paid, change: payload.change });
     pushBillHistory(payload);
+      syncBillToCloud(payload);
     renderLastBill();
   __ensureMadridClock();
 
@@ -1855,6 +1856,7 @@ function settleNoPrint(){
 
     saveLastBill({ billNo: payload.billNo, ts: payload.ts, total: payload.total, paid: payload.paid, change: payload.change });
     pushBillHistory(payload);
+      syncBillToCloud(payload);
     renderLastBill();
 
     try{ clearCurrentToNew(); }catch(e){}
@@ -1891,6 +1893,7 @@ function settleNoPrint(){
     // 记录上一笔（金额/实收/找零）+ 历史
     saveLastBill({ billNo: payload.billNo, ts: payload.ts, total: payload.total, paid: payload.paid, change: payload.change });
     pushBillHistory(payload);
+      syncBillToCloud(payload);
     renderLastBill();
 
     const w = window.open("", "_blank", "width=420,height=720");
@@ -2509,6 +2512,42 @@ function __ensureMadridClock(){
   lineEl.select();
   toast('就绪');
 })();
+
+/* ===== Cloud Sync (Boss Cloud) ===== */
+const CLOUD_API = "https://pos123516269.miangelitomoda.workers.dev";
+const POS_API_KEY = "miangelito_2026_secure_key_83927_123516269";
+const SHOP_ID = "miangelito";
+let MACHINE_ID = localStorage.getItem("pos_machine_id") || "A";
+localStorage.setItem("pos_machine_id", MACHINE_ID);
+
+async function syncBillToCloud(payload){
+  try{
+    await fetch(CLOUD_API + "/api/bill", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-API-KEY": POS_API_KEY
+      },
+      body: JSON.stringify({
+        shop_id: SHOP_ID,
+        machine_id: MACHINE_ID,
+        billNo: payload.billNo,
+        tsMs: Date.now(),
+        tsText: payload.ts,
+        total: payload.total,
+        paid: payload.paid,
+        change: payload.change,
+        sumQty: payload.sumQty,
+        kinds: payload.kinds,
+        customerName: payload.customerName || "",
+        payload
+      })
+    });
+  }catch(e){
+    console.warn("Cloud sync failed", e);
+  }
+}
+
 </script>
 </body>
 </html>

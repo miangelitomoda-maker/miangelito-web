@@ -1,0 +1,462 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Mi Angelito Moda · Panel del dueño (Cloud)</title>
+  <style>
+    :root{
+      --bg:#f5f5f5;
+      --panel:#ffffff;
+      --line:#e8e8e8;
+      --text:#111111;
+      --muted:#6f6f6f;
+      --accent:#111111;
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,"PingFang SC","Microsoft YaHei",sans-serif;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--text)}
+    .wrap{max-width:1200px;margin:0 auto;padding:14px}
+    .top{
+      background:#fff;border:1px solid var(--line);border-radius:14px;
+      padding:12px 14px;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;
+    }
+    .brand{display:flex;gap:10px;align-items:center}
+    .logo{height:32px;width:auto;object-fit:contain;filter:grayscale(100%);opacity:.92;mix-blend-mode:multiply}
+    .title{font-weight:950}
+    .sub{font-size:12px;color:var(--muted);margin-top:2px}
+    .controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:flex-end}
+    input,select,button,textarea{font:inherit;}
+    .ctl{display:flex;gap:8px;align-items:center;padding:8px 10px;border:1px solid var(--line);border-radius:12px;background:#fff;}
+    .ctl label{font-size:12px;color:var(--muted)}
+    .ctl input,.ctl select{border:0;outline:0;background:transparent;min-width:120px;font-variant-numeric: tabular-nums;}
+    .btn{padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:#fff;cursor:pointer;}
+    .btn:hover{background:#f6f6f6}
+    .btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+    .btn.danger{border-color:#d1d1d1}
+    .grid{display:grid;grid-template-columns: 1.1fr .9fr;gap:12px;margin-top:12px;}
+    @media (max-width: 980px){.grid{grid-template-columns:1fr}}
+    .card{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;}
+    .cardHead{padding:12px 14px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:10px;}
+    .cardHead .h{font-weight:900}
+    .cardHead .m{font-size:12px;color:var(--muted)}
+    .cardBody{padding:12px 14px}
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+    @media (max-width: 980px){.stats{grid-template-columns:repeat(2,1fr)}}
+    .stat{border:1px solid var(--line);border-radius:12px;padding:10px;background:#fff;}
+    .stat .t{font-size:12px;color:var(--muted)}
+    .stat .v{font-size:22px;font-weight:950;margin-top:6px;font-variant-numeric: tabular-nums}
+    .small{font-size:12px;color:var(--muted)}
+    .table{width:100%;border-collapse:collapse;table-layout:fixed;}
+    .table thead th{
+      position:sticky;top:0;z-index:2;
+      background:#fff;border-bottom:1px solid var(--line);
+      padding:10px 8px;text-align:left;font-size:12px;color:var(--muted);
+      font-weight:700;white-space:nowrap;
+    }
+    .table tbody td{
+      border-bottom:1px solid #f0f0f0;
+      padding:8px 8px;font-size:13px;vertical-align:middle;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+      font-variant-numeric: tabular-nums;
+    }
+    .tdR{text-align:right}
+    .tdC{text-align:center}
+    .pill{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:#fff;padding:4px 10px;border-radius:999px;font-size:12px;color:var(--text);white-space:nowrap;}
+    .pill.ok .dot{background:#111}
+    .pill.bad .dot{background:#b91c1c}
+    .dot{width:8px;height:8px;border-radius:50%;background:#9ca3af}
+    .hr{border-top:1px solid var(--line);margin:12px 0}
+    .kpiRow{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .kpiRow .pill{background:#fafafa}
+    .notice{border:1px dashed var(--line);border-radius:12px;padding:10px;background:#fff;color:var(--muted);font-size:12px;line-height:1.55;}
+    .mono{font-family: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;}
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div class="brand">
+        <img class="logo" src="https://www.miangelitomoda.com/logo.jpg" alt="Mi Angelito MODA" />
+        <div>
+          <div class="title">Panel del dueño</div>
+          <div class="sub">Ventas y tickets · Datos en la nube (Worker + D1)</div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <div class="ctl">
+          <label for="shopId">Tienda</label>
+          <select id="shopId">
+            <option value="miangelito">miangelito</option>
+          </select>
+        </div>
+        <div class="ctl">
+          <label for="dateFrom">Desde</label>
+          <input id="dateFrom" type="date" />
+        </div>
+        <div class="ctl">
+          <label for="dateTo">Hasta</label>
+          <input id="dateTo" type="date" />
+        </div>
+        <button class="btn" id="btnToday">Hoy</button>
+        <button class="btn" id="btnReload">Actualizar</button>
+        <button class="btn" id="btnExportCSV">Exportar CSV</button>
+        <button class="btn" id="btnExportJSON">Exportar JSON</button>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <div class="cardHead">
+          <div>
+            <div class="h">Resumen</div>
+            <div class="m" id="rangeLabel">—</div>
+          </div>
+          <div class="pill ok" id="pillWrap"><span class="dot"></span><span id="statusPill">Conectado</span></div>
+        </div>
+        <div class="cardBody">
+          <div class="stats">
+            <div class="stat"><div class="t">Ingresos</div><div class="v" id="kTotal">€ 0.00</div></div>
+            <div class="stat"><div class="t">Tickets</div><div class="v" id="kTickets">0</div></div>
+            <div class="stat"><div class="t">Piezas</div><div class="v" id="kPiezas">0</div></div>
+            <div class="stat"><div class="t">Ticket medio</div><div class="v" id="kAvg">€ 0.00</div></div>
+          </div>
+
+          <div class="hr"></div>
+
+          <div class="kpiRow">
+            <span class="pill"><span class="dot"></span><span>Último ticket: <b id="kLast">—</b></span>
+            <span class="pill"><span class="dot"></span><span>Hora pico: <b id="kPeak">—</b></span>
+            <span class="pill"><span class="dot"></span><span>Fuente: <b class="mono">https://pos123516269.miangelitomoda.workers.dev</b></span>
+          </div>
+
+          <div class="hr"></div>
+
+          <div class="notice">
+            <div><b>Nota:</b> Este panel lee datos desde la nube (Worker + D1).</div>
+            <div class="small">Si hoy ves 0, significa que el POS todavía no está enviando tickets a <span class="mono">/api/bill</span>.</div>
+            <div class="small">Por ahora, la lista se basa en los <b>últimos 100 tickets</b> (límite del API actual).</div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cardHead">
+          <div>
+            <div class="h">Estado</div>
+            <div class="m">Conexión y permisos</div>
+          </div>
+          <button class="btn" id="btnPing">Probar conexión</button>
+        </div>
+        <div class="cardBody">
+          <div class="small mono" id="debugBox">—</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:12px">
+      <div class="cardHead">
+        <div>
+          <div class="h">Tickets</div>
+          <div class="m">Últimos tickets (cloud)</div>
+        </div>
+        <div class="small">Mostrar: <b id="listCount">0</b></div>
+      </div>
+      <div class="cardBody" style="padding:0">
+        <div style="max-height:520px;overflow:auto">
+          <table class="table">
+            <colgroup>
+              <col style="width:170px" />
+              <col style="width:220px" />
+              <col style="width:90px" />
+              <col style="width:120px" />
+              <col style="width:120px" />
+              <col style="width:120px" />
+            </colgroup>
+            <thead>
+              <tr>
+                <th>Nº ticket</th>
+                <th>Fecha</th>
+                <th class="tdR">Máq.</th>
+                <th class="tdR">Total</th>
+                <th class="tdR">Pagado</th>
+                <th class="tdR">Cambio</th>
+              </tr>
+            </thead>
+            <tbody id="tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+<script>
+(() => {
+  // ===== Cloud config =====
+  const API_URL = "https://pos123516269.miangelitomoda.workers.dev";
+  const API_KEY = "miangelito_2026_secure_key_83927_123516269";
+  const DEFAULT_SHOP_ID = "miangelito";
+
+  // ===== Helpers =====
+  function money(n){ n = Number(n) || 0; return (Math.round(n * 100) / 100).toFixed(2); }
+  function eur(n){ return `€ ${money(n)}`; }
+  function escapeHtml(s){ return String(s ?? "").replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+  function ymd(d){ const z=new Date(d); const y=z.getFullYear(); const m=String(z.getMonth()+1).padStart(2,"0"); const dd=String(z.getDate()).padStart(2,"0"); return `${y}-${m}-${dd}`; }
+  function startOfDay(d){ const x=new Date(d); x.setHours(0,0,0,0); return x; }
+  function endOfDay(d){ const x=new Date(d); x.setHours(23,59,59,999); return x; }
+  function downloadText(filename, text, mime="text/plain") {
+    const blob = new Blob([text], {type:mime});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(()=>{ URL.revokeObjectURL(url); a.remove(); }, 0);
+  }
+
+  async function apiFetch(path) {
+    const res = await fetch(API_URL + path, {
+      headers: {
+        "X-API-KEY": API_KEY
+      }
+    });
+    const txt = await res.text();
+    let data = null;
+    try { data = JSON.parse(txt); } catch(e) { data = txt; }
+    if(!res.ok) {
+      const err = (data && data.error) ? data.error : ("HTTP " + res.status);
+      throw new Error(err);
+    }
+    return data;
+  }
+
+  function parseBillTime(b) {
+    // Prefer ISO-like strings in ts_text (e.g. "2026-02-25 10:30")
+    const s = String(b.ts_text ?? b.ts ?? "").trim();
+    if(!s) return null;
+
+    // normalize "YYYY-MM-DD HH:mm(:ss)" => "YYYY-MM-DDTHH:mm(:ss)"
+    const iso = s.includes("T") ? s : s.replace(" ", "T");
+    const t = Date.parse(iso);
+    if(Number.isFinite(t)) return new Date(t);
+
+    // fallback: bill_no yyyymmdd-HHMMSS
+    const bn = String(b.bill_no ?? b.billNo ?? "");
+    const m = bn.match(/^(\d{4})(\d{2})(\d{2})-(\d{2})(\d{2})(\d{2})$/);
+    if(m) {
+      const [_, y, mo, d, hh, mm, ss] = m;
+      return new Date(Number(y), Number(mo)-1, Number(d), Number(hh), Number(mm), Number(ss), 0);
+    }
+    return null;
+  }
+
+  function withinRange(dateObj, from, to) {
+    if(!dateObj) return false;
+    const t = dateObj.getTime();
+    return t >= from.getTime() && t <= to.getTime();
+  }
+
+  function computePeakHour(bills) {
+    const buckets = new Array(24).fill(0);
+    bills.forEach(b=>{
+      const d = parseBillTime(b);
+      if(!d) return;
+      buckets[d.getHours()] += Number(b.total)||0;
+    });
+    let bestH=-1,bestV=-1;
+    buckets.forEach((v,h)=>{ if(v>bestV){ bestV=v; bestH=h; } });
+    if(bestH<0) return "—";
+    return `${String(bestH).padStart(2,"0")}:00`;
+  }
+
+  function lastBillLabel(bills) {
+    if(!bills.length) return "—";
+    const b = bills[0]; // newest first
+    const id = b.bill_no ?? b.billNo ?? "—";
+    const ts = b.ts_text ?? b.ts ?? "";
+    return `#${id} · ${eur(b.total)} · ${ts}`;
+  }
+
+  function exportCSV(bills) {
+    const header = ["bill_no","ts_text","machine_id","sum_qty","total","paid","change"].join(",");
+    const rows = bills.map(b => [
+      b.bill_no ?? "",
+      `"${String(b.ts_text ?? "").replaceAll('"','""')}"`
+      ,
+      b.machine_id ?? "",
+      b.sum_qty ?? "",
+      money(b.total),
+      money(b.paid),
+      money(b.change),
+    ].join(","));
+    return [header, ...rows].join("\n");
+  }
+
+  // ===== DOM =====
+  const shopIdEl = document.getElementById("shopId");
+  const dateFromEl = document.getElementById("dateFrom");
+  const dateToEl   = document.getElementById("dateTo");
+  const btnToday   = document.getElementById("btnToday");
+  const btnReload  = document.getElementById("btnReload");
+  const btnExportCSV = document.getElementById("btnExportCSV");
+  const btnExportJSON= document.getElementById("btnExportJSON");
+
+  const rangeLabel = document.getElementById("rangeLabel");
+  const statusPill = document.getElementById("statusPill");
+  const pillWrap   = document.getElementById("pillWrap");
+  const debugBox   = document.getElementById("debugBox");
+  const btnPing    = document.getElementById("btnPing");
+
+  const kTotal   = document.getElementById("kTotal");
+  const kTickets = document.getElementById("kTickets");
+  const kPiezas  = document.getElementById("kPiezas");
+  const kAvg     = document.getElementById("kAvg");
+  const kLast    = document.getElementById("kLast");
+  const kPeak    = document.getElementById("kPeak");
+
+  const tbody = document.getElementById("tbody");
+  const listCount = document.getElementById("listCount");
+
+  // ===== State =====
+  let __allBills = [];
+  let __filteredBills = [];
+
+  function setStatus(ok, text, extra="") {
+    statusPill.textContent = text;
+    pillWrap.classList.remove("ok","bad");
+    pillWrap.classList.add(ok ? "ok" : "bad");
+    debugBox.textContent = extra || "—";
+  }
+
+  function setToday() {
+    const today = ymd(new Date());
+    dateFromEl.value = today;
+    dateToEl.value = today;
+  }
+
+  function applyFilter() {
+    const from = dateFromEl.value ? startOfDay(dateFromEl.value) : startOfDay(new Date());
+    const to   = dateToEl.value ? endOfDay(dateToEl.value) : endOfDay(new Date());
+
+    __filteredBills = __allBills.filter(b => {
+      const d = parseBillTime(b);
+      return withinRange(d, from, to);
+    });
+
+    // newest first
+    __filteredBills.sort((a,b)=>{
+      const da = parseBillTime(a), db = parseBillTime(b);
+      return (db?.getTime()||0) - (da?.getTime()||0);
+    });
+
+    rangeLabel.textContent = `${ymd(from)} → ${ymd(to)} · ${__filteredBills.length} tickets (últimos 100 del cloud)`;
+  }
+
+  function renderSummary() {
+    const bills = __filteredBills;
+
+    let total=0, piezas=0;
+    bills.forEach(b=>{
+      total += Number(b.total)||0;
+      piezas += Number(b.sum_qty ?? b.sumQty ?? 0)||0;
+    });
+    const tickets = bills.length;
+    const avg = tickets ? total / tickets : 0;
+
+    kTotal.textContent = eur(total);
+    kTickets.textContent = String(tickets);
+    kPiezas.textContent = String(piezas);
+    kAvg.textContent = eur(avg);
+
+    kLast.textContent = lastBillLabel(bills);
+    kPeak.textContent = computePeakHour(bills);
+  }
+
+  function renderList() {
+    const bills = __filteredBills;
+    listCount.textContent = String(bills.length);
+
+    tbody.innerHTML = "";
+    if(!bills.length) {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td colspan="6" style="padding:14px;color:#6f6f6f;font-size:12px">
+        No hay tickets en este rango (cloud).
+      </td>`;
+      tbody.appendChild(tr);
+      return;
+    }
+
+    bills.forEach(b=>{
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td class="mono">#${escapeHtml(b.bill_no ?? b.billNo ?? "—")}</td>
+        <td title="${escapeHtml(b.ts_text ?? "")}">${escapeHtml(b.ts_text ?? "")}</td>
+        <td class="tdR">${escapeHtml(String(b.machine_id ?? ""))}</td>
+        <td class="tdR"><b>${eur(b.total)}</b></td>
+        <td class="tdR">${eur(b.paid)}</td>
+        <td class="tdR">${eur(b.change)}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  async function loadFromCloud() {
+    const shopId = shopIdEl.value || DEFAULT_SHOP_ID;
+    setStatus(true, "Cargando…");
+
+    try {
+      // Get last 100 bills (current API limit)
+      const bills = await apiFetch(`/api/bills?shop_id=${encodeURIComponent(shopId)}`);
+      __allBills = Array.isArray(bills) ? bills : [];
+
+      applyFilter();
+      renderSummary();
+      renderList();
+
+      setStatus(true, "Conectado", `OK · tickets recibidos: ${__allBills.length}`);
+    } catch(err) {
+      __allBills = [];
+      __filteredBills = [];
+      renderSummary();
+      renderList();
+
+      setStatus(false, "Error", String(err?.message || err));
+    }
+  }
+
+  // ===== Events =====
+  btnToday.onclick = () => { setToday(); applyFilter(); renderSummary(); renderList(); };
+  btnReload.onclick = () => loadFromCloud();
+  shopIdEl.onchange = () => loadFromCloud();
+  dateFromEl.onchange = () => { applyFilter(); renderSummary(); renderList(); };
+  dateToEl.onchange = () => { applyFilter(); renderSummary(); renderList(); };
+
+  btnExportCSV.onclick = () => {
+    const csv = exportCSV(__filteredBills);
+    downloadText(`ventas_cloud_${ymd(new Date())}.csv`, csv, "text/csv");
+  };
+  btnExportJSON.onclick = () => {
+    downloadText(`ventas_cloud_${ymd(new Date())}.json`, JSON.stringify(__filteredBills, null, 2), "application/json");
+  };
+
+  btnPing.onclick = async () => {
+    try {
+      const shopId = shopIdEl.value || DEFAULT_SHOP_ID;
+      const s = await apiFetch(`/api/summary?shop_id=${encodeURIComponent(shopId)}`);
+      setStatus(true, "Conectado", "summary: " + JSON.stringify(s));
+    } catch(err) {
+      setStatus(false, "Error", String(err?.message || err));
+    }
+  };
+
+  // ===== Init =====
+  shopIdEl.value = DEFAULT_SHOP_ID;
+  setToday();
+  loadFromCloud();
+})();
+</script>
+</body>
+</html>
