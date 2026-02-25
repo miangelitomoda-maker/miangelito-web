@@ -1,0 +1,811 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Mi Angelito Moda · Panel del dueño</title>
+  <style>
+    :root{
+      --bg:#f5f5f5;
+      --panel:#ffffff;
+      --line:#e8e8e8;
+      --text:#111111;
+      --muted:#6f6f6f;
+      --accent:#111111;
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,"PingFang SC","Microsoft YaHei",sans-serif;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--text)}
+    .wrap{max-width:1200px;margin:0 auto;padding:14px}
+    .top{
+      background:#fff;border:1px solid var(--line);border-radius:14px;
+      padding:12px 14px;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;
+    }
+    .brand{display:flex;gap:10px;align-items:center}
+    .logo{height:32px;width:auto;object-fit:contain;filter:grayscale(100%);opacity:.92;mix-blend-mode:multiply}
+    .title{font-weight:950}
+    .sub{font-size:12px;color:var(--muted);margin-top:2px}
+    .controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:flex-end}
+    input,select,button,textarea{
+      font:inherit;
+    }
+    .ctl{
+      display:flex;gap:8px;align-items:center;
+      padding:8px 10px;border:1px solid var(--line);border-radius:12px;background:#fff;
+    }
+    .ctl label{font-size:12px;color:var(--muted)}
+    .ctl input,.ctl select{
+      border:0;outline:0;background:transparent;min-width:120px;
+      font-variant-numeric: tabular-nums;
+    }
+    .btn{
+      padding:10px 12px;border-radius:12px;border:1px solid var(--line);
+      background:#fff;cursor:pointer;
+    }
+    .btn:hover{background:#f6f6f6}
+    .btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+    .btn.danger{border-color:#d1d1d1}
+    .grid{
+      display:grid;grid-template-columns: 1.1fr .9fr;gap:12px;margin-top:12px;
+    }
+    @media (max-width: 980px){
+      .grid{grid-template-columns:1fr}
+    }
+    .card{
+      background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;
+    }
+    .cardHead{
+      padding:12px 14px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:10px;
+    }
+    .cardHead .h{font-weight:900}
+    .cardHead .m{font-size:12px;color:var(--muted)}
+    .cardBody{padding:12px 14px}
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+    @media (max-width: 980px){
+      .stats{grid-template-columns:repeat(2,1fr)}
+    }
+    .stat{
+      border:1px solid var(--line);border-radius:12px;padding:10px;background:#fff;
+    }
+    .stat .t{font-size:12px;color:var(--muted)}
+    .stat .v{font-size:22px;font-weight:950;margin-top:6px;font-variant-numeric: tabular-nums}
+    .small{font-size:12px;color:var(--muted)}
+    .table{
+      width:100%;border-collapse:collapse;table-layout:fixed;
+    }
+    .table thead th{
+      position:sticky;top:0;z-index:2;
+      background:#fff;border-bottom:1px solid var(--line);
+      padding:10px 8px;text-align:left;font-size:12px;color:var(--muted);
+      font-weight:700;white-space:nowrap;
+    }
+    .table tbody td{
+      border-bottom:1px solid #f0f0f0;
+      padding:8px 8px;font-size:13px;vertical-align:middle;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+      font-variant-numeric: tabular-nums;
+    }
+    .tdR{text-align:right}
+    .tdC{text-align:center}
+    .pill{
+      display:inline-flex;align-items:center;gap:6px;
+      border:1px solid var(--line);background:#fff;
+      padding:4px 10px;border-radius:999px;font-size:12px;color:var(--text);
+      white-space:nowrap;
+    }
+    .pill.ok .dot{background:#111}
+    .dot{width:8px;height:8px;border-radius:50%;background:#9ca3af}
+    .hr{border-top:1px solid var(--line);margin:12px 0}
+    .kpiRow{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .kpiRow .pill{background:#fafafa}
+    .notice{
+      border:1px dashed var(--line);border-radius:12px;padding:10px;background:#fff;color:var(--muted);font-size:12px;line-height:1.55;
+    }
+    .closingForm{
+      display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;
+    }
+    @media (max-width: 980px){
+      .closingForm{grid-template-columns:1fr}
+    }
+    .field{
+      border:1px solid var(--line);border-radius:12px;padding:10px;background:#fff;
+    }
+    .field label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}
+    .field input,.field textarea{
+      width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 10px;outline:none;background:#fff;
+      font-variant-numeric: tabular-nums;
+    }
+    .field textarea{min-height:88px;resize:vertical}
+    .footBtns{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+    .mono{font-family: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;}
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div class="brand">
+        <img class="logo" src="https://www.miangelitomoda.com/logo.jpg" alt="Mi Angelito MODA" />
+        <div>
+          <div class="title">Panel del dueño</div>
+          <div class="sub">Ventas, tickets y cierre de caja · Datos locales (localStorage)</div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <div class="ctl">
+          <label for="storeKey">Origen</label>
+          <select id="storeKey"></select>
+        </div>
+        <div class="ctl">
+          <label for="dateFrom">Desde</label>
+          <input id="dateFrom" type="date" />
+        </div>
+        <div class="ctl">
+          <label for="dateTo">Hasta</label>
+          <input id="dateTo" type="date" />
+        </div>
+        <button class="btn" id="btnToday">Hoy</button>
+        <button class="btn" id="btnReload">Actualizar</button>
+        <button class="btn" id="btnExportCSV">Exportar CSV</button>
+        <button class="btn" id="btnExportJSON">Exportar JSON</button>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <div class="cardHead">
+          <div>
+            <div class="h">Resumen</div>
+            <div class="m" id="rangeLabel">—</div>
+          </div>
+          <div class="pill ok"><span class="dot"></span><span id="statusPill">Listo</span></div>
+        </div>
+        <div class="cardBody">
+          <div class="stats">
+            <div class="stat"><div class="t">Ingresos</div><div class="v" id="kTotal">€ 0.00</div></div>
+            <div class="stat"><div class="t">Tickets</div><div class="v" id="kTickets">0</div></div>
+            <div class="stat"><div class="t">Piezas</div><div class="v" id="kPiezas">0</div></div>
+            <div class="stat"><div class="t">Ticket medio</div><div class="v" id="kAvg">€ 0.00</div></div>
+          </div>
+
+          <div class="hr"></div>
+
+          <div class="kpiRow">
+            <span class="pill"><span class="dot"></span><span>Último ticket: <b id="kLast">—</b></span>
+            <span class="pill"><span class="dot"></span><span>Hora pico: <b id="kPeak">—</b></span>
+            <span class="pill"><span class="dot"></span><span>Desde último cierre: <b id="kSinceClose">—</b></span>
+          </div>
+
+          <div class="hr"></div>
+
+          <div class="notice">
+            <div><b>Nota:</b> Este panel lee el historial que se guarda automáticamente después de imprimir el ticket en tu POS.</div>
+            <div>Si abres este archivo en <b>otro navegador/otro dispositivo</b>, verá un historial distinto (porque es local).</div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cardHead">
+          <div>
+            <div class="h">Cierre de caja</div>
+            <div class="m">Guardar cierre y reiniciar “desde último cierre”</div>
+          </div>
+          <button class="btn danger" id="btnClearClosings">Borrar cierres</button>
+        </div>
+        <div class="cardBody">
+          <div class="small">Último cierre: <b id="lastClose">—</b></div>
+
+          <div class="closingForm">
+            <div class="field">
+              <label>Apertura (caja inicial) €</label>
+              <input id="openCash" inputmode="decimal" placeholder="Ej. 100.00" />
+              <div class="small" style="margin-top:6px">Opcional. Se recuerda para el próximo cierre.</div>
+            </div>
+            <div class="field">
+              <label>Caja contada (ahora) €</label>
+              <input id="countCash" inputmode="decimal" placeholder="Ej. 845.00" />
+              <div class="small" style="margin-top:6px">Introduce el efectivo real contado.</div>
+            </div>
+            <div class="field" style="grid-column:1/-1">
+              <label>Nota</label>
+              <textarea id="closeNote" placeholder="Ej. Cambio, incidencias, Bizum, devoluciones..."></textarea>
+            </div>
+          </div>
+
+          <div class="footBtns">
+            <button class="btn primary" id="btnDoClose">Guardar cierre</button>
+            <button class="btn" id="btnDownloadClosings">Descargar cierres (CSV)</button>
+          </div>
+
+          <div class="hr"></div>
+          <div class="small mono" id="closeDiff">—</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:12px">
+      <div class="cardHead">
+        <div>
+          <div class="h">Tickets</div>
+          <div class="m">Filtra por fecha y gestiona</div>
+        </div>
+        <div class="small">Mostrar: <b id="listCount">0</b></div>
+      </div>
+      <div class="cardBody" style="padding:0">
+        <div style="max-height:520px;overflow:auto">
+          <table class="table">
+            <colgroup>
+              <col style="width:170px" />
+              <col style="width:180px" />
+              <col style="width:90px" />
+              <col style="width:120px" />
+              <col style="width:120px" />
+              <col style="width:180px" />
+            </colgroup>
+            <thead>
+              <tr>
+                <th>Nº ticket</th>
+                <th>Fecha</th>
+                <th class="tdR">Piezas</th>
+                <th class="tdR">Total</th>
+                <th class="tdR">Pagado</th>
+                <th class="tdC">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+<script>
+(() => {
+  // ===== Keys used by this boss panel =====
+  const BOSS_CLOSE_KEY = "pos_boss_closings_v1";
+  const BOSS_LAST_OPEN_CASH_KEY = "pos_boss_last_open_cash_v1";
+
+  // ===== Helpers =====
+  function money(n){
+    n = Number(n) || 0;
+    return (Math.round(n * 100) / 100).toFixed(2);
+  }
+  function eur(n){ return `€ ${money(n)}`; }
+  function parseNum(s){
+    s = String(s ?? "").trim().replace(",", ".");
+    if(!s) return NaN;
+    if(s.endsWith(".")) s += "00";
+    const n = Number(s);
+    return Number.isFinite(n) ? n : NaN;
+  }
+  function escapeHtml(s){
+    return String(s ?? "").replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  }
+  function ymd(d){
+    const z = new Date(d);
+    const y = z.getFullYear();
+    const m = String(z.getMonth()+1).padStart(2,"0");
+    const dd= String(z.getDate()).padStart(2,"0");
+    return `${y}-${m}-${dd}`;
+  }
+  function startOfDay(d){
+    const x = new Date(d);
+    x.setHours(0,0,0,0);
+    return x;
+  }
+  function endOfDay(d){
+    const x = new Date(d);
+    x.setHours(23,59,59,999);
+    return x;
+  }
+  function downloadText(filename, text, mime="text/plain"){
+    const blob = new Blob([text], {type:mime});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(()=>{ URL.revokeObjectURL(url); a.remove(); }, 0);
+  }
+
+  // ===== Find available bill history keys =====
+  function listBillHistoryKeys(){
+    const keys = [];
+    for(let i=0;i<localStorage.length;i++){
+      const k = localStorage.key(i);
+      if(!k) continue;
+      if(k.endsWith("_bill_history") && k.startsWith("pos_")) keys.push(k);
+    }
+    // Also include the "known" one from your POS build (if exists)
+    // Example: pos_v10.3.12_prostable_v3.7_bill_history
+    keys.sort();
+    return keys;
+  }
+
+  // ===== Load bill history =====
+  function loadBillHistory(key){
+    try{
+      const raw = localStorage.getItem(key);
+      const arr = raw ? JSON.parse(raw) : [];
+      return Array.isArray(arr) ? arr : [];
+    }catch(e){ return []; }
+  }
+
+  // ===== Closing store =====
+  function loadClosings(){
+    try{
+      const raw = localStorage.getItem(BOSS_CLOSE_KEY);
+      const arr = raw ? JSON.parse(raw) : [];
+      return Array.isArray(arr) ? arr : [];
+    }catch(e){ return []; }
+  }
+  function saveClosings(arr){
+    try{ localStorage.setItem(BOSS_CLOSE_KEY, JSON.stringify(arr)); }catch(e){}
+  }
+  function getLastClosing(){
+    const arr = loadClosings();
+    return arr.length ? arr[0] : null; // newest first
+  }
+  function setLastOpenCash(val){
+    try{ localStorage.setItem(BOSS_LAST_OPEN_CASH_KEY, String(val ?? "")); }catch(e){}
+  }
+  function getLastOpenCash(){
+    try{ return localStorage.getItem(BOSS_LAST_OPEN_CASH_KEY) || ""; }catch(e){ return ""; }
+  }
+
+  // ===== DOM =====
+  const storeKeyEl = document.getElementById("storeKey");
+  const dateFromEl = document.getElementById("dateFrom");
+  const dateToEl   = document.getElementById("dateTo");
+  const btnToday   = document.getElementById("btnToday");
+  const btnReload  = document.getElementById("btnReload");
+  const btnExportCSV = document.getElementById("btnExportCSV");
+  const btnExportJSON= document.getElementById("btnExportJSON");
+
+  const rangeLabel = document.getElementById("rangeLabel");
+  const statusPill = document.getElementById("statusPill");
+
+  const kTotal   = document.getElementById("kTotal");
+  const kTickets = document.getElementById("kTickets");
+  const kPiezas  = document.getElementById("kPiezas");
+  const kAvg     = document.getElementById("kAvg");
+  const kLast    = document.getElementById("kLast");
+  const kPeak    = document.getElementById("kPeak");
+  const kSinceClose = document.getElementById("kSinceClose");
+
+  const tbody = document.getElementById("tbody");
+  const listCount = document.getElementById("listCount");
+
+  const lastCloseEl = document.getElementById("lastClose");
+  const openCashEl  = document.getElementById("openCash");
+  const countCashEl = document.getElementById("countCash");
+  const closeNoteEl = document.getElementById("closeNote");
+  const closeDiffEl = document.getElementById("closeDiff");
+  const btnDoClose  = document.getElementById("btnDoClose");
+  const btnClearClosings = document.getElementById("btnClearClosings");
+  const btnDownloadClosings = document.getElementById("btnDownloadClosings");
+
+  // ===== State =====
+  let __allBills = [];
+  let __filteredBills = [];
+  let __activeKey = "";
+
+  function parseBillTime(b){
+    // POS stores b.ts as now.toLocaleString(); format varies by browser locale.
+    // We will prefer billNo yyyymmdd-HHMMSS when available.
+    if(b && b.billNo){
+      const m = String(b.billNo).match(/^(\d{4})(\d{2})(\d{2})-(\d{2})(\d{2})(\d{2})$/);
+      if(m){
+        const [_, y, mo, d, hh, mm, ss] = m;
+        return new Date(Number(y), Number(mo)-1, Number(d), Number(hh), Number(mm), Number(ss), 0);
+      }
+    }
+    // Fallback: Date.parse(ts) may fail; best-effort
+    const t = Date.parse(b.ts);
+    if(Number.isFinite(t)) return new Date(t);
+    return null;
+  }
+
+  function withinRange(dateObj, from, to){
+    if(!dateObj) return false;
+    return dateObj.getTime() >= from.getTime() && dateObj.getTime() <= to.getTime();
+  }
+
+  function computePeakHour(bills){
+    const buckets = new Array(24).fill(0);
+    bills.forEach(b=>{
+      const d = parseBillTime(b);
+      if(!d) return;
+      buckets[d.getHours()] += Number(b.total)||0;
+    });
+    let bestH = -1, bestV = -1;
+    buckets.forEach((v,h)=>{ if(v>bestV){ bestV=v; bestH=h; } });
+    if(bestH<0) return "—";
+    return `${String(bestH).padStart(2,"0")}:00`;
+  }
+
+  function lastBillLabel(bills){
+    if(!bills.length) return "—";
+    const b = bills[0]; // newest first
+    return `#${b.billNo || "—"} · ${eur(b.total)} · ${b.ts || ""}`;
+  }
+
+  function applyFilter(){
+    const from = dateFromEl.value ? startOfDay(dateFromEl.value) : startOfDay(new Date());
+    const to   = dateToEl.value ? endOfDay(dateToEl.value) : endOfDay(new Date());
+
+    __filteredBills = __allBills.filter(b=>{
+      const d = parseBillTime(b);
+      return withinRange(d, from, to);
+    });
+
+    // newest first
+    __filteredBills.sort((a,b)=>{
+      const da = parseBillTime(a), db = parseBillTime(b);
+      return (db?.getTime()||0) - (da?.getTime()||0);
+    });
+
+    rangeLabel.textContent = `${ymd(from)} → ${ymd(to)} · ${__filteredBills.length} tickets`;
+  }
+
+  function renderSummary(){
+    const bills = __filteredBills;
+
+    let total=0, piezas=0;
+    bills.forEach(b=>{
+      total += Number(b.total)||0;
+      piezas += Number(b.sumQty)||0;
+    });
+    const tickets = bills.length;
+    const avg = tickets ? total / tickets : 0;
+
+    kTotal.textContent = eur(total);
+    kTickets.textContent = String(tickets);
+    kPiezas.textContent = String(piezas);
+    kAvg.textContent = eur(avg);
+
+    kLast.textContent = lastBillLabel(bills);
+    kPeak.textContent = computePeakHour(bills);
+
+    // Since last close
+    const lastClose = getLastClosing();
+    if(!lastClose){
+      kSinceClose.textContent = eur(total) + " (sin cierre guardado)";
+    }else{
+      const since = bills.filter(b=>{
+        const d = parseBillTime(b);
+        return d && d.getTime() > Number(lastClose.tsMs||0);
+      });
+      let t=0; since.forEach(x=> t += Number(x.total)||0);
+      kSinceClose.textContent = `${eur(t)} (desde ${lastClose.ts || "—"})`;
+    }
+
+    statusPill.textContent = __allBills.length ? "OK" : "Sin historial";
+  }
+
+  function renderList(){
+    const bills = __filteredBills;
+    listCount.textContent = String(bills.length);
+
+    tbody.innerHTML = "";
+    if(!bills.length){
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td colspan="6" style="padding:14px;color:#6f6f6f;font-size:12px">
+        No hay tickets en este rango. (Recuerda: se guarda después de imprimir)
+      </td>`;
+      tbody.appendChild(tr);
+      return;
+    }
+
+    bills.forEach(b=>{
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td class="mono">#${escapeHtml(b.billNo||"—")}</td>
+        <td title="${escapeHtml(b.ts||"")}">${escapeHtml(b.ts||"")}</td>
+        <td class="tdR">${escapeHtml(String(b.sumQty ?? "0"))}</td>
+        <td class="tdR"><b>${eur(b.total)}</b></td>
+        <td class="tdR">${eur(b.paid)}</td>
+        <td class="tdC">
+          <button class="btn primary" data-act="reprint" style="padding:8px 10px">Reimprimir</button>
+          <button class="btn danger" data-act="del" style="padding:8px 10px">Eliminar</button>
+        </td>
+      `;
+      tr.querySelector('[data-act="reprint"]').onclick = () => {
+        if(!b.items || !Array.isArray(b.items)){
+          alert("Este ticket no tiene detalle de items.");
+          return;
+        }
+        // Use the same minimal receipt builder as POS (embedded here)
+        const w = window.open("", "_blank", "width=420,height=720");
+        if(!w){ alert("El navegador bloqueó la ventana emergente."); return; }
+        w.document.open();
+        w.document.write(buildReceiptHTML(b));
+        w.document.close();
+      };
+      tr.querySelector('[data-act="del"]').onclick = () => {
+        if(!confirm(`¿Eliminar el ticket #${b.billNo}?`)) return;
+        const all = loadBillHistory(__activeKey);
+        const keep = all.filter(x => x.billNo !== b.billNo);
+        localStorage.setItem(__activeKey, JSON.stringify(keep));
+        loadAndRender();
+      };
+      tbody.appendChild(tr);
+    });
+  }
+
+  // ===== Export =====
+  function exportCSV(bills){
+    const header = ["billNo","ts","sumQty","kinds","total","paid","change"].join(",");
+    const rows = bills.map(b => [
+      b.billNo ?? "",
+      `"${String(b.ts ?? "").replaceAll('"','""')}"`,
+      b.sumQty ?? 0,
+      b.kinds ?? 0,
+      money(b.total),
+      money(b.paid),
+      money(b.change),
+    ].join(","));
+    return [header, ...rows].join("\n");
+  }
+
+  // ===== Receipt builder (same style as POS, kept minimal) =====
+  function buildReceiptHTML(payload){
+    const shopName = payload.shopName || "Mi Angelito Moda";
+    const ts = payload.ts || "";
+    const rows = (payload.items || []).map(it => {
+      const name = escapeHtml(it.name || "Ropa");
+      const qxp  = `${it.qty}×${money(it.price)}`;
+      const amt  = `${money(it.amount)}€`;
+      return `
+        <div class="itemRow">
+          <div class="iName">${name}</div>
+          <div class="iQxp">${qxp}</div>
+          <div class="iAmt">${amt}</div>
+        </div>
+      `;
+    }).join("");
+
+    return `<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<title>Ticket</title>
+<style>
+@page{ size:80mm auto; margin:0; }
+html,body{ margin:0; padding:0; }
+body{
+  width:72mm;margin:0 auto;padding:6mm 0;
+  font-family: "Consolas","Courier New",monospace;color:#000;
+  -webkit-print-color-adjust: exact;print-color-adjust: exact;
+}
+.wrap{ padding:0 5mm; }
+.center{ text-align:center; }
+.upper{ text-transform:uppercase; letter-spacing:.14em; }
+.muted{ opacity:.80; }
+.hr{ border-top:1px solid #000; opacity:.55; margin:10px 0; }
+.small{ font-size:12px; line-height:1.25; }
+.itemHead{ display:flex; justify-content:space-between; font-size:12px; opacity:.85; margin-top:2px; }
+.itemRow{ display:flex; justify-content:space-between; gap:6px; font-size:14px; line-height:1.28; padding:2px 0; }
+.iName{ flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.iQxp{ width:18mm; text-align:center; font-variant-numeric: tabular-nums; white-space:nowrap; }
+.iAmt{ width:18mm; text-align:right; font-variant-numeric: tabular-nums; white-space:nowrap; }
+.totalLabel{ font-size:12px; opacity:.85; letter-spacing:.18em; text-transform:uppercase; }
+.totalValue{ font-size:26px; font-weight:950; margin-top:2px; font-variant-numeric: tabular-nums; }
+.payLine{ display:flex; justify-content:space-between; font-size:14px; margin-top:4px; font-variant-numeric: tabular-nums; }
+.payLine .k{ opacity:.85; } .payLine .v{ font-weight:900; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="center" style="font-weight:900;font-size:16px;letter-spacing:.10em">${escapeHtml(shopName)}</div>
+    <div class="center upper small muted" style="margin-top:4px;">Whatsapp 681 677 777</div>
+    <div class="center small muted" style="margin-top:4px;">${escapeHtml(ts)}</div>
+    <div class="center small muted" style="margin-top:2px;">#${escapeHtml(payload.billNo || "")}</div>
+    <div class="hr"></div>
+    <div class="center" style="margin:6px 0 0;font-size:15px;font-weight:900">PIEZAS: ${payload.sumQty || 0}</div>
+    <div class="hr"></div>
+    <div class="itemHead"><div>Artículo</div><div>Cant×€</div><div>Importe</div></div>
+    ${rows}
+    <div class="hr"></div>
+    <div class="center">
+      <div class="totalLabel">IMPORTE</div>
+      <div class="totalValue">${money(payload.total)}€</div>
+    </div>
+    <div class="hr"></div>
+    <div class="payLine"><div class="k">Pagado</div><div class="v">${money(payload.paid)}€</div></div>
+    <div class="payLine"><div class="k">Cambio</div><div class="v">${money(payload.change)}€</div></div>
+    <div class="hr"></div>
+    <div class="center" style="margin-top:10px;font-size:12px;opacity:.78;letter-spacing:.10em;text-transform:uppercase">Gracias por su compra</div>
+  </div>
+<script>
+  window.onload = () => { window.focus(); setTimeout(() => window.print(), 60); };
+  window.onafterprint = () => { setTimeout(()=>window.close(), 120); };
+<\/script>
+</body>
+</html>`;
+  }
+
+  // ===== Closing UI =====
+  function renderClosingInfo(){
+    const last = getLastClosing();
+    if(!last){
+      lastCloseEl.textContent = "—";
+      closeDiffEl.textContent = "Sin cierres guardados todavía.";
+    }else{
+      lastCloseEl.textContent = `${last.ts} · Caja: ${eur(last.countCash)} · Dif: ${eur(last.diff)}`;
+      closeDiffEl.textContent = `Último cierre guardado (#${last.id}): Esperado ${eur(last.expectedCash)} · Contado ${eur(last.countCash)} · Diferencia ${eur(last.diff)} · Nota: ${last.note || "—"}`;
+    }
+    // recall last open cash
+    if(!openCashEl.value){
+      openCashEl.value = getLastOpenCash();
+    }
+  }
+
+  function calcExpectedCashSinceLastClose(){
+    // This POS is cash-oriented: expected cash = apertura + sum(total) since last close.
+    const openCash = parseNum(openCashEl.value);
+    const opening = Number.isFinite(openCash) ? openCash : 0;
+
+    const last = getLastClosing();
+    const tsCut = last ? Number(last.tsMs||0) : 0;
+
+    // expected from all bills AFTER last close timestamp
+    let sum = 0;
+    __allBills.forEach(b=>{
+      const d = parseBillTime(b);
+      if(!d) return;
+      if(d.getTime() > tsCut){
+        sum += Number(b.total)||0;
+      }
+    });
+
+    return { opening, sumSales: sum, expected: opening + sum };
+  }
+
+  function doClose(){
+    const counted = parseNum(countCashEl.value);
+    if(!Number.isFinite(counted)){
+      alert("Introduce 'Caja contada' (número).");
+      countCashEl.focus(); countCashEl.select();
+      return;
+    }
+
+    const { opening, sumSales, expected } = calcExpectedCashSinceLastClose();
+    const diff = counted - expected;
+
+    const now = new Date();
+    const closings = loadClosings();
+    const id = String(now.getTime());
+
+    const rec = {
+      id,
+      ts: now.toLocaleString(),
+      tsMs: now.getTime(),
+      openCash: opening,
+      salesSinceLastClose: sumSales,
+      expectedCash: expected,
+      countCash: counted,
+      diff,
+      note: String(closeNoteEl.value || "").trim()
+    };
+
+    closings.unshift(rec);
+    saveClosings(closings);
+
+    setLastOpenCash(openCashEl.value);
+
+    renderClosingInfo();
+    alert("Cierre guardado.");
+  }
+
+  function downloadClosingsCSV(){
+    const arr = loadClosings();
+    const header = ["id","ts","openCash","salesSinceLastClose","expectedCash","countCash","diff","note"].join(",");
+    const rows = arr.map(r => [
+      r.id,
+      `"${String(r.ts||"").replaceAll('"','""')}"`,
+      money(r.openCash),
+      money(r.salesSinceLastClose),
+      money(r.expectedCash),
+      money(r.countCash),
+      money(r.diff),
+      `"${String(r.note||"").replaceAll('"','""')}"`,
+    ].join(","));
+    downloadText(`cierres_${ymd(new Date())}.csv`, [header, ...rows].join("\n"), "text/csv");
+  }
+
+  // ===== Main load/render =====
+  function loadAndRender(){
+    __activeKey = storeKeyEl.value;
+
+    __allBills = loadBillHistory(__activeKey);
+    // Ensure newest first
+    __allBills.sort((a,b)=>{
+      const da = parseBillTime(a), db = parseBillTime(b);
+      return (db?.getTime()||0) - (da?.getTime()||0);
+    });
+
+    applyFilter();
+    renderSummary();
+    renderList();
+    renderClosingInfo();
+
+    // Show closing diff preview
+    const { opening, sumSales, expected } = calcExpectedCashSinceLastClose();
+    closeDiffEl.textContent = `Desde el último cierre: Ventas ${eur(sumSales)} · Apertura ${eur(opening)} · Caja esperada ${eur(expected)} · (Introduce “Caja contada” para ver diferencia)`;
+  }
+
+  // ===== Init =====
+  function initKeysDropdown(){
+    const keys = listBillHistoryKeys();
+    storeKeyEl.innerHTML = "";
+    if(!keys.length){
+      const opt = document.createElement("option");
+      opt.value = "";
+      opt.textContent = "No encontrado (sin historial)";
+      storeKeyEl.appendChild(opt);
+      storeKeyEl.disabled = true;
+      statusPill.textContent = "Sin historial";
+      return;
+    }
+    keys.forEach(k=>{
+      const opt = document.createElement("option");
+      opt.value = k;
+      opt.textContent = k.replace(/^pos_/, "");
+      storeKeyEl.appendChild(opt);
+    });
+    storeKeyEl.disabled = false;
+    storeKeyEl.value = keys[keys.length-1]; // default latest by name
+  }
+
+  function setToday(){
+    const today = ymd(new Date());
+    dateFromEl.value = today;
+    dateToEl.value = today;
+  }
+
+  // events
+  btnToday.onclick = () => { setToday(); loadAndRender(); };
+  btnReload.onclick = () => loadAndRender();
+  storeKeyEl.onchange = () => loadAndRender();
+  dateFromEl.onchange = () => loadAndRender();
+  dateToEl.onchange = () => loadAndRender();
+
+  btnExportCSV.onclick = () => {
+    const csv = exportCSV(__filteredBills);
+    downloadText(`ventas_${ymd(new Date())}.csv`, csv, "text/csv");
+  };
+  btnExportJSON.onclick = () => {
+    downloadText(`ventas_${ymd(new Date())}.json`, JSON.stringify(__filteredBills, null, 2), "application/json");
+  };
+
+  btnDoClose.onclick = () => doClose();
+  btnClearClosings.onclick = () => {
+    if(confirm("¿Borrar todos los cierres guardados?")){
+      localStorage.removeItem(BOSS_CLOSE_KEY);
+      renderClosingInfo();
+    }
+  };
+  btnDownloadClosings.onclick = () => downloadClosingsCSV();
+
+  countCashEl.addEventListener("input", ()=>{
+    const counted = parseNum(countCashEl.value);
+    const { opening, sumSales, expected } = calcExpectedCashSinceLastClose();
+    if(Number.isFinite(counted)){
+      closeDiffEl.textContent = `Esperado ${eur(expected)} · Contado ${eur(counted)} · Diferencia ${eur(counted-expected)} · (Ventas ${eur(sumSales)} + Apertura ${eur(opening)})`;
+    }else{
+      closeDiffEl.textContent = `Desde el último cierre: Ventas ${eur(sumSales)} · Apertura ${eur(opening)} · Caja esperada ${eur(expected)}`;
+    }
+  });
+
+  // start
+  initKeysDropdown();
+  setToday();
+  loadAndRender();
+})();
+</script>
+</body>
+</html>

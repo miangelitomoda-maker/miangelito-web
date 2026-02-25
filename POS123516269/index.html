@@ -1,0 +1,2514 @@
+<!doctype html>
+<html lang="zh">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>POS Mi Angelito Moda</title>
+  <style>
+    :root{
+      --bg:#f5f5f5;
+      --panel:#ffffff;
+      --line:#e8e8e8;
+      --text:#111111;
+      --muted:#6f6f6f;
+
+      --accent:#111111;
+      --ok:#111111;
+      --warn:#111111;
+
+      --rowA:#ffffff;
+      --rowB:#f3f3f3;
+      --rowHover:#ededed;
+      --rowSel:#e6e6e6;
+
+      --focus:#111111;
+
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,"PingFang SC","Microsoft YaHei",sans-serif;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--text)}
+    .app{height:100vh;display:flex;gap:12px;padding:12px}
+
+    /* Left */
+    .left{
+      flex:1;background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:12px;
+      display:flex;flex-direction:column;
+      overflow:hidden;min-width:560px;
+    }
+    .leftHeader{
+      padding:10px 12px;border-bottom:1px solid var(--line);
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+      background:#fff;
+    }
+    .leftHeader .title{font-weight:800;letter-spacing:.2px}
+    .leftHeader .sub{font-size:12px;color:var(--muted)}
+    .tableWrap{flex:1;overflow:auto;outline:none}
+    table{width:100%;border-collapse:collapse; table-layout:fixed}
+    thead th{
+      white-space:nowrap;
+
+      white-space:nowrap;
+
+      position:sticky;top:0;z-index:2;
+      background:#fff;border-bottom:1px solid var(--line);
+      padding:9px 8px;text-align:left;font-size:12px;color:var(--muted);
+      font-weight:600;
+    }
+    tbody td{
+      border-bottom:1px solid #f0f0f0;
+      padding:4px 8px;         /* 更紧：保证 20 行 */
+      font-size:13px;line-height:1.05;vertical-align:middle;
+    }
+    tbody tr:nth-child(odd){ background:var(--rowA); }
+    tbody tr:nth-child(even){ background:var(--rowB); }
+    tbody tr:hover{background:var(--rowHover)}
+    tbody tr.selected{ background: inherit !important; outline:none !important; }
+    tbody tr.selected::before{
+      content:"";
+      position:absolute;
+      left:0; top:0; bottom:0;
+      width:4px;
+      background:var(--focus);
+    }
+    .tdRight{text-align:right}
+    .tdCenter{text-align:center}
+
+    .pill{
+      display:inline-flex;align-items:center;gap:6px;
+      border:1px solid var(--line);background:#fff;
+      padding:4px 10px;border-radius:999px;font-size:12px;color:var(--text);
+      white-space:nowrap;
+    }
+    .pill .dot{width:8px;height:8px;border-radius:50%;background:#9ca3af}
+    .pill.ok .dot{background:var(--focus)}
+
+    .nameEdit, .numEdit{
+      width:100%;
+      border:1px solid transparent;
+      background:transparent;
+      padding:3px 6px;border-radius:8px;font-size:13px;outline:none;
+      color:var(--text);
+    }
+    .numEdit{ text-align:right; font-variant-numeric: tabular-nums; }
+    .nameEdit:focus, .numEdit:focus{
+      background:#fff;border-color:#111;
+      box-shadow:none;
+    }
+
+    /* Stable columns when editing */
+    td{ overflow:hidden; }
+    td:nth-child(2){ overflow:hidden; } /* name col */
+    .nameEdit{ min-width:0; }
+
+    .footBar{
+      border-top:1px solid var(--line);
+      background:#fff;
+      padding:9px 12px;
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+      font-size:12px;color:var(--muted);
+    }
+    td button{
+      padding:6px 8px;border-radius:10px;font-size:12px;
+      border:1px solid var(--line);
+      cursor:pointer;background:#fff;color:#111827;
+    }
+    td button:hover{background:#f6f6f6}
+
+    /* Right */
+    .right{
+      width:540px;background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:12px;
+      display:flex;flex-direction:column;overflow:hidden;
+    }
+    .rightTop{padding:18px;border-bottom:1px solid var(--line);background:#fff}
+    .totalBox{
+      border:3px solid var(--line);
+      background:#fff;
+      border-radius:20px;
+      padding:24px 22px 18px;
+      box-shadow:0 18px 40px rgba(0,0,0,.08);
+    }
+    .totalHead{display:flex;justify-content:space-between;align-items:center;font-size:14px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase}
+.euroBadge{border:1px solid var(--line);border-radius:999px;padding:4px 10px;font-weight:800;color:var(--text);background:#fafafa}
+    .bigTotal{font-weight:950;font-size:104px;line-height:0.95;text-align:right;font-variant-numeric:tabular-nums;margin-top:14px;letter-spacing:-1px}
+    .kv{display:flex;justify-content:flex-end;align-items:baseline;gap:12px;margin-top:10px}
+    .kv .k{font-size:18px;color:var(--muted);white-space:nowrap}
+    .kv .v{font-size:38px;font-weight:950;min-width:90px;text-align:right;font-variant-numeric:tabular-nums}
+
+    .section{padding:12px;border-bottom:1px solid var(--line)}
+    label{display:block;font-size:12px;color:var(--muted);margin:6px 0}
+    .right input{
+      width:100%;font-size:20px;padding:12px 12px;
+      border:1px solid var(--line);border-radius:14px;outline:none;
+      font-variant-numeric: tabular-nums;
+      background:#fff;
+      color:var(--text);
+    }
+    .right input:focus{
+      border-color:#111;
+      box-shadow:none;
+    }
+    .hint{font-size:12px;color:var(--muted);line-height:1.6;margin-top:8px}
+    .kbd{
+      font-family: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+      background:#f3f3f3;border:1px solid var(--line);
+      border-radius:6px;padding:2px 6px;
+    }
+
+    .holds{padding:12px;border-bottom:1px solid var(--line);background:#fff}
+    .holdsHead{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:10px}
+    .holdsHead .t{font-size:12px;color:var(--muted)}
+    .holdsHead .a{font-size:12px;color:var(--text);opacity:.85;cursor:pointer;border-bottom:1px dotted rgba(17,24,39,.35)}
+    .holdsList{display:flex;flex-direction:column;gap:8px;max-height:200px;overflow:auto}
+    .holdCard{
+      border:1px solid var(--line);border-radius:14px;
+      padding:10px 12px;background:#fafafa;
+      display:flex;justify-content:space-between;align-items:center;gap:10px;
+      cursor:pointer;
+    }
+    .holdCard:hover{background:#f1f1f1}
+    .holdCard .name{font-weight:900}
+    .holdCard .meta{font-size:12px;color:var(--muted)}
+    .holdCard .amt{font-weight:950;font-size:18px;font-variant-numeric:tabular-nums;white-space:nowrap}
+    .holdEmpty{border:1px dashed var(--line);border-radius:14px;padding:12px;color:var(--muted);font-size:12px;background:#fff}
+
+    /* 上一笔（小窗） */
+    .lastBillCard{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:10px 12px;
+      background:#fff;
+      margin-top:10px;
+    }
+    .lastBillCard .head{
+      display:flex;
+      justify-content:space-between;
+      align-items:baseline;
+      gap:10px;
+      margin-bottom:8px;
+    }
+    .lastBillCard .head .t{font-size:12px;color:var(--muted)}
+    .lastBillCard .vals{
+      display:grid;
+      grid-template-columns:1fr 1fr 1fr;
+      gap:10px;
+    }
+    .lastBillCard .k{font-size:11px;color:var(--muted)}
+    .lastBillCard .v{
+      font-size:16px;
+      font-weight:900;
+      margin-top:4px;
+      font-variant-numeric:tabular-nums;
+    }
+
+    .stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px;border-bottom:1px solid var(--line)}
+    .stat{border:1px solid var(--line);border-radius:12px;padding:10px;background:#fff}
+    .stat .t{font-size:12px;color:var(--muted)}
+    .stat .v{font-size:20px;font-weight:900;margin-top:6px}
+    .stat .v.ok{color:var(--text)}
+    .stat .v.warn{color:var(--text)}
+
+    .btns{margin-top:auto;padding:12px;display:flex;gap:10px;flex-wrap:wrap;background:#fff;border-top:1px solid var(--line)}
+    .btns button{
+      flex:1;min-width:120px;padding:10px 12px;border-radius:12px;border:1px solid var(--line);
+      cursor:pointer;font-size:14px;background:#fff;color:#111;
+    }
+    .btns button:hover{background:#f6f6f6}
+    .btns button.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+    .btns button.primary:hover{filter:brightness(.98)}
+    .btns button.danger{background:#fff;border-color:#d1d1d1;color:#111}
+    .btns button.danger:hover{background:#f6f6f6}
+
+    /* ===== Checkout modal ===== */
+    .modalMask{
+      position:fixed;inset:0;
+      background:rgba(17,24,39,.55);
+      display:none;align-items:center;justify-content:center;
+      padding:18px;
+      z-index:9999;
+    }
+    .modal{
+      width:min(900px, 98vw);
+      background:#fff;
+      border-radius:18px;
+      border:1px solid rgba(229,231,235,1);
+      box-shadow:0 30px 80px rgba(0,0,0,.35);
+      overflow:hidden;
+    }
+    .modalHead{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:14px 16px;
+      background:#fff;
+      border-bottom:1px solid var(--line);
+    }
+    .modalHead .h1{font-weight:950;font-size:18px}
+    .modalHead .h2{font-size:12px;color:var(--muted)}
+    .modalBody{
+      display:grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap:0;
+      min-height:520px;
+    }
+    .modalLeft{
+      padding:16px;
+      border-right:1px solid var(--line);
+      background:#fff;
+    }
+    .modalRight{
+      padding:16px;
+      background:#fff;
+    }
+    .bigMoney{
+      border:2px solid var(--line);
+      border-radius:18px;
+      padding:16px;
+      background:#fff;
+      margin-bottom:14px;
+    }
+    .bigMoney .row{
+      display:flex;justify-content:space-between;align-items:baseline;
+      color:var(--muted);font-size:13px;
+    }
+    .bigMoney .amt{
+      font-size:80px;
+      font-weight:950;
+      text-align:right;
+      letter-spacing:0.8px;
+      font-variant-numeric: tabular-nums;
+      color:var(--text);
+      margin-top:10px;
+      line-height:1;
+    }
+    .payGrid{display:grid;grid-template-columns: 1fr;gap:12px}
+    .payBox{
+      border:2px solid var(--line);
+      border-radius:18px;
+      padding:14px;
+      background:#fff;
+    }
+    .payBox label{margin:0 0 8px 0;font-size:13px}
+    .payInput{
+      width:100%;
+      font-size:56px;
+      font-weight:900;
+      padding:14px 16px;
+      border-radius:16px;
+      border:2px solid var(--line);
+      outline:none;
+      text-align:right;
+      font-variant-numeric: tabular-nums;
+      background:#fff;
+      color:var(--text);
+    }
+    .payInput:focus{border-color:#111;box-shadow:none}
+    .changeAmt{
+      font-size:58px;
+      font-weight:950;
+      text-align:right;
+      font-variant-numeric: tabular-nums;
+      line-height:1.05;
+      margin-top:8px;
+    }
+    .metaLine{display:flex;justify-content:space-between;gap:10px;margin-top:10px;color:var(--muted);font-size:13px}
+    .metaLine b{color:var(--text)}
+    .modalBtns{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+    .modalBtns button{
+      flex:1;min-width:160px;
+      padding:14px 14px;border-radius:16px;
+      border:1px solid var(--line);cursor:pointer;font-size:16px;
+      background:#fff;color:#111;
+    }
+    .modalBtns button:hover{background:#f6f6f6}
+    .modalBtns button.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+    .modalBtns button.danger{background:#fff;color:#111;border-color:#d1d1d1}
+    .tinyHint{font-size:12px;color:var(--muted);line-height:1.6;margin-top:10px}
+    .miniList{border:1px solid var(--line);border-radius:14px;overflow:hidden}
+    .miniListHead{
+      padding:10px 12px;background:#fff;border-bottom:1px solid var(--line);
+      font-size:12px;color:var(--muted);
+      display:flex;justify-content:space-between;
+    }
+    .miniItems{max-height:420px;overflow:auto}
+    .miniRow{
+      display:grid;
+      grid-template-columns: 1fr 70px 80px 88px;
+      gap:8px;
+      padding:8px 12px;
+      border-bottom:1px solid #f0f0f0;
+      font-size:13px;
+      align-items:center;
+    }
+    .miniRow:nth-child(even){background:var(--rowB)}
+    .miniRow b{text-align:right;font-variant-numeric: tabular-nums}
+    .miniRow .r{text-align:right;font-variant-numeric: tabular-nums}
+  
+    
+    /* Index column: fixed width + right align + tabular numbers */
+    .col-idx{ width:46px; }
+    thead th.col-idx{ text-align:right; padding-right:10px; }
+    tbody td.tdIdx{
+      width:46px;
+      text-align:right;
+      padding-right:10px;
+      font-variant-numeric: tabular-nums;
+      white-space:nowrap;
+    }
+
+    /* Brand logo */
+    #brandLogo{
+      height:30px;
+      width:auto;
+      object-fit:contain;
+      filter: grayscale(100%);
+      opacity:.92;
+      mix-blend-mode:multiply;
+    }
+
+  
+    /* ===== Behavior tweaks (v10.3.4) ===== */
+    /* 1) Clicking/editing should NOT "change layout": make selected style nearly invisible */
+    tbody tr.selected{
+      background: inherit !important;
+      outline: none !important;
+    }
+    tbody tr.selected::before{ display:none !important; }
+
+    /* 2) Always highlight the LAST entered row (until next entry) */
+    tbody tr.lastAdded{
+      background:#cfcfcf !important;
+      font-weight:600;
+    }
+
+  
+    /* ===== Total footer layout v10.3.6 ===== */
+    .totalFooter{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-end;
+      margin-top:18px;
+      border-top:1px solid #e5e5e5;
+      padding-top:14px;
+    }
+    .tfItem{display:flex;gap:10px;align-items:baseline}
+    .tfLabel{font-size:14px;color:#777;letter-spacing:.06em;text-transform:uppercase}
+    .tfValue{font-size:26px;font-weight:900;font-variant-numeric:tabular-nums}
+
+
+    /* Total footer (same row) */
+    .totalFooter{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-end;
+      margin-top:16px;
+      border-top:1px solid #e5e5e5;
+      padding-top:12px;
+    }
+    .tfItem{display:flex;gap:10px;align-items:baseline}
+    .tfLabel{font-size:13px;color:#777;letter-spacing:.06em;text-transform:uppercase}
+    .tfValue{font-size:24px;font-weight:900;font-variant-numeric:tabular-nums}
+
+
+    /* ===== Pro Stable: hide non-essential blocks (keep DOM for JS) ===== */
+    #paidSection{ display:none !important; }
+    .stats{ display:none !important; }
+
+  
+/* ===============================
+   ITALY GREY LUX THEME (24")
+   Visual-only overrides (no logic changes)
+   =============================== */
+:root{
+  --bg:#dcdfe3;
+  --panel:#f6f6f6;
+  --line:#e0e0e0;
+  --text:#1c1c1c;
+  --muted:#7a7a7a;
+
+  --accent:#2c2c2c;
+  --ok:#2c2c2c;
+  --warn:#2c2c2c;
+
+  --rowA:#f6f6f6;
+  --rowB:#eeeeee;
+  --rowHover:#e4e4e4;
+  --rowSel:#dedede;
+
+  --focus:#2c2c2c;
+
+  font-family:"Helvetica Neue",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+body{
+  background:
+    radial-gradient(circle at 20% 10%, #f0f0f0 0%, transparent 40%),
+    linear-gradient(135deg,#e7e9ec 0%,#d9dde2 100%);
+}
+
+/* App spacing a bit more "air" on 24" */
+.app{ gap:14px; padding:14px; }
+
+/* Panels: microcement card */
+.left,.right{
+  background:linear-gradient(145deg,#f8f8f8,#f0f0f0);
+  border:1px solid rgba(0,0,0,.04);
+  border-radius:20px;
+  box-shadow:0 20px 50px rgba(0,0,0,.08), inset 0 1px 0 rgba(255,255,255,.6);
+}
+
+/* Header: true centered title, time on same row (right) */
+.leftHeader{
+  display:grid !important;
+  grid-template-columns: 1fr auto 1fr;
+  align-items:center;
+  background:transparent;
+}
+.leftHeader > div:first-child{ grid-column:2; justify-self:center; text-align:center; }
+.leftHeader .title{
+  font-size:18px;
+  font-weight:900;
+  letter-spacing:.10em;
+  text-transform:none;
+}
+/* Keep right area at column 3 */
+.leftHeader > div:last-child{ grid-column:3; justify-self:end; }
+
+/* Madrid time text */
+.madridTime{
+  grid-column:3;
+  justify-self:end;
+  font-size:12px;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  font-weight:500;
+  color:rgba(28,28,28,.55);
+  font-family:"Helvetica Neue",system-ui,sans-serif;
+  margin-right:10px;
+}
+
+/* Total box: premium light */
+.rightTop{ background:transparent; }
+.totalBox{
+  border:none;
+  border-radius:28px;
+  padding:32px 26px 24px;
+  background:linear-gradient(180deg,#fdfdfd,#f1f1f1);
+  box-shadow:0 30px 80px rgba(0,0,0,.10), inset 0 1px 0 rgba(255,255,255,.7);
+}
+.euroBadge{ background:#f0f0f0; border-color:rgba(0,0,0,.08); }
+.bigTotal{
+  font-weight:900;
+  font-size:112px;
+  margin-top:18px;
+  background:linear-gradient(180deg,#222,#555);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+.tfLabel{ color:rgba(28,28,28,.55); }
+.tfValue{ color:#1c1c1c; }
+
+/* Inputs: subtle inset */
+.right input, .payInput{
+  border:1px solid rgba(0,0,0,.08) !important;
+  background:#f9f9f9 !important;
+  border-radius:16px;
+  box-shadow: inset 0 2px 6px rgba(0,0,0,.05), 0 1px 0 rgba(255,255,255,.65);
+}
+.right input:focus, .payInput:focus{
+  border-color:#2c2c2c !important;
+  box-shadow:0 0 0 3px rgba(0,0,0,.05), inset 0 2px 6px rgba(0,0,0,.05);
+}
+
+/* Buttons: metal grey */
+.btns button, .modalBtns button, td button, #btnClose{
+  border:1px solid rgba(0,0,0,.10) !important;
+  background:#f2f2f2 !important;
+  transition:.25s ease;
+}
+.btns button:hover, .modalBtns button:hover, td button:hover, #btnClose:hover{
+  transform:translateY(-1px);
+  box-shadow:0 8px 20px rgba(0,0,0,.10);
+  background:#ededed !important;
+}
+.btns button.primary, .modalBtns button.primary{
+  background:#2c2c2c !important;
+  color:#fff !important;
+  box-shadow:0 10px 25px rgba(0,0,0,.25);
+  border-color:rgba(0,0,0,.25) !important;
+}
+.btns button.primary:hover, .modalBtns button.primary:hover{
+  filter:brightness(.98);
+}
+
+/* Table: calmer contrast + smooth hover */
+thead th{ background:rgba(255,255,255,.75) !important; backdrop-filter: blur(6px); }
+tbody tr{ transition:.18s ease; }
+tbody tr:nth-child(odd){ background:var(--rowA) !important; }
+tbody tr:nth-child(even){ background:var(--rowB) !important; }
+tbody tr:hover{ background:var(--rowHover) !important; }
+
+/* Holds cards: premium */
+.holdCard{
+  background:linear-gradient(180deg,#f8f8f8,#f0f0f0) !important;
+  border:1px solid rgba(0,0,0,.06) !important;
+}
+.holdCard:hover{ background:linear-gradient(180deg,#f2f2f2,#eaeaea) !important; }
+
+/* Modal: keep premium */
+.modal{ border-radius:22px; }
+
+
+/* ===== Left panel: warm beige + better row depth (v2.1) ===== */
+.left{
+  background:linear-gradient(145deg,#fbf6ee 0%, #f3ede2 100%) !important;
+  border:1px solid rgba(0,0,0,.05) !important;
+  box-shadow:0 18px 50px rgba(0,0,0,.08), inset 0 1px 0 rgba(255,255,255,.65) !important;
+
+  /* scoped row tones (only left table) */
+  --rowA:#fbf6ee;
+  --rowB:#f6efe6;
+  --rowHover:#efe6db;
+  --line:rgba(0,0,0,.07);
+}
+.leftHeader{
+  background:linear-gradient(180deg, rgba(255,255,255,.55), rgba(255,255,255,.18)) !important;
+  backdrop-filter:saturate(120%) blur(8px);
+  border-bottom:1px solid rgba(0,0,0,.06) !important;
+}
+.tableWrap{
+  background:transparent !important;
+}
+thead th{
+  background:rgba(255,255,255,.55) !important;
+  backdrop-filter:saturate(120%) blur(8px);
+  border-bottom:1px solid rgba(0,0,0,.06) !important;
+}
+tbody td{
+  border-bottom:1px solid rgba(0,0,0,.06) !important;
+}
+tbody tr{
+  transition:background .15s ease, filter .15s ease;
+}
+tbody tr:hover td{
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.70),
+    inset 0 -1px 0 rgba(0,0,0,.10);
+}
+/* Slightly more depth between rows without changing layout height */
+tbody tr:nth-child(odd) td{
+  background:linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,0));
+}
+tbody tr:nth-child(even) td{
+  background:linear-gradient(180deg, rgba(0,0,0,.015), rgba(255,255,255,0));
+}
+
+
+/* ===== Smart highlight colors (Deep Beige lastAdded, Deep Gray selected) ===== */
+/* When there is an active selection, do NOT highlight lastAdded unless it's also selected */
+#tbody.hasSel tr.lastAdded:not(.selected){
+  background: inherit !important;
+  font-weight: inherit !important;
+  box-shadow: none !important;
+}
+
+/* lastAdded: deep beige */
+#tbody tr.lastAdded{
+  background:linear-gradient(180deg,#d9cbb7,#cdbca6) !important;
+  font-weight:650;
+  box-shadow:
+    inset 0 2px 5px rgba(0,0,0,.06),
+    0 5px 16px rgba(0,0,0,.10);
+}
+
+/* selected: deep gray, very obvious */
+#tbody tr.selected{
+  background:linear-gradient(180deg,#3a3a3a,#242424) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.08),
+    inset 0 -1px 0 rgba(0,0,0,.25),
+    0 10px 24px rgba(0,0,0,.18);
+  font-weight:700;
+}
+#tbody tr.selected td,
+#tbody tr.selected .nameEdit,
+#tbody tr.selected .numEdit{
+  color:#fff !important;
+}
+
+/* Keep inputs readable while selected */
+#tbody tr.selected .nameEdit,
+#tbody tr.selected .numEdit{
+  border-color:rgba(255,255,255,.22) !important;
+}
+#tbody tr.selected .nameEdit:focus,
+#tbody tr.selected .numEdit:focus{
+  background:rgba(255,255,255,.10) !important;
+  border-color:rgba(255,255,255,.35) !important;
+}
+
+/* Disable old "selected invisible" behavior if present */
+tbody tr.selected::before{ display:none !important; }
+
+
+/* ===== F2 Calculator (keyboard only) ===== */
+.calcMask{
+  position:fixed; inset:0;
+  background:rgba(17,24,39,.55);
+  display:none;
+  align-items:center; justify-content:center;
+  padding:18px;
+  z-index:10050;
+}
+.calcPanel{
+  width:min(520px, 96vw);
+  background:linear-gradient(180deg,#ffffff,#f2f2f2);
+  border:1px solid rgba(0,0,0,.10);
+  border-radius:22px;
+  box-shadow:0 30px 80px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.7);
+  overflow:hidden;
+}
+.calcHead{
+  display:flex; justify-content:space-between; align-items:center;
+  padding:14px 16px;
+  border-bottom:1px solid rgba(0,0,0,.08);
+  background:rgba(255,255,255,.55);
+  backdrop-filter: blur(8px);
+}
+.calcHead .t{
+  font-weight:950;
+  letter-spacing:.08em;
+}
+.calcHead .h{
+  font-size:12px;
+  color:rgba(28,28,28,.60);
+  letter-spacing:.10em;
+  text-transform:uppercase;
+}
+.calcBody{ padding:16px; }
+.calcScreen{
+  border:1px solid rgba(0,0,0,.10);
+  background:linear-gradient(180deg,#fbfbfb,#f0f0f0);
+  border-radius:18px;
+  padding:14px 14px 12px;
+  box-shadow: inset 0 2px 8px rgba(0,0,0,.05);
+}
+.calcExpr{
+  font-family: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+  font-size:18px;
+  letter-spacing:.04em;
+  color:#1c1c1c;
+  min-height:26px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.calcRes{
+  margin-top:10px;
+  font-family: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+  font-size:40px;
+  font-weight:950;
+  letter-spacing:-0.02em;
+  text-align:right;
+  font-variant-numeric: tabular-nums;
+  color:#1c1c1c;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.calcTips{
+  margin-top:12px;
+  font-size:12px;
+  color:rgba(28,28,28,.62);
+  line-height:1.7;
+}
+.calcTips .kbd{
+  font-family: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+  background:rgba(0,0,0,.04);
+  border:1px solid rgba(0,0,0,.08);
+  border-radius:6px;
+  padding:2px 6px;
+}
+
+</style>
+</head>
+
+<body>
+<div class="app">
+  <div class="left">
+    <div class="leftHeader">
+      <div>
+        <div class="title">Mi Angelito Moda</div>
+</div>
+      <div style="display:flex;align-items:center;gap:10px">
+  <img id="brandLogo" src="https://www.miangelitomoda.com/logo.jpg" alt="Mi Angelito MODA" />
+  <div id="lockPill" class="pill"><span class="dot"></span><span>未锁定数量</span></div>
+</div>
+    </div>
+
+    <div class="tableWrap" id="tableWrap" tabindex="0">
+      <table>
+        <colgroup>
+          <col style="width:46px" />
+          <col />
+          <col style="width:90px" />
+          <col style="width:110px" />
+          <col style="width:120px" />
+          <col style="width:78px" />
+        </colgroup>
+        <thead>
+          <tr>
+            <th class="col-idx">序号</th>
+            <th>商品名称</th>
+            <th class="tdRight">数量</th>
+            <th class="tdRight">单价</th>
+            <th class="tdRight">小计</th>
+            <th class="tdCenter">操作</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+
+    <div class="footBar"><div id="footInfo">0 项</div>
+    </div>
+  </div>
+
+  <div class="right">
+    <div class="rightTop">
+      <div class="totalBox">
+        <div class="totalHead"><div>Total</div><div class="euroBadge">€</div></div>
+        <div class="bigTotal" id="grand">0.00</div>
+        <div class="totalFooter">
+          <div class="tfItem">
+            <div class="tfLabel">Piezas</div>
+            <div class="tfValue" id="sumQty">0</div>
+          </div>
+          <div class="tfItem">
+            <div class="tfLabel">Modelos</div>
+            <div class="tfValue" id="count">0</div>
+          </div>
+        </div>
+        
+        
+      </div>
+    </div>
+
+    <div class="section">
+      <label>输入框</label>
+      <input id="line" placeholder="件数+单价回车" autocomplete="off" />
+      <div id="toast" class="hint" style="margin-top:8px;">就绪</div>
+
+  <label style="margin-top:10px;">客户名称</label>
+  <input id="customerName" placeholder="请输入" autocomplete="off" />
+</div>
+
+    <div class="holds">
+      <div class="holdsHead">
+        <div class="t">挂单列表</div>
+        <div style="display:flex;gap:10px;align-items:baseline">
+          <div class="a" id="btnHoldNow">挂单（Ctrl+G）</div>
+          <div class="a" id="btnClearHolds">清空挂单</div>
+        </div>
+      </div>
+            <div class="holdsList" id="holdsList"></div>
+
+      <div class="lastBillCard" id="lastBillCard" aria-label="上一笔账单">
+        <div class="head">
+          <div class="t">上一笔</div>
+          <div class="t" id="lastBillTime">—</div>
+        </div>
+        <div class="vals">
+          <div>
+            <div class="k">金额</div>
+            <div class="v" id="lastBillTotal">—</div>
+          </div>
+          <div>
+            <div class="k">实收</div>
+            <div class="v" id="lastBillPaid">—</div>
+          </div>
+          <div>
+            <div class="k">找零</div>
+            <div class="v" id="lastBillChange">—</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section" id="paidSection">
+<label>实收金额（显示用；结账弹窗会更大）</label>
+      <input id="paid" placeholder="例如：50." inputmode="decimal" autocomplete="off" />
+</div>
+
+    <div class="stats">
+      <div class="stat"><div class="t">找零</div><div class="v" id="change">0.00 €</div></div>
+      <div class="stat"><div class="t">状态</div><div class="v ok" id="status">待收款</div></div>
+      <div class="stat"><div class="t">锁定数量</div><div class="v" id="locked">—</div></div>
+      <div class="stat"><div class="t">最近一条小计</div><div class="v" id="last">—</div></div>
+    </div>
+
+    <div class="btns">
+      <button class="primary" id="btnCheckout">结账（PageDown）</button>
+      <button id="btnUndo">撤销（Ctrl+Z）</button>
+      <button class="danger" id="btnClear">清空</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- Calculator Modal (F2) -->
+<div class="calcMask" id="calcMask" aria-hidden="true">
+  <div class="calcPanel" role="dialog" aria-modal="true" aria-label="Calculator">
+    <div class="calcHead">
+      <div class="t">CALCULADORA</div>
+      <div class="h">F2 / ESC · SOLO TECLADO</div>
+    </div>
+    <div class="calcBody">
+      <div class="calcScreen">
+        <div class="calcExpr" id="calcExpr"> </div>
+        <div class="calcRes" id="calcRes">0</div>
+      </div>
+      <div class="calcTips">
+        <div><span class="kbd">0-9</span> <span class="kbd">.</span> <span class="kbd">+</span> <span class="kbd">-</span> <span class="kbd">*</span> <span class="kbd">/</span> <span class="kbd">(</span> <span class="kbd">)</span></div>
+        <div><span class="kbd">Enter</span> = &nbsp; <span class="kbd">Backspace</span> 删除 &nbsp; <span class="kbd">Del</span> 清空</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Checkout Modal -->
+<div class="modalMask" id="mask">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modalHead">
+      <div>
+        <div class="h1">Mi Angelito Moda---收款</div>
+        <div class="h2">Enter：打印小票 · Esc：取消</div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <div class="pill ok"><span class="dot"></span><span id="modalState">准备结账</span></div>
+        <button id="btnClose" style="padding:10px 12px;border-radius:12px;border:1px solid var(--line);cursor:pointer;background:#fff">关闭</button>
+      </div>
+    </div>
+
+    <div class="modalBody">
+      <div class="modalLeft">
+        <div class="bigMoney">
+          <div class="row"><div>Importe pendiente de cobro</div><div>€</div></div>
+          <div class="amt" id="modalTotal">0.00</div>
+          <div class="metaLine">
+            <div>Piezas：<b id="modalQty">0</b></div>
+            <div>Modelos：<b id="modalKinds">0</b></div>
+          </div>
+        </div>
+
+        <div class="payGrid">
+          <div class="payBox">
+            <label>Importe recibido</label>
+            <input class="payInput" id="modalPaid" inputmode="decimal" placeholder="0.00" />
+</div>
+
+          <div class="payBox">
+            <label>Cambio</label>
+            <div class="changeAmt" id="modalChange">0.00</div>
+</div>
+
+          <div class="modalBtns">
+            <button class="primary" id="btnPrint">打印小票（Enter）</button>
+            <button id="btnFillExact">刚好付清</button>
+            <button class="danger" id="btnCancel">取消（Esc）</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="modalRight">
+        <div class="miniList">
+          <div class="miniListHead">
+            <div>明细预览</div>
+            <div style="display:flex;gap:10px">
+              <span class="kbd">名称</span>
+              <span class="kbd">数量</span>
+              <span class="kbd">单价</span>
+              <span class="kbd">小计</span>
+            </div>
+          </div>
+          <div class="miniItems" id="miniItems"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  const DEFAULT_NAME = 'Ropa';
+  const items = [];
+  let lockedQty = null;
+  let selectedRow = -1;
+  let selectedCol = 0;
+  let lastAddedIndex = -1; // 高亮最后输入的一行
+
+  const HOLD_KEY = "pos_v10_2_holds";
+
+  // ===== Bill history (hidden, F8) =====
+  const POS_VERSION_TAG = "v10.3.12_prostable_v3.7";
+  const BILL_HISTORY_KEY = `pos_${POS_VERSION_TAG}_bill_history`;
+  const BILL_HISTORY_MAX = 200;
+
+  // DOM
+  const lineEl = document.getElementById('line');
+    const customerEl = document.getElementById('customerName');
+const paidEl = document.getElementById('paid');
+  const tbody = document.getElementById('tbody');
+  const tableWrap = document.getElementById('tableWrap');
+
+  const grandEl = document.getElementById('grand');
+  const sumQtyEl = document.getElementById('sumQty');
+  const countEl = document.getElementById('count');
+  const footInfo = document.getElementById('footInfo');
+
+  const changeEl = document.getElementById('change');
+  const statusEl = document.getElementById('status');
+  const lockedEl = document.getElementById('locked');
+  const lastEl = document.getElementById('last');
+  const lockPill = document.getElementById('lockPill');
+
+  const holdsListEl = document.getElementById('holdsList');
+  const btnClearHolds = document.getElementById('btnClearHolds');
+
+  // last bill
+  const lastBillCard = document.getElementById('lastBillCard');
+  const lastBillTime = document.getElementById('lastBillTime');
+  const lastBillTotal = document.getElementById('lastBillTotal');
+  const lastBillPaid = document.getElementById('lastBillPaid');
+  const lastBillChange = document.getElementById('lastBillChange');
+  const btnHoldNow = document.getElementById('btnHoldNow');
+
+  const toastEl = document.getElementById('toast');
+
+  // modal
+  const mask = document.getElementById('mask');
+  const modalTotal = document.getElementById('modalTotal');
+  const modalQty = document.getElementById('modalQty');
+  const modalKinds = document.getElementById('modalKinds');
+  const modalPaid = document.getElementById('modalPaid');
+  const modalChange = document.getElementById('modalChange');
+  const miniItems = document.getElementById('miniItems');
+  const modalState = document.getElementById('modalState');
+
+  // helpers
+  function normalizeDecimalString(s){
+    s = String(s ?? '').trim();
+    if(!s) return s;
+    s = s.replace(',', '.');
+    if(s.endsWith('.')) s += '00';
+    return s;
+  }
+  function toNumber(str){
+    const s = normalizeDecimalString(str);
+    if(!s) return NaN;
+    return Number(s);
+  }
+  function money(n){ return (Math.round(n * 100) / 100).toFixed(2); }
+
+function pad2(n){ return String(n).padStart(2,'0'); }
+function billNoFromDate(d){
+  // yyyymmdd-HHMMSS
+  return `${d.getFullYear()}${pad2(d.getMonth()+1)}${pad2(d.getDate())}-${pad2(d.getHours())}${pad2(d.getMinutes())}${pad2(d.getSeconds())}`;
+}
+  function fitGrand(){
+    const el = grandEl;
+    if(!el) return;
+    let size = 104;
+    el.style.fontSize = size + 'px';
+    el.style.letterSpacing = '-1px';
+    const min = 72;
+    const box = el.closest('.totalBox');
+    const maxW = box ? box.clientWidth - 24 : el.clientWidth;
+    while(size > min && el.scrollWidth > maxW){
+      size -= 2;
+      el.style.fontSize = size + 'px';
+      if(size < 92) el.style.letterSpacing = '-0.5px';
+      if(size < 84) el.style.letterSpacing = '0px';
+    }
+  }
+  function escapeHtml(s){
+    return String(s ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  }
+
+  
+  // Ensure the last entered row is always visible inside the scroll container (tableWrap)
+  function __scrollLastAddedIntoView(){
+    if(lastAddedIndex < 0) return;
+    const wrap = tableWrap;
+    const tr = tbody && tbody.children ? tbody.children[lastAddedIndex] : null;
+    if(!wrap || !tr) return;
+
+    const wr = wrap.getBoundingClientRect();
+    const rr = tr.getBoundingClientRect();
+    const pad = 14; // small breathing room
+
+    // If row is below the viewport, scroll down; if above, scroll up
+    if(rr.bottom > (wr.bottom - pad)){
+      wrap.scrollTop += (rr.bottom - (wr.bottom - pad));
+    }else if(rr.top < (wr.top + pad)){
+      wrap.scrollTop -= ((wr.top + pad) - rr.top);
+    }
+  }
+function toast(msg){
+    toastEl.textContent = msg || '就绪';
+    toastEl.style.color = '';
+  }
+  function flashInputError(msg){
+    toastEl.textContent = msg;
+    toastEl.style.color = '#111';
+    lineEl.style.borderColor = '#111';
+    lineEl.animate([{transform:'translateX(0)'},{transform:'translateX(-2px)'},{transform:'translateX(2px)'},{transform:'translateX(0)'}],{duration:140});
+    setTimeout(()=>{
+      lineEl.style.borderColor = '';
+      toastEl.style.color = '';
+      toast('就绪');
+    }, 900);
+    lineEl.focus();
+    lineEl.select();
+  }
+
+  function recalcItem(it){
+    const q = Number.isFinite(it.qty) ? it.qty : 0;
+    const p = Number.isFinite(it.price) ? it.price : 0;
+    it.amount = q * p;
+  }
+  function calcTotals(){
+    let total = 0, sumQty = 0;
+    items.forEach(it => { recalcItem(it); total += it.amount; sumQty += it.qty; });
+    return { total, sumQty };
+  }
+
+  function updatePaymentUI(){
+    const { total } = calcTotals();
+    const paid = toNumber(paidEl.value);
+    const change = Number.isFinite(paid) ? (paid - total) : NaN;
+
+    if(!Number.isFinite(paid)){
+      changeEl.textContent = `0.00 €`;
+      statusEl.textContent = total > 0 ? '待收款' : '空单';
+      statusEl.className = 'v ok';
+      return;
+    }
+    changeEl.textContent = `${money(change)} €`;
+
+    if(total <= 0){
+      statusEl.textContent = '空单';
+      statusEl.className = 'v ok';
+      return;
+    }
+    if(change >= 0){
+      statusEl.textContent = '已收款';
+      statusEl.className = 'v ok';
+    }else{
+      statusEl.textContent = '实收不足';
+      statusEl.className = 'v warn';
+    }
+  }
+
+  function renderHeaderOnly(){
+    const { total, sumQty } = calcTotals();
+    grandEl.textContent = money(total);
+    fitGrand();
+    sumQtyEl.textContent = String(sumQty);
+    countEl.textContent = String(items.length);
+    footInfo.textContent = `${items.length} 项`;
+    updatePaymentUI();
+  }
+
+  function focusCell(row, col){
+    const el = tbody.querySelector(`[data-row="${row}"][data-col="${col}"]`);
+    if(el){
+      el.focus();
+      if(el.select) el.select();
+      el.scrollIntoView({ block:'nearest' });
+    }
+  }
+  function setSelected(row, col, focus=true){
+    if(items.length === 0) return;
+    row = Math.max(0, Math.min(items.length - 1, row));
+    col = Math.max(0, Math.min(2, col));
+    selectedRow = row; selectedCol = col;
+    [...tbody.querySelectorAll('tr')].forEach((tr, i) => tr.classList.toggle('selected', i === selectedRow));
+    tbody.classList.toggle('hasSel', selectedRow >= 0);
+    if(focus) focusCell(selectedRow, selectedCol);
+  }
+  function navigate(key){
+    if(items.length === 0) return;
+    if(selectedRow < 0) { setSelected(0,0,true); return; }
+    if(key === 'ArrowUp') setSelected(selectedRow - 1, selectedCol, true);
+    if(key === 'ArrowDown') setSelected(selectedRow + 1, selectedCol, true);
+    if(key === 'ArrowLeft') setSelected(selectedRow, selectedCol - 1, true);
+    if(key === 'ArrowRight') setSelected(selectedRow, selectedCol + 1, true);
+  }
+
+  // parse & normalize
+  function normalizeExpressionDisplay(raw){
+    const s0 = String(raw ?? '').trim().replace(/\s+/g,'');
+    if(!s0) return s0;
+    const s = s0.replace(',', '.');
+
+    let m = s.match(/^(\d+(?:\.\d+)?)(\+)(\d+(?:\.\d*)?)$/);
+    if(m) return `${m[1]}+${normalizeDecimalString(m[3])}`;
+
+    m = s.match(/^(\d+(?:\.\d+)?)(\+)$/);
+    if(m) return `${m[1]}+`;
+
+    m = s.match(/^(\d+(?:\.\d*)?)$/);
+    if(m) return normalizeDecimalString(m[1]);
+
+    return s0;
+  }
+
+  
+  function parseLine(raw){
+    const s0 = String(raw || '').trim().replace(/\s+/g,'');
+    if(!s0) return { type:'empty' };
+    const s = s0.replace(',', '.');
+
+    // qty can be negative for returns: -1+5.  or -2+ (lock) etc.
+    let m = s.match(/^(-?\d+(?:\.\d+)?)(\+)(\d+(?:\.\d*)?)?$/);
+    if(m){
+      const qty = toNumber(m[1]);
+      const hasPrice = m[3] != null && m[3] !== '';
+      if(hasPrice) return { type:'full', qty, price: toNumber(m[3]) };
+      return { type:'lock', qty };
+    }
+
+    m = s.match(/^(\d+\.\d*)$/);
+    if(m) return { type:'priceOnly', price: toNumber(m[1]) };
+
+    return { type:'invalid' };
+  }
+
+  function addItem(qty, price){
+    if(!Number.isFinite(qty) || qty === 0){ flashInputError('数量不对'); return false; }
+    if(!Number.isFinite(price) || price < 0){ flashInputError('单价不对'); return false; }
+
+    // Return items: qty < 0 => DEVOLUCIÓN
+    const it = {
+      name: (qty < 0 ? 'DEVOLUCIÓN' : DEFAULT_NAME),
+      qty,
+      price,
+      amount: qty * price
+    };
+    items.push(it);
+    lastAddedIndex = items.length - 1;
+    lastEl.textContent = `${money(it.amount)} €`;
+    return true;
+  }
+
+  function render(){
+    const { total, sumQty } = calcTotals();
+    grandEl.textContent = money(total);
+    fitGrand();
+    sumQtyEl.textContent = String(sumQty);
+    countEl.textContent = String(items.length);
+    footInfo.textContent = `${items.length} 项`;
+
+    lockedEl.textContent = (lockedQty == null ? '—' : String(lockedQty));
+    if(lockedQty == null){
+      lockPill.className = 'pill';
+      lockPill.innerHTML = `<span class="dot"></span><span>未锁定数量</span>`;
+    }else{
+      lockPill.className = 'pill ok';
+      lockPill.innerHTML = `<span class="dot"></span><span>已锁定数量：${lockedQty}</span>`;
+    }
+
+    tbody.innerHTML = '';
+    items.forEach((it, idx) => {
+      const tr = document.createElement('tr');
+      if(idx === lastAddedIndex){ tr.classList.add('lastAdded'); }
+      if(idx === lastAddedIndex){ tr.classList.add('lastAdded'); }
+      tr.addEventListener('mousedown', (ev) => {
+        // 如果点在输入框上，不要强制把焦点抢到 tableWrap，避免“跳来跳去”
+        const t = ev.target;
+        if(t && t.tagName && t.tagName.toLowerCase()==='input'){
+          setSelected(idx, selectedCol, false);
+          return;
+        }
+        setSelected(idx, selectedCol, false);
+        tableWrap.focus();
+      });
+
+      const tdIdx = document.createElement('td'); tdIdx.className = 'tdIdx'; tdIdx.textContent = String(idx + 1);
+
+      const tdName = document.createElement('td');
+      const nameInput = document.createElement('input');
+      nameInput.className = 'nameEdit';
+      nameInput.value = it.name || DEFAULT_NAME;
+      nameInput.dataset.row = String(idx);
+      nameInput.dataset.col = "0";
+      nameInput.addEventListener('focus', () => { selectedRow = idx; selectedCol = 0; });
+      nameInput.addEventListener('change', () => { it.name = nameInput.value.trim() || DEFAULT_NAME; });
+      tdName.appendChild(nameInput);
+
+      const tdQty = document.createElement('td'); tdQty.className='tdRight';
+      const qtyInput = document.createElement('input');
+      qtyInput.className='numEdit'; qtyInput.value=String(it.qty); qtyInput.inputMode='decimal';
+      qtyInput.dataset.row=String(idx); qtyInput.dataset.col="1";
+      qtyInput.addEventListener('focus', () => { selectedRow = idx; selectedCol = 1; });
+      qtyInput.addEventListener('input', () => {
+        const v = toNumber(qtyInput.value);
+        it.qty = Number.isFinite(v) ? v : 0;
+        recalcItem(it);
+        tdAmt.innerHTML = `<b>${money(it.amount)}</b>`;
+        renderHeaderOnly();
+      });
+      qtyInput.addEventListener('blur', () => {
+        const v = toNumber(qtyInput.value);
+        it.qty = Number.isFinite(v) ? v : 0;
+        qtyInput.value = String(it.qty);
+        render();
+      });
+      tdQty.appendChild(qtyInput);
+
+      const tdPrice = document.createElement('td'); tdPrice.className='tdRight';
+      const priceInput = document.createElement('input');
+      priceInput.className='numEdit'; priceInput.value=money(it.price); priceInput.inputMode='decimal';
+      priceInput.dataset.row=String(idx); priceInput.dataset.col="2";
+      priceInput.addEventListener('focus', () => { selectedRow = idx; selectedCol = 2; });
+      priceInput.addEventListener('input', () => {
+        const v = toNumber(priceInput.value);
+        it.price = Number.isFinite(v) ? v : 0;
+        recalcItem(it);
+        tdAmt.innerHTML = `<b>${money(it.amount)}</b>`;
+        renderHeaderOnly();
+      });
+      priceInput.addEventListener('blur', () => {
+        const v = toNumber(priceInput.value);
+        it.price = Number.isFinite(v) ? v : 0;
+        priceInput.value = money(it.price);
+        render();
+      });
+      tdPrice.appendChild(priceInput);
+
+      const tdAmt = document.createElement('td'); tdAmt.className='tdRight';
+      tdAmt.innerHTML = `<b>${money(it.amount)}</b>`;
+
+      const tdOp = document.createElement('td'); tdOp.className='tdCenter';
+      const btn = document.createElement('button'); btn.textContent='删除';
+      btn.onclick = () => { 
+        items.splice(idx,1);
+        if(lastAddedIndex === idx) lastAddedIndex = -1;
+        if(lastAddedIndex > idx) lastAddedIndex -= 1;
+        render();
+      };
+      tdOp.appendChild(btn);
+
+      tr.appendChild(tdIdx); tr.appendChild(tdName); tr.appendChild(tdQty);
+      tr.appendChild(tdPrice); tr.appendChild(tdAmt); tr.appendChild(tdOp);
+      tbody.appendChild(tr);
+    });
+    updatePaymentUI();
+    // render 后如果不在编辑表格，强制回到主输入框
+    const __ae = document.activeElement;
+    if(!__ae || !__ae.closest || !__ae.closest('#tbody')){
+      setTimeout(()=>{ if(mask.style.display!=='flex'){ lineEl.focus(); } }, 0);
+    }
+    // 不默认高亮任何一行（只有你点击/用方向键才会选中）
+    if(selectedRow >= 0 && selectedRow < items.length){
+      [...tbody.querySelectorAll('tr')].forEach((tr, i) => tr.classList.toggle('selected', i === selectedRow));
+    }else{
+      selectedRow = -1;
+    }
+    tbody.classList.toggle('hasSel', selectedRow >= 0);
+
+    // After DOM paint, keep the last-entered row visible (row 21+)
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        __scrollLastAddedIntoView();
+      });
+    });
+  }
+
+  function handleEnterOnLine(){
+    const normalized = normalizeExpressionDisplay(lineEl.value);
+    lineEl.value = normalized;
+    const p = parseLine(normalized);
+
+    if(p.type === 'empty') return;
+    if(p.type === 'invalid'){ flashInputError('格式不对：示例 6. 或 5+6. 或 5+ 或 -1+5.'); return; }
+
+    if(p.type === 'lock'){
+      if(!Number.isFinite(p.qty) || p.qty <= 0){ flashInputError('锁定数量不对（例如 5+）'); return; }
+      lockedQty = p.qty;
+      lineEl.value = '';
+      render();
+      toast(`已锁定数量：${lockedQty}`);
+      lineEl.focus(); lineEl.select();
+      return;
+    }
+
+    if(p.type === 'priceOnly'){
+      const qty = (lockedQty == null ? 1 : lockedQty);
+      const ok = addItem(qty, p.price);
+      if(ok){
+        lockedQty = null;
+        lineEl.value = '';
+        selectedRow = -1; selectedCol = 0;
+        render();
+        toast('已添加');
+        lineEl.focus(); lineEl.select();
+      }
+      return;
+    }
+
+    if(p.type === 'full'){
+      const ok = addItem(p.qty, p.price);
+      if(ok){
+        lockedQty = null;
+        lineEl.value = '';
+        selectedRow = -1; selectedCol = 0;
+        render();
+        toast('已添加');
+        lineEl.focus(); lineEl.select();
+      }
+    }
+  }
+
+  // ===== Holds =====
+  function loadHolds(){ try{ const raw=localStorage.getItem(HOLD_KEY); const arr=raw?JSON.parse(raw):[]; return Array.isArray(arr)?arr:[]; }catch{ return []; } }
+  function saveHolds(arr){ localStorage.setItem(HOLD_KEY, JSON.stringify(arr)); }
+
+  // ===== Last bill (上一笔) =====
+  const LAST_BILL_KEY = `pos_${POS_VERSION_TAG}_last_bill`;
+  function loadLastBill(){
+    try{
+      const raw = localStorage.getItem(LAST_BILL_KEY);
+      const obj = raw ? JSON.parse(raw) : null;
+      return obj && typeof obj === 'object' ? obj : null;
+    }catch(e){ return null; }
+  }
+  function saveLastBill(b){
+    try{ localStorage.setItem(LAST_BILL_KEY, JSON.stringify(b)); }catch(e){}
+  }
+  function renderLastBill(){
+    if(!lastBillCard) return;
+    const b = loadLastBill();
+    if(!b){
+      lastBillTime.textContent = '—';
+      lastBillTotal.textContent = '—';
+      lastBillPaid.textContent = '—';
+      lastBillChange.textContent = '—';
+      return;
+    }
+    lastBillTime.textContent = (b.billNo ? ('#' + b.billNo + ' · ') : '') + (b.ts || '—');
+    lastBillTotal.textContent = `€ ${money(Number(b.total)||0)}`;
+    lastBillPaid.textContent  = `€ ${money(Number(b.paid)||0)}`;
+    lastBillChange.textContent= `€ ${money(Number(b.change)||0)}`;
+  }
+
+// ===== Bill history store (local only) =====
+function loadBillHistory(){
+  try{
+    const raw = localStorage.getItem(BILL_HISTORY_KEY);
+    const arr = raw ? JSON.parse(raw) : [];
+    return Array.isArray(arr) ? arr : [];
+  }catch(e){ return []; }
+}
+function saveBillHistory(arr){
+  try{ localStorage.setItem(BILL_HISTORY_KEY, JSON.stringify(arr)); }catch(e){}
+}
+function pushBillHistory(bill){
+  const arr = loadBillHistory();
+  arr.unshift(bill); // newest first
+  if(arr.length > BILL_HISTORY_MAX) arr.length = BILL_HISTORY_MAX;
+  saveBillHistory(arr);
+}
+
+
+
+  function calcHoldSummary(h){
+    let total=0,sumQty=0;
+    (h.items||[]).forEach(it => { const q=Number(it.qty)||0; const p=Number(it.price)||0; total+=q*p; sumQty+=q; });
+    return { total, sumQty, kinds:(h.items||[]).length };
+  }
+
+  function renderHolds(){
+    const holds = loadHolds();
+    holdsListEl.innerHTML='';
+    if(!holds.length){
+      const empty=document.createElement('div');
+      empty.className='holdEmpty';
+      empty.textContent='暂无挂单';
+      holdsListEl.appendChild(empty);
+      return;
+    }
+    holds.forEach((h, idx) => {
+      const s = calcHoldSummary(h);
+      const card=document.createElement('div');
+      card.className='holdCard';
+      card.innerHTML=`
+        <div>
+          <div class="name">${escapeHtml((h.customerName && String(h.customerName).trim()) ? String(h.customerName).trim() : ("挂单 " + (idx+1)))}</div>
+          <div class="meta">件数 ${s.sumQty} · 款式 ${s.kinds}</div>
+        </div>
+        <div class="amt">€ ${money(s.total)}</div>
+      `;
+      card.onclick = () => {
+        if(items.length){
+          const ok = confirm('当前有内容，确认覆盖为该挂单？');
+          if(!ok) return;
+        }
+        const holds2 = loadHolds();
+        const picked = holds2.splice(idx,1)[0]; // 取出后移除
+        saveHolds(holds2);
+
+        applyHold(picked);
+        renderHolds();
+      };
+      holdsListEl.appendChild(card);
+    });
+  }
+
+  function applyHold(hold){
+    items.length=0; lockedQty=null; paidEl.value=''; lastEl.textContent='—'; lastAddedIndex = -1; lastAddedIndex = -1; lastAddedIndex = -1;
+    selectedRow=-1; selectedCol=0;
+        if(customerEl) customerEl.value = (hold && hold.customerName) ? String(hold.customerName) : '';
+(hold.items||[]).forEach(x => {
+      const qty=Number(x.qty)||0; const price=Number(x.price)||0;
+      items.push({name:x.name||DEFAULT_NAME, qty, price, amount:qty*price});
+    });
+    render();
+    lineEl.focus();
+  }
+
+  function holdCurrent(){
+    if(!items.length) return;
+    const holds = loadHolds();
+    holds.push({ ts:Date.now(), customerName: (customerEl ? String(customerEl.value||'').trim() : ''), items: items.map(it => ({name:it.name||DEFAULT_NAME, qty:it.qty, price:it.price})) });
+    saveHolds(holds);
+
+    clearCurrentToNew();      // this calls render() and focuses input
+    renderHolds();            // immediate refresh (no reload needed)
+  }
+
+  function clearCurrentToNew(){
+    items.length=0; lockedQty=null; paidEl.value=''; lastEl.textContent='—'; lastAddedIndex = -1; lastAddedIndex = -1; lastAddedIndex = -1;
+    selectedRow=-1; selectedCol=0;
+        if(customerEl) customerEl.value='';
+render();
+    lineEl.focus();
+    lineEl.select();
+    toast('就绪');
+  }
+
+  btnHoldNow.onclick = () => { holdCurrent(); };
+
+  btnClearHolds.onclick = () => {
+    const holds = loadHolds();
+    if(!holds.length) return;
+    if(confirm('确认清空所有挂单？')){
+      saveHolds([]);
+      renderHolds();
+    }
+  };
+
+  // ===== Checkout modal + 80mm printing + auto clear on success =====
+  function openCheckout(){
+    const { total, sumQty } = calcTotals();
+    if(total <= 0){ lineEl.focus(); return; }
+
+    modalTotal.textContent = money(total);
+    modalQty.textContent = String(sumQty);
+    modalKinds.textContent = String(items.length);
+
+    miniItems.innerHTML = '';
+    items.forEach(it => {
+      const row = document.createElement('div');
+      row.className = 'miniRow';
+      row.innerHTML = `
+        <div>${escapeHtml(it.name || DEFAULT_NAME)}</div>
+        <div class="r">${it.qty}</div>
+        <div class="r">${money(it.price)}</div>
+        <b>${money(it.amount)}</b>
+      `;
+      miniItems.appendChild(row);
+    });
+
+    modalPaid.value = String(paidEl.value || '').trim();
+    updateModalChange();
+
+    mask.style.display='flex';
+    setTimeout(()=>{ modalPaid.focus(); modalPaid.select(); }, 0);
+  }
+  function closeCheckout(){
+    mask.style.display='none';
+    lineEl.focus();
+    lineEl.select();
+  }
+  function fillExact(){
+    const { total } = calcTotals();
+    modalPaid.value = money(total);
+    updateModalChange();
+    modalPaid.focus();
+    modalPaid.select();
+  }
+  function updateModalChange(){
+    const { total } = calcTotals();
+    const paid = toNumber(modalPaid.value);
+    if(!Number.isFinite(paid)){
+      modalChange.textContent='0.00';
+      modalState.textContent='输入实收';
+      return;
+    }
+    const ch = paid - total;
+    modalChange.textContent = money(ch);
+    modalState.textContent = (ch >= 0) ? '可打印' : '实收不足';
+  }
+
+  
+  function buildReceiptHTML(payload){
+    const shopName = payload.shopName || 'Mi Angelito Moda';
+    const ts = payload.ts || '';
+
+        const customerName = String(payload.customerName || '').trim();
+const rows = payload.items.map(it => {
+      const name = escapeHtml(it.name || DEFAULT_NAME);
+      const qxp  = `${it.qty}×${money(it.price)}`;
+      const amt  = `${money(it.amount)}€`;
+      return `
+        <div class="itemRow">
+          <div class="iName">${name}</div>
+          <div class="iQxp">${qxp}</div>
+          <div class="iAmt">${amt}</div>
+        </div>
+      `;
+    }).join("");
+
+    return `<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<title>Mi Angelito Moda</title>
+<style>
+/* ===== Zara-style minimal receipt (Epson 80mm safe) ===== */
+@page{ size:80mm auto; margin:0; }
+html,body{ margin:0; padding:0; }
+body{
+  width:72mm;              /* leave side margins on 80mm */
+  margin:0 auto;
+  padding:6mm 0;           /* top/bottom breathing room */
+  font-family: "Consolas","Courier New",monospace;
+  color:#000;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+  text-rendering: optimizeSpeed;
+}
+.wrap{
+  padding:0 5mm;           /* left/right safe margin inside 72mm */
+}
+.center{ text-align:center; }
+.upper{ text-transform:uppercase; letter-spacing:.14em; }
+.muted{ opacity:.80; }
+.hr{
+  border-top:1px solid #000;
+  opacity:.55;
+  margin:10px 0;
+}
+.small{ font-size:12px; line-height:1.25; }
+.base{ font-size:14px; line-height:1.28; }
+.bold{ font-weight:900; }
+
+.piezas{
+  margin:6px 0 0;
+  font-size:15px;
+  font-weight:900;
+}
+
+.itemHead{
+  display:flex;
+  justify-content:space-between;
+  font-size:12px;
+  opacity:.85;
+  margin-top:2px;
+}
+.itemRow{
+  display:flex;
+  justify-content:space-between;
+  gap:6px;
+  font-size:14px;          /* bigger body */
+  line-height:1.28;
+  padding:2px 0;
+}
+.iName{
+  flex:1;
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.iQxp{
+  width:18mm;
+  text-align:center;
+  font-variant-numeric: tabular-nums;
+  white-space:nowrap;
+}
+.iAmt{
+  width:18mm;
+  text-align:right;
+  font-variant-numeric: tabular-nums;
+  white-space:nowrap;
+}
+
+.totalBox{
+  margin-top:6px;
+}
+.totalLabel{
+  font-size:12px;
+  opacity:.85;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+}
+.totalValue{
+  font-size:26px;          /* TOTAL bigger */
+  font-weight:950;
+  margin-top:2px;
+  font-variant-numeric: tabular-nums;
+}
+.payLine{
+  display:flex;
+  justify-content:space-between;
+  font-size:14px;
+  margin-top:4px;
+  font-variant-numeric: tabular-nums;
+}
+.payLine .k{ opacity:.85; }
+.payLine .v{ font-weight:900; }
+
+.thanks{
+  margin-top:10px;
+  font-size:12px;
+  opacity:.78;
+  letter-spacing:.10em;
+  text-transform:uppercase;
+}
+
+    /* ===== v3.1 左侧米色 + 行层次增强（不动逻辑） ===== */
+    .tableWrap{
+      background:linear-gradient(180deg,#f4efe6,#efe9df) !important;
+    }
+
+    /* 商品行层次增强：更明显的米色分层 + 细腻分隔线 + 微内阴影 */
+    tbody tr{
+      position:relative;
+      background:#f6f1e8 !important;
+      transition:.18s ease;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.55),
+        inset 0 -1px 0 rgba(0,0,0,.04);
+    }
+    tbody tr:nth-child(even){
+      background:#ece4d8 !important; /* 加大色差 */
+    }
+    tbody tr:hover{
+      background:#e6dccb !important;
+    }
+    tbody tr::after{
+      content:"";
+      position:absolute;
+      left:0; right:0; bottom:0;
+      height:1px;
+      background:linear-gradient(90deg,
+        rgba(0,0,0,.02),
+        rgba(0,0,0,.10),
+        rgba(0,0,0,.02)
+      );
+      pointer-events:none;
+    }
+
+    /* 最后一行（最后输入）高级高亮：更立体、更明显 */
+    tbody tr.lastAdded{
+      background:linear-gradient(180deg,#ded4c2,#d6c9b4) !important;
+      font-weight:650;
+      box-shadow:
+        inset 0 2px 5px rgba(0,0,0,.06),
+        0 5px 16px rgba(0,0,0,.10);
+    }
+    tbody tr.lastAdded::after{
+      background:linear-gradient(90deg,
+        rgba(0,0,0,.05),
+        rgba(0,0,0,.18),
+        rgba(0,0,0,.05)
+      );
+    }
+
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    ${customerName ? `<div class="center bold upper" style="font-size:18px;letter-spacing:.10em">${escapeHtml(customerName)}</div><div style="height:6px"></div>` : ``}
+    <div class="center bold" style="font-size:16px;letter-spacing:.10em">${escapeHtml(shopName)}</div>
+    <div class="center upper small muted" style="margin-top:4px;">ALBARÁN DE ENTREGA</div>
+    <div class="center small muted" style="margin-top:2px;">#${escapeHtml(payload.billNo || "")}</div>
+
+    <div class="hr"></div>
+
+    <div class="center piezas">PIEZAS: ${payload.sumQty}</div>
+
+    <div class="hr"></div>
+
+    <div class="itemHead">
+      <div>Artículo</div>
+      <div>Cant×€</div>
+      <div>Importe</div>
+    </div>
+
+    ${rows}
+
+    <div class="hr"></div>
+
+    <div class="center totalBox">
+      <div class="totalLabel">IMPORTE</div>
+      <div class="totalValue">${money(payload.total)}€</div>
+    </div>
+
+    <div class="hr"></div>
+
+    <div class="payLine"><div class="k">Pagado</div><div class="v">${money(payload.paid)}€</div></div>
+    <div class="payLine"><div class="k">Cambio</div><div class="v">${money(payload.change)}€</div></div>
+
+    <div class="hr"></div>
+
+    <div class="center thanks">Gracias por su compra</div>
+    <div class="center thanks">CONTACTO: 681677777</div>
+  </div>
+
+<script>
+  window.onload = () => { window.focus(); setTimeout(() => window.print(), 60); };
+  window.onafterprint = () => {
+    try{ if(window.opener){ window.opener.postMessage({type:'POS_PRINTED_OK'}, '*'); } }catch(e){}
+    setTimeout(()=>window.close(), 120);
+  };
+<\/script>
+</body>
+</html>`;
+  }
+
+
+  
+function settleNoPrint(){
+    // 在结账窗口内：不打印，直接入账（默认刚好付清，或用你输入的实收）
+    const { total } = calcTotals();
+    if(total <= 0){ closeCheckout(); return; }
+
+    const raw = String(modalPaid.value || '').trim();
+    let paid = toNumber(raw);
+    if(!raw || !Number.isFinite(paid)){
+      paid = total; // default: exact amount
+      modalPaid.value = money(paid);
+    }
+    const change = paid - total;
+
+    paidEl.value = money(paid);
+    updatePaymentUI();
+
+    const { sumQty } = calcTotals();
+    const now = new Date();
+    const billNo = billNoFromDate(now);
+
+    const payload = {
+      ts: now.toLocaleString(),
+      billNo,
+      customerName: (customerEl ? String(customerEl.value||'').trim() : ''),
+      items: items.map(it => ({ name: it.name || DEFAULT_NAME, qty: it.qty, price: it.price, amount: it.amount })),
+      total, paid, change, sumQty, kinds: items.length
+    };
+
+    // 记录上一笔 + 历史（统计用）
+    saveLastBill({ billNo: payload.billNo, ts: payload.ts, total: payload.total, paid: payload.paid, change: payload.change });
+    pushBillHistory(payload);
+    renderLastBill();
+  __ensureMadridClock();
+
+    // 清空并回到输入框（不打印）
+    try{ clearCurrentToNew(); }catch(e){}
+    closeCheckout();
+    toast('Guardado (sin imprimir)');
+  }
+
+  function quickSettleNoModal(){
+    // 不弹出收款窗口：默认“刚好付清”，直接入账（不打印）
+    const { total, sumQty } = calcTotals();
+    if(total <= 0){
+      lineEl.focus(); lineEl.select();
+      return;
+    }
+
+    const now = new Date();
+    const billNo = billNoFromDate(now);
+    const paid = total;
+    const change = 0;
+
+    const payload = {
+      ts: now.toLocaleString(),
+      billNo,
+      customerName: (customerEl ? String(customerEl.value||'').trim() : ''),
+      items: items.map(it => ({ name: it.name || DEFAULT_NAME, qty: it.qty, price: it.price, amount: it.amount })),
+      total, paid, change, sumQty, kinds: items.length
+    };
+
+    saveLastBill({ billNo: payload.billNo, ts: payload.ts, total: payload.total, paid: payload.paid, change: payload.change });
+    pushBillHistory(payload);
+    renderLastBill();
+
+    try{ clearCurrentToNew(); }catch(e){}
+    toast('Cobrado y guardado');
+    lineEl.focus(); lineEl.select();
+  }
+
+  function printReceipt(){
+    // 正常打印流程：在结账窗口按 Enter 或点“打印小票”
+    const { total } = calcTotals();
+    const paid = toNumber(modalPaid.value);
+    if(!Number.isFinite(paid)){
+      modalPaid.focus();
+      modalPaid.select();
+      return;
+    }
+    const change = paid - total;
+
+    paidEl.value = money(paid);
+    updatePaymentUI();
+
+    const { sumQty } = calcTotals();
+    const now = new Date();
+    const billNo = billNoFromDate(now);
+
+    const payload = {
+      ts: now.toLocaleString(),
+      billNo,
+      customerName: (customerEl ? String(customerEl.value||'').trim() : ''),
+      items: items.map(it => ({ name: it.name || DEFAULT_NAME, qty: it.qty, price: it.price, amount: it.amount })),
+      total, paid, change, sumQty, kinds: items.length
+    };
+
+    // 记录上一笔（金额/实收/找零）+ 历史
+    saveLastBill({ billNo: payload.billNo, ts: payload.ts, total: payload.total, paid: payload.paid, change: payload.change });
+    pushBillHistory(payload);
+    renderLastBill();
+
+    const w = window.open("", "_blank", "width=420,height=720");
+    if(!w){
+      flashInputError("浏览器拦截了弹窗，请允许弹窗后再打印。");
+      return;
+    }
+    w.document.open();
+    w.document.write(buildReceiptHTML(payload));
+    w.document.close();
+
+    // 打印完成后由 postMessage 清空；这里兜底延迟清空
+    setTimeout(() => { try { clearCurrentToNew(); } catch(e){} }, 3500);
+    closeCheckout();
+  }
+
+window.addEventListener('message', (ev) => {
+    if(ev?.data?.type === 'POS_PRINTED_OK'){
+      clearCurrentToNew();
+      setTimeout(() => { lineEl.focus(); lineEl.select(); }, 50);
+    }
+  });
+
+  
+  // ===== Quick edit (selected row first) =====
+  function __targetRowIndex(){
+    if(selectedRow >= 0 && selectedRow < items.length) return selectedRow; // 优先：选中行
+    if(lastAddedIndex >= 0 && lastAddedIndex < items.length) return lastAddedIndex; // 其次：最后新增行
+    return items.length - 1; // 兜底：最后一行
+  }
+
+  // RePag (PageUp): after typing "5." press RePag to overwrite PRICE of selected row (if any) else last row
+  function quickEditLastPrice(){
+    const idx = __targetRowIndex();
+    if(idx < 0) return;
+    const v = toNumber(lineEl.value);
+    if(!Number.isFinite(v) || v < 0){
+      flashInputError('改价格：先输入单价（例如 5.）然后按 RePag');
+      return;
+    }
+    items[idx].price = v;
+    recalcItem(items[idx]);
+    lastAddedIndex = idx;
+    lineEl.value = '';
+    render();
+    toast(`已改价：€ ${money(v)}`);
+    lineEl.focus(); lineEl.select();
+  }
+
+  // Pausa/Inter (Pause): after typing "5" press Pause to overwrite QTY of selected row (if any) else last row
+  function quickEditLastQty(){
+    const idx = __targetRowIndex();
+    if(idx < 0) return;
+    const v = toNumber(lineEl.value);
+    if(!Number.isFinite(v) || v === 0){
+      flashInputError('改数量：先输入数量（例如 5）然后按 Pausa/Inter');
+      return;
+    }
+    items[idx].qty = v;
+    recalcItem(items[idx]);
+    lastAddedIndex = idx;
+    lineEl.value = '';
+    render();
+    toast(`已改数量：${v}`);
+    lineEl.focus(); lineEl.select();
+  }
+
+
+// ===== hotkeys: Delete / Ctrl+Z =====
+  function undoLast(){
+    if(!items.length) return;
+    items.pop();
+    render();
+    toast('已撤销');
+    lineEl.focus(); lineEl.select();
+  }
+  function deleteSelectedRow(){
+    if(selectedRow < 0 || selectedRow >= items.length) return;
+    items.splice(selectedRow, 1);
+    if(lastAddedIndex === selectedRow) lastAddedIndex = -1;
+    if(lastAddedIndex > selectedRow) lastAddedIndex -= 1;
+    if(lastAddedIndex === selectedRow) lastAddedIndex = -1;
+    if(lastAddedIndex > selectedRow) lastAddedIndex -= 1;
+    if(items.length === 0){ selectedRow = -1; selectedCol = 0; }
+    else selectedRow = Math.min(selectedRow, items.length - 1);
+    render();
+    toast('已删除');
+    lineEl.focus(); lineEl.select();
+  }
+  function isEditingTableInput(){
+    const a = document.activeElement;
+    if(!a) return false;
+    const tag = (a.tagName || '').toLowerCase();
+    if(tag === 'input' || tag === 'textarea'){
+      if(a.closest && a.closest('#tbody')) return true;
+    }
+    return false;
+  }
+
+  // arrow navigation
+  function interceptArrows(e){
+    if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)){
+      e.preventDefault(); e.stopPropagation(); // move selection without stealing focus from main input
+    if(e.key === 'ArrowUp') setSelected(selectedRow - 1, selectedCol, false);
+    else setSelected(selectedRow + 1, selectedCol, false);
+    setTimeout(()=>{ try{ lineEl.focus(); lineEl.select(); }catch(e){} }, 0);
+    }
+  }
+  tableWrap.addEventListener('keydown', interceptArrows, true);
+  tbody.addEventListener('keydown', interceptArrows, true);
+
+  // 强制：快速输入 Enter 必触发（兼容输入法/小键盘回车）
+  let __lineComposing = false;
+  lineEl.addEventListener('compositionstart', () => { __lineComposing = true; });
+  lineEl.addEventListener('compositionend', () => { __lineComposing = false; });
+
+  function __isEnter(e){
+    return e.key === 'Enter' || e.key === 'NumpadEnter' || e.keyCode === 13;
+  }
+  function __tryEnter(e){
+    if(!__isEnter(e)) return false;
+    if(__lineComposing || e.isComposing) return true;
+    e.preventDefault();
+    e.stopPropagation();
+    handleEnterOnLine();
+    return true;
+  }
+  lineEl.addEventListener('keydown', (e) => { __tryEnter(e); }, true);
+  lineEl.addEventListener('keyup', (e) => {
+    if(String(lineEl.value || '').trim() === '') return;
+    __tryEnter(e);
+  }, true);
+
+  paidEl.addEventListener('blur', ()=> {
+    const s=normalizeDecimalString(paidEl.value);
+    const n=toNumber(s);
+    if(Number.isFinite(n)) paidEl.value=money(n);
+    updatePaymentUI();
+  });
+
+  modalPaid.addEventListener('input', updateModalChange);
+  // Enter in 实收：空/非法=默认刚好付清；有金额=直接打印
+  modalPaid.addEventListener('keydown', (e) => {
+    if(e.key !== 'Enter' && e.key !== 'NumpadEnter') return;
+    e.preventDefault();
+    const { total } = calcTotals();
+    const raw = String(modalPaid.value || '').trim();
+    const paid = toNumber(raw);
+    // Enter：空/非法 => 默认刚好付清（不打印，等待下一次 Enter）
+    if(!raw || !Number.isFinite(paid)){
+      modalPaid.value = money(total);
+      updateModalChange();
+      modalPaid.focus();
+      modalPaid.select();
+      return;
+    }
+    // Enter：有效金额 => 打印
+    printReceipt();
+  });
+
+modalPaid.addEventListener('blur', () => {
+    if(String(modalPaid.value||'').trim()){
+      modalPaid.value = normalizeDecimalString(modalPaid.value);
+      const n = toNumber(modalPaid.value);
+      if(Number.isFinite(n)) modalPaid.value = money(n);
+    }
+    updateModalChange();
+  });
+
+  // Global hotkeys
+  document.addEventListener('keydown', (e)=>{
+    if(e.key === 'F8'){ e.preventDefault(); toggleHistory(); return; }
+    // RePag (PageUp): overwrite last row price using the number currently typed in the main input
+    if(e.key === 'PageUp'){
+      if(mask.style.display === 'flex' || isEditingTableInput()) return;
+      e.preventDefault();
+      quickEditLastPrice();
+      return;
+    }
+    // Pausa/Inter (Pause): overwrite last row qty using the number currently typed in the main input
+    if(e.key === 'Pause'){
+      if(mask.style.display === 'flex' || isEditingTableInput()) return;
+      e.preventDefault();
+      quickEditLastQty();
+      return;
+    }
+    // Bloq Despl (Scroll Lock)：结账但不打印（仍计入统计）
+    if(e.key === 'ScrollLock'){
+      e.preventDefault();
+      // Bloq Despl: cobro rápido SIN pantalla de cobro
+      if(mask.style.display === 'flex') { settleNoPrint(); }
+      else { quickSettleNoModal(); }
+      return;
+    }
+    // Esc：取消选中行（非结账窗口时）
+    if(e.key === 'Escape' && mask.style.display !== 'flex'){
+      if(isEditingTableInput()) return; // 正在编辑表格输入框就不打断
+      e.preventDefault();
+      selectedRow = -1;
+      selectedCol = 0;
+      // 立即取消视觉选中（render 后 lastAdded 会自动回归高亮）
+      [...tbody.querySelectorAll('tr')].forEach(tr => tr.classList.remove('selected'));
+      render();
+      lineEl.focus();
+      lineEl.select();
+      return;
+    }
+
+
+    if(mask.style.display === 'flex'){
+      if(e.key === 'Escape'){ e.preventDefault(); closeCheckout(); return; }
+      if(e.key === 'Enter' || e.key === 'NumpadEnter'){ e.preventDefault(); printReceipt(); return; }
+      return;
+    }
+
+    if(e.ctrlKey && !e.shiftKey && (e.key === 'z' || e.key === 'Z')){
+      if(isEditingTableInput()) return;
+      e.preventDefault();
+      undoLast();
+      return;
+    }
+
+    if(e.key === 'Delete'){
+      const ae = document.activeElement;
+      const safe = (ae === tableWrap) || (ae === document.body) || (ae === lineEl);
+      if(safe && selectedRow >= 0){
+        e.preventDefault();
+        deleteSelectedRow();
+        return;
+      }
+    }
+
+    if(e.ctrlKey && !e.shiftKey && (e.key === 'g' || e.key === 'G')){
+      e.preventDefault(); holdCurrent(); return;
+    }
+
+    if(e.key === 'PageDown'){
+      e.preventDefault(); openCheckout(); return;
+    }
+  });
+
+  // Buttons
+  document.getElementById('btnCheckout').onclick = openCheckout;
+  document.getElementById('btnUndo').onclick = undoLast;
+  document.getElementById('btnClear').onclick = ()=>{ if(confirm('确认清空所有项目？')) clearCurrentToNew(); };
+
+  document.getElementById('btnClose').onclick = closeCheckout;
+  document.getElementById('btnCancel').onclick = closeCheckout;
+  document.getElementById('btnFillExact').onclick = fillExact;
+  document.getElementById('btnPrint').onclick = settleNoPrint;
+
+  window.addEventListener('resize', () => { fitGrand(); });
+
+  
+// ===== Hidden History UI (F8) =====
+let __historyBuilt = false;
+function __ensureHistoryUI(){
+  if(__historyBuilt) return;
+  __historyBuilt = true;
+
+  const mask = document.createElement('div');
+  mask.id = 'historyMask';
+  mask.style.cssText = `
+    position:fixed;inset:0;display:none;align-items:center;justify-content:center;
+    padding:18px;background:rgba(17,24,39,.55);z-index:10000;
+  `;
+  const panel = document.createElement('div');
+  panel.style.cssText = `
+    width:min(980px,98vw);max-height:88vh;overflow:hidden;
+    background:#fff;border-radius:18px;border:1px solid rgba(229,231,235,1);
+    box-shadow:0 30px 80px rgba(0,0,0,.35);
+    display:flex;flex-direction:column;
+    font-family: system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  `;
+  panel.innerHTML = `
+    <div style="padding:14px 16px;border-bottom:1px solid #e8e8e8;display:flex;align-items:center;justify-content:space-between;gap:12px">
+      <div>
+        <div style="font-weight:950;font-size:18px">Historial · Reimprimir</div>
+        <div style="font-size:12px;color:#6f6f6f;margin-top:2px">F8：打开/关闭 · Solo para quien conoce el atajo</div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <button id="histClearAll" style="padding:10px 12px;border-radius:12px;border:1px solid #e8e8e8;background:#fff;cursor:pointer">Vaciar</button>
+        <button id="histClose" style="padding:10px 12px;border-radius:12px;border:1px solid #e8e8e8;background:#fff;cursor:pointer">Cerrar</button>
+      </div>
+    </div>
+
+    <div style="padding:12px 16px;border-bottom:1px solid #e8e8e8;display:flex;gap:10px;align-items:center">
+      <input id="histSearch" placeholder="Buscar por nº, importe, piezas..." style="flex:1;font-size:14px;padding:10px 12px;border:1px solid #e8e8e8;border-radius:12px;outline:none"/>
+      <div style="font-size:12px;color:#6f6f6f;white-space:nowrap" id="histCount">0</div>
+    </div>
+
+    <div id="histList" style="padding:10px 16px;overflow:auto;flex:1;background:#fff"></div>
+  `;
+  mask.appendChild(panel);
+  document.body.appendChild(mask);
+
+  const close = () => { mask.style.display='none'; lineEl.focus(); lineEl.select(); };
+  panel.querySelector('#histClose').onclick = close;
+  mask.addEventListener('mousedown', (e)=>{ if(e.target === mask) close(); });
+
+  panel.querySelector('#histClearAll').onclick = () => {
+    if(confirm('¿Vaciar todo el historial?')){
+      saveBillHistory([]);
+      __renderHistoryList();
+    }
+  };
+
+  const searchEl = panel.querySelector('#histSearch');
+  searchEl.addEventListener('input', __renderHistoryList);
+
+  function __formatEUR(x){ return `€ ${money(Number(x)||0)}`; }
+
+  function __renderHistoryList(){
+    const listEl = panel.querySelector('#histList');
+    const countEl = panel.querySelector('#histCount');
+    const q = (searchEl.value || '').trim().toLowerCase();
+
+    const arr = loadBillHistory();
+    const filtered = !q ? arr : arr.filter(b => {
+      const hay = `${b.billNo||''} ${b.ts||''} ${b.total||''} ${b.sumQty||''}`.toLowerCase();
+      return hay.includes(q);
+    });
+
+    countEl.textContent = `${filtered.length}/${arr.length}`;
+    if(!filtered.length){
+      listEl.innerHTML = `<div style="border:1px dashed #e8e8e8;border-radius:14px;padding:12px;color:#6f6f6f;font-size:12px">
+        Sin registros. (Se guarda automáticamente después de imprimir.)
+      </div>`;
+      return;
+    }
+
+    listEl.innerHTML = '';
+    filtered.forEach((b, idx) => {
+      const card = document.createElement('div');
+      card.style.cssText = `
+        border:1px solid #e8e8e8;border-radius:14px;padding:10px 12px;background:#fafafa;
+        display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px;
+      `;
+      card.innerHTML = `
+        <div style="min-width:0">
+          <div style="font-weight:950">#${escapeHtml(b.billNo||'—')} <span style="font-weight:600;color:#6f6f6f;font-size:12px;margin-left:8px">${escapeHtml(b.ts||'')}</span></div>
+          <div style="font-size:12px;color:#6f6f6f;margin-top:4px">Piezas: <b style="color:#111">${escapeHtml(b.sumQty)}</b> · Total: <b style="color:#111">${__formatEUR(b.total)}</b></div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
+          <button data-act="reprint" style="padding:8px 10px;border-radius:12px;border:1px solid #e8e8e8;background:#111;color:#fff;cursor:pointer">Reimprimir</button>
+          <button data-act="del" style="padding:8px 10px;border-radius:12px;border:1px solid #e8e8e8;background:#fff;cursor:pointer">Eliminar</button>
+        </div>
+      `;
+      card.querySelector('[data-act="reprint"]').onclick = () => {
+        // reprint does NOT touch current order
+        const w = window.open("", "_blank", "width=420,height=720");
+        if(!w){ alert("El navegador bloqueó la ventana emergente."); return; }
+        w.document.open();
+        w.document.write(buildReceiptHTML(b));
+        w.document.close();
+      };
+      card.querySelector('[data-act="del"]').onclick = () => {
+        const all = loadBillHistory();
+        const keep = all.filter(x => x.billNo !== b.billNo);
+        saveBillHistory(keep);
+        __renderHistoryList();
+      };
+
+      listEl.appendChild(card);
+    });
+  }
+
+  window.__renderHistoryList = __renderHistoryList;
+}
+
+function toggleHistory(){
+  __ensureHistoryUI();
+  const hm = document.getElementById('historyMask');
+  if(!hm) return;
+  const now = hm.style.display === 'flex';
+  hm.style.display = now ? 'none' : 'flex';
+  if(!now){
+    window.__renderHistoryList && window.__renderHistoryList();
+    const search = hm.querySelector('#histSearch');
+    if(search){ setTimeout(()=>{ search.focus(); search.select(); }, 0); }
+  }else{
+    lineEl.focus(); lineEl.select();
+  }
+}
+
+
+  // ===== Focus keeper: keep cursor in main input (unless modal/table editing) =====
+  function keepFocusOnLine(){
+    if(mask.style.display === 'flex') return; // checkout modal active
+    const ae = document.activeElement;
+    if(ae && ae.closest && ae.closest('#tbody')) return; // editing table inputs
+        if(ae === customerEl) return; // editing customer name
+setTimeout(()=>{ lineEl.focus(); }, 0);
+  }
+
+  // Click anywhere => back to input (except modal/table)
+  document.addEventListener('click', (e) => {
+    if(mask.style.display === 'flex') return;
+    if(e.target && e.target.closest && e.target.closest('#tbody')) return;
+    if(e.target && (e.target.id === 'customerName' || (e.target.closest && e.target.closest('#customerName')))) return;
+    setTimeout(()=>{ lineEl.focus(); }, 0);
+  }, true);
+
+  // Window refocus (alt-tab / after printing) => back to input
+  window.addEventListener('focus', () => {
+    if(mask.style.display !== 'flex'){
+      lineEl.focus();
+      lineEl.select();
+    }
+  });
+
+
+  // ===== F2 Calculator (keyboard only) =====
+  const calcMask = document.getElementById('calcMask');
+  const calcExprEl = document.getElementById('calcExpr');
+  const calcResEl  = document.getElementById('calcRes');
+  let __calcOpen = false;
+  let __calcExpr = '';
+  let __calcJustEvaluated = false;
+
+  function __calcRender(){
+    if(calcExprEl) calcExprEl.textContent = (__calcExpr || ' ');
+  }
+  function __calcSetResult(val){
+    if(!calcResEl) return;
+    calcResEl.textContent = String(val);
+  }
+  function __calcSafeEval(expr){
+    const s = String(expr || '').trim();
+    if(!s) return null;
+    // Allow only numbers, operators, parentheses, dot and spaces
+    if(!/^[0-9+\-*/().\s]+$/.test(s)) return null;
+    try{
+      // eslint-disable-next-line no-new-func
+      const v = Function('"use strict";return (' + s + ')')();
+      if(typeof v !== 'number' || !Number.isFinite(v)) return null;
+      // format: keep up to 10 decimals, strip trailing zeros
+      const out = (Math.round(v * 1e10) / 1e10).toString();
+      return out;
+    }catch(e){
+      return null;
+    }
+  }
+
+  function __openCalc(){
+    if(!calcMask) return;
+    __calcOpen = true;
+    calcMask.style.display = 'flex';
+    calcMask.setAttribute('aria-hidden','false');
+    // keep current expression (so you can continue), but if empty reset screen nicely
+    __calcRender();
+    // focus trap: use mask itself to capture keys
+    setTimeout(()=>{ try{ calcMask.focus(); }catch(e){} }, 0);
+  }
+  function __closeCalc(){
+    if(!calcMask) return;
+    __calcOpen = false;
+    calcMask.style.display = 'none';
+    calcMask.setAttribute('aria-hidden','true');
+    lineEl.focus();
+    lineEl.select();
+  }
+  function __toggleCalc(){
+    if(__calcOpen) __closeCalc();
+    else __openCalc();
+  }
+
+  if(calcMask){
+    // allow focus for key capture
+    calcMask.tabIndex = -1;
+    // click outside panel closes
+    calcMask.addEventListener('mousedown', (e)=>{ if(e.target === calcMask) __closeCalc(); });
+  }
+
+  function __calcHandleKey(e){
+    if(!__calcOpen) return false;
+
+    // close keys
+    if(e.key === 'Escape'){ e.preventDefault(); e.stopPropagation(); __closeCalc(); return true; }
+    if(e.key === 'F2'){ e.preventDefault(); e.stopPropagation(); __toggleCalc(); return true; }
+
+    // clear
+    if(e.key === 'Delete'){ e.preventDefault(); e.stopPropagation(); __calcExpr=''; __calcJustEvaluated = false; __calcRender(); __calcSetResult('0'); return true; }
+    if(e.key === 'Backspace'){
+      e.preventDefault(); e.stopPropagation();
+      __calcExpr = __calcExpr.slice(0, -1);
+      __calcJustEvaluated = false;
+      __calcRender();
+      return true;
+    }
+
+    // equals
+    if(e.key === 'Enter' || e.key === 'NumpadEnter'){
+      e.preventDefault(); e.stopPropagation();
+      const out = __calcSafeEval(__calcExpr);
+      if(out == null){
+        __calcSetResult('Error');
+        __calcJustEvaluated = false;
+      }else{
+        __calcSetResult(out);
+        __calcExpr = out; // keep result on screen
+        __calcJustEvaluated = true;
+        __calcRender();
+      }
+      return true;
+    }
+
+    // allowed characters
+    const ch = e.key;
+    const allowed = '0123456789.+-*/()';
+    if(allowed.includes(ch)){
+      e.preventDefault(); e.stopPropagation();
+      const isOp = '+-*/'.includes(ch) || ch === ')';
+      const isStartNew = !isOp; // digit, dot, '('
+      if(__calcJustEvaluated){
+        if(isStartNew){
+          __calcExpr = ch;       // start new calculation
+        }else{
+          __calcExpr += ch;      // continue from result with operator
+        }
+        __calcJustEvaluated = false;
+      }else{
+        __calcExpr += ch;
+      }
+      __calcRender();
+      return true;
+    }
+
+    // ignore everything else while open (prevent POS hotkeys)
+    if(ch.length === 1){
+      e.preventDefault(); e.stopPropagation();
+      return true;
+    }
+    return true;
+  }
+
+  // F2: open calculator (global)
+  document.addEventListener('keydown', (e)=>{
+    if(e.key === 'F2'){
+      e.preventDefault();
+      __toggleCalc();
+      return;
+    }
+    // when calculator open, swallow keys here as well (before other handlers)
+    if(__calcOpen){
+      __calcHandleKey(e);
+    }
+  }, true);
+
+
+  // ===== ArrowUp/ArrowDown: keyboard select rows while staying in main input =====
+  // Only adds shortcut behavior; does not change business logic.
+  document.addEventListener('keydown', (e)=>{
+    if(e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return;
+    // do not interfere when calculator or checkout modal is open
+    if(__calcOpen) { e.preventDefault(); e.stopPropagation(); return; }
+    if(mask.style.display === 'flex') return;
+    // only when focus is on main input (avoid breaking text editing in customer/table inputs)
+    const ae = document.activeElement;
+    if(ae !== lineEl && ae !== tableWrap && ae !== document.body) return;
+    if(items.length === 0) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    // If nothing selected yet, start from lastAdded (or last row)
+    if(selectedRow < 0){
+      const start = (lastAddedIndex >= 0 && lastAddedIndex < items.length) ? lastAddedIndex : (items.length - 1);
+      setSelected(start, 0, false);
+      // keep caret in main input
+      setTimeout(()=>{ try{ lineEl.focus(); lineEl.select(); }catch(e){} }, 0);
+      return;
+    }
+    // move selection without stealing focus from main input
+    if(e.key === 'ArrowUp') setSelected(selectedRow - 1, selectedCol, false);
+    else setSelected(selectedRow + 1, selectedCol, false);
+    setTimeout(()=>{ try{ lineEl.focus(); lineEl.select(); }catch(e){} }, 0);
+  }, true);
+
+// ===== Madrid time (same row as title) =====
+function __ensureMadridClock(){
+  const header = document.querySelector('.leftHeader');
+  if(!header) return;
+
+  let el = document.getElementById('madridTime');
+  if(!el){
+    el = document.createElement('div');
+    el.id = 'madridTime';
+    el.className = 'madridTime';
+    header.appendChild(el);
+  }
+
+  const fmt = new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Europe/Madrid',
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+
+  const tick = () => {
+    const s = fmt.format(new Date()).replace(',', '');
+    el.textContent = s;
+  };
+
+  tick();
+  setInterval(tick, 30000);
+}
+
+  // init
+  render();
+  renderHolds();
+  renderLastBill();
+  lineEl.focus();
+  lineEl.select();
+  toast('就绪');
+})();
+</script>
+</body>
+</html>
