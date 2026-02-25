@@ -70,6 +70,28 @@
     .kpiRow .pill{background:#fafafa}
     .notice{border:1px dashed var(--line);border-radius:12px;padding:10px;background:#fff;color:var(--muted);font-size:12px;line-height:1.55;}
     .mono{font-family: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;}
+  
+    /* modal */
+    .modal.hidden{display:none}
+    .modal{position:fixed;inset:0;z-index:9999}
+    .modal-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.35)}
+    .modal-card{position:relative;max-width:880px;margin:6vh auto;background:#fff;border-radius:16px;box-shadow:0 20px 70px rgba(0,0,0,.25);overflow:hidden}
+    .modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:16px 18px;border-bottom:1px solid #eee}
+    .modal-title{font-weight:800;font-size:18px}
+    .modal-sub{margin-top:2px;color:#666;font-size:12px}
+    .modal-body{padding:16px 18px;max-height:60vh;overflow:auto}
+    .modal-actions{display:flex;flex-wrap:wrap;gap:10px;padding:12px 18px;border-top:1px solid #eee}
+    .modal-note{padding:0 18px 14px;color:#666;font-size:12px}
+    .receipt{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;font-size:12px;white-space:pre-wrap;line-height:1.25}
+    @media print{
+      body *{visibility:hidden}
+      #ticketModal, #ticketModal *{visibility:visible}
+      #ticketModal{position:absolute;inset:auto}
+      .modal-backdrop,.modal-actions,.modal-note,#btnCloseModal{display:none !important}
+      .modal-card{box-shadow:none;margin:0;max-width:none;border-radius:0}
+      .modal-body{max-height:none}
+    }
+
   </style>
 </head>
 
@@ -156,6 +178,20 @@
       </div>
     </div>
 
+
+    <div class="card" style="margin-top:12px">
+      <div class="cardHead">
+        <div>
+          <div class="h">Estadísticas</div>
+          <div class="m">Desglose rápido (según los tickets cargados)</div>
+        </div>
+        <button class="btn" id="btnExportStats">Exportar resumen</button>
+      </div>
+      <div class="cardBody">
+        <div id="extraStats" class="grid2"></div>
+      </div>
+    </div>
+
     <div class="card" style="margin-top:12px">
       <div class="cardHead">
         <div>
@@ -197,7 +233,7 @@
 (() => {
   // ===== Cloud config =====
   const API_URL = "https://pos123516269.miangelitomoda.workers.dev";
-  const API_KEY = "miangelito_2026_secure_key_83927_123516269";
+  const API_KEY = "miangelito_2026_secure_key_83927123516269";
   const DEFAULT_SHOP_ID = "miangelito";
 
   // ===== Helpers =====
@@ -323,6 +359,7 @@
   // ===== State =====
   let __allBills = [];
   let __filteredBills = [];
+  let __summary = null;
 
   function setStatus(ok, text, extra="") {
     statusPill.textContent = text;
@@ -358,20 +395,40 @@
   function renderSummary() {
     const bills = __filteredBills;
 
-    let total=0, piezas=0;
-    bills.forEach(b=>{
-      total += Number(b.total)||0;
-      piezas += Number(b.sum_qty ?? b.sumQty ?? 0)||0;
-    });
-    const tickets = bills.length;
-    const avg = tickets ? total / tickets : 0;
+    // Prefer server-side summary if available (more accurate, includes piezas even if /api/bills is minimal)
+    const s = __summary && typeof __summary === "object" ? __summary : null;
 
-    kTotal.textContent = eur(total);
-    kTickets.textContent = String(tickets);
-    kPiezas.textContent = String(piezas);
+    const total = s?.total ?? s?.income ?? s?.ingresos ?? null;
+    const tickets = s?.tickets ?? s?.count ?? s?.num_tickets ?? null;
+    const piezas = s?.piezas ?? s?.sum_qty ?? s?.sumQty ?? s?.qty ?? null;
+
+    let cTotal = 0, cPiezas = 0;
+    bills.forEach(b=>{
+      cTotal += Number(b.total)||0;
+      cPiezas += Number(b.sum_qty ?? b.sumQty ?? 0)||0;
+    });
+    const cTickets = bills.length;
+
+    const finalTotal = (total!=null) ? Number(total)||0 : cTotal;
+    const finalTickets = (tickets!=null) ? Number(tickets)||0 : cTickets;
+    const finalPiezas = (piezas!=null) ? Number(piezas)||0 : cPiezas;
+    const avg = finalTickets ? finalTotal / finalTickets : 0;
+
+    kTotal.textContent = eur(finalTotal);
+    kTickets.textContent = String(finalTickets);
+    kPiezas.textContent = String(finalPiezas);
     kAvg.textContent = eur(avg);
 
-    kLast.textContent = lastBillLabel(bills);
+    // Last ticket label: prefer server, fallback to client
+    if (s?.last_bill_no || s?.last_bill || s?.last) {
+      const n = s.last_bill_no ?? s.last_bill ?? s.last;
+      const t = s.last_ts_text ?? s.last_ts ?? s.last_time ?? "";
+      const tot = s.last_total ?? s.last_amount ?? "";
+      kLast.textContent = `Último ticket: #${String(n)} · ${String(t)}${tot!==""?` · ${eur(tot)}`:""}`;
+    } else {
+      kLast.textContent = lastBillLabel(bills);
+    }
+
     kPeak.textContent = computePeakHour(bills);
   }
 
@@ -391,37 +448,59 @@
 
     bills.forEach(b=>{
       const tr = document.createElement("tr");
+      tr.style.cursor = "pointer";
+      tr.title = "Clic para ver / imprimir";
       tr.innerHTML = `
-        <td class="mono">#${escapeHtml(b.bill_no ?? b.billNo ?? "—")}</td>
-        <td title="${escapeHtml(b.ts_text ?? "")}">${escapeHtml(b.ts_text ?? "")}</td>
-        <td class="tdR">${escapeHtml(String(b.machine_id ?? ""))}</td>
+        <td><b>#${escapeHtml(String(b.bill_no || ""))}</b></td>
+        <td>${escapeHtml(String(b.ts_text || ""))}</td>
+        <td class="tdC">${escapeHtml(String(b.machine_id || ""))}</td>
         <td class="tdR"><b>${eur(b.total)}</b></td>
         <td class="tdR">${eur(b.paid)}</td>
         <td class="tdR">${eur(b.change)}</td>
       `;
+      tr.addEventListener("click", ()=>openTicketModal(b));
       tbody.appendChild(tr);
     });
   }
 
   async function loadFromCloud() {
     const shopId = shopIdEl.value || DEFAULT_SHOP_ID;
+    const from = fromEl.value;
+    const to = toEl.value;
+    __summary = null;
+
     setStatus(true, "Cargando…");
 
     try {
-      // Get last 100 bills (current API limit)
+      // 1) Get last 100 bills (API limit) and filter locally by date range
       const bills = await apiFetch(`/api/bills?shop_id=${encodeURIComponent(shopId)}`);
       __allBills = Array.isArray(bills) ? bills : [];
-
       applyFilter();
+
+      // 2) Try to fetch server-side summary (for accurate piezas, etc.)
+      // If the Worker does not support from/to yet, we gracefully fall back to client-side summary.
+      try {
+        const qs = new URLSearchParams({ shop_id: shopId });
+        if (from) qs.set("from", from);
+        if (to) qs.set("to", to);
+        const s = await apiFetch(`/api/summary?${qs.toString()}`);
+        if (s && typeof s === "object") __summary = s;
+      } catch(_) {
+        __summary = null;
+      }
+
       renderSummary();
       renderList();
+      renderExtraStats();
 
       setStatus(true, "Conectado", `OK · tickets recibidos: ${__allBills.length}`);
     } catch(err) {
       __allBills = [];
       __filteredBills = [];
+      __summary = null;
       renderSummary();
       renderList();
+      renderExtraStats();
 
       setStatus(false, "Error", String(err?.message || err));
     }
@@ -452,11 +531,205 @@
     }
   };
 
+
+  // ===== Extra stats (by machine / by hour) =====
+  function renderExtraStats(){
+    const root = document.getElementById("extraStats");
+    if(!root) return;
+
+    const bills = __filteredBills;
+    if(!bills.length){
+      root.innerHTML = `<div class="note">Sin datos en este rango.</div>`;
+      return;
+    }
+
+    const byMachine = new Map();
+    const byHour = new Map();
+    let total = 0, tickets = 0, piezas = 0;
+
+    bills.forEach(b=>{
+      const m = String(b.machine_id || "-");
+      const t = Number(b.total)||0;
+      const q = Number(b.sum_qty ?? b.sumQty ?? 0)||0;
+      total += t; tickets += 1; piezas += q;
+
+      const mm = byMachine.get(m) || { tickets:0, total:0, piezas:0 };
+      mm.tickets += 1; mm.total += t; mm.piezas += q;
+      byMachine.set(m, mm);
+
+      const h = hourOf(b.ts_text);
+      const hh = byHour.get(h) || { tickets:0, total:0 };
+      hh.tickets += 1; hh.total += t;
+      byHour.set(h, hh);
+    });
+
+    // top hour
+    const hourRows = [...byHour.entries()].sort((a,b)=> b[1].total - a[1].total);
+    const topHour = hourRows[0] ? `${hourRows[0][0]}:00` : "--";
+
+    const machineRows = [...byMachine.entries()].sort((a,b)=> b[1].total - a[1].total);
+
+    root.innerHTML = `
+      <div class="kpi">
+        <div class="kLabel">Máquinas</div>
+        <div class="kValue">${machineRows.length}</div>
+        <div class="kSub">Con tickets en el rango</div>
+      </div>
+      <div class="kpi">
+        <div class="kLabel">Hora top</div>
+        <div class="kValue">${escapeHtml(topHour)}</div>
+        <div class="kSub">Según total vendido</div>
+      </div>
+      <div class="kpi" style="grid-column:1/-1">
+        <div class="kLabel">Desglose por máquina</div>
+        <div class="kSub" style="margin-top:8px">
+          ${machineRows.map(([m, v])=>`
+            <div style="display:flex;gap:10px;justify-content:space-between;padding:6px 0;border-top:1px dashed #e6e6e6">
+              <div><b>${escapeHtml(m)}</b> · ${v.tickets} tickets · ${v.piezas} piezas</div>
+              <div><b>${eur(v.total)}</b></div>
+            </div>
+          `).join("")}
+        </div>
+      </div>
+    `;
+  }
+
+  function hourOf(tsText){
+    // expects "YYYY/MM/DD HH:mm:ss" or similar
+    const m = String(tsText||"").match(/\b(\d{1,2}):\d{2}/);
+    if(!m) return "--";
+    const h = String(m[1]).padStart(2,"0");
+    return h;
+  }
+
+  // ===== Ticket modal (preview / print / export / email) =====
+  const modal = document.getElementById("ticketModal");
+  const modalBody = document.getElementById("ticketModalBody");
+  const modalTitle = document.getElementById("ticketModalTitle");
+  const modalSub = document.getElementById("ticketModalSub");
+  const modalNote = document.getElementById("ticketModalNote");
+  const btnCloseModal = document.getElementById("btnCloseModal");
+  const btnPrintTicket = document.getElementById("btnPrintTicket");
+  const btnCopyTicket = document.getElementById("btnCopyTicket");
+  const btnEmailTicket = document.getElementById("btnEmailTicket");
+  const btnExportTicketJson = document.getElementById("btnExportTicketJson");
+  const btnExportStats = document.getElementById("btnExportStats");
+
+  let __activeTicket = null;
+
+  function openTicketModal(b){
+    __activeTicket = b || null;
+    if(!modal) return;
+
+    const shopId = shopIdEl.value || DEFAULT_SHOP_ID;
+    const billNo = b?.bill_no || "";
+    modalTitle.textContent = `Ticket #${billNo}`;
+    modalSub.textContent = `${shopId} · ${b?.ts_text || ""} · Máquina ${b?.machine_id || ""}`;
+    modalNote.textContent = "Nota: si el API no guarda el detalle (líneas), el panel sólo puede previsualizar el resumen.";
+
+    const lines = [];
+    lines.push(`MI ANGELITO MODA`);
+    lines.push(`Tienda: ${shopId}`);
+    lines.push(`Ticket: ${billNo}`);
+    lines.push(`Fecha: ${b?.ts_text || ""}`);
+    lines.push(`Máquina: ${b?.machine_id || ""}`);
+    lines.push(`------------------------------`);
+    if (b?.sum_qty != null) lines.push(`Piezas: ${b.sum_qty}`);
+    if (b?.kinds != null) lines.push(`Modelos: ${b.kinds}`);
+    lines.push(`TOTAL: ${eur(b?.total)}`);
+    if (b?.paid != null) lines.push(`PAGADO: ${eur(b?.paid)}`);
+    if (b?.change != null) lines.push(`CAMBIO: ${eur(b?.change)}`);
+
+    // If the Worker later exposes a detail endpoint, we can enrich here:
+    // try GET /api/bill?shop_id=...&bill_no=...
+    modalBody.innerHTML = `<div class="receipt">${escapeHtml(lines.join("\n"))}</div>`;
+
+    modal.classList.remove("hidden");
+  }
+
+  function closeTicketModal(){
+    if(!modal) return;
+    modal.classList.add("hidden");
+    __activeTicket = null;
+  }
+
+  if(modal){
+    modal.addEventListener("click", (e)=>{
+      const t = e.target;
+      if(t && (t.dataset?.close === "1")) closeTicketModal();
+    });
+  }
+  if(btnCloseModal) btnCloseModal.onclick = closeTicketModal;
+  document.addEventListener("keydown", (e)=>{
+    if(e.key === "Escape" && modal && !modal.classList.contains("hidden")) closeTicketModal();
+  });
+
+  if(btnPrintTicket) btnPrintTicket.onclick = ()=>window.print();
+  if(btnCopyTicket) btnCopyTicket.onclick = async ()=>{
+    try{
+      const txt = modalBody?.innerText || "";
+      await navigator.clipboard.writeText(txt);
+      modalNote.textContent = "Copiado al portapapeles.";
+    }catch(_){
+      modalNote.textContent = "No se pudo copiar (permiso del navegador).";
+    }
+  };
+  if(btnEmailTicket) btnEmailTicket.onclick = ()=>{
+    const b = __activeTicket;
+    if(!b) return;
+    const subj = encodeURIComponent(`Ticket ${b.bill_no} · Mi Angelito Moda`);
+    const body = encodeURIComponent((modalBody?.innerText||"") + "\n\n— Enviado desde Boss Panel");
+    // Opens the user's email client
+    window.location.href = `mailto:?subject=${subj}&body=${body}`;
+  };
+  if(btnExportTicketJson) btnExportTicketJson.onclick = ()=>{
+    const b = __activeTicket;
+    if(!b) return;
+    downloadText(`ticket_${String(b.bill_no||"")}.json`, JSON.stringify(b, null, 2), "application/json");
+  };
+
+  if(btnExportStats) btnExportStats.onclick = ()=>{
+    const shopId = shopIdEl.value || DEFAULT_SHOP_ID;
+    const from = fromEl.value;
+    const to = toEl.value;
+    const payload = {
+      shop_id: shopId,
+      from, to,
+      summary: __summary,
+      tickets: __filteredBills
+    };
+    downloadText(`resumen_cloud_${shopId}_${from}_${to}.json`, JSON.stringify(payload, null, 2), "application/json");
+  };
+
+
   // ===== Init =====
   shopIdEl.value = DEFAULT_SHOP_ID;
   setToday();
   loadFromCloud();
 })();
 </script>
+
+  <!-- Ticket preview modal -->
+  <div id="ticketModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="ticketModalTitle">
+    <div class="modal-backdrop" data-close="1"></div>
+    <div class="modal-card">
+      <div class="modal-head">
+        <div>
+          <div id="ticketModalTitle" class="modal-title">Ticket</div>
+          <div id="ticketModalSub" class="modal-sub"></div>
+        </div>
+        <button class="btn" id="btnCloseModal" title="Cerrar">✕</button>
+      </div>
+      <div class="modal-body" id="ticketModalBody"></div>
+      <div class="modal-actions">
+        <button class="btn" id="btnPrintTicket">Imprimir</button>
+        <button class="btn" id="btnCopyTicket">Copiar</button>
+        <button class="btn" id="btnEmailTicket">Email</button>
+        <button class="btn" id="btnExportTicketJson">Exportar JSON</button>
+      </div>
+      <div class="modal-note" id="ticketModalNote"></div>
+    </div>
+  </div>
+
 </body>
 </html>
