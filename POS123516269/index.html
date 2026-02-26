@@ -1090,22 +1090,29 @@ function toast(msg){
 
     if(!Number.isFinite(paid)){
       changeEl.textContent = `0.00 €`;
-      statusEl.textContent = total > 0 ? '待收款' : '空单';
+      if(total === 0){
+        statusEl.textContent = '空单';
+      }else if(total > 0){
+        statusEl.textContent = '待收款';
+      }else{
+        statusEl.textContent = '待退款';
+      }
+      statusEl.className = 'v ok';
+      return;
+    }
+    if(total === 0){
+      changeEl.textContent = `0.00 €`;
+      statusEl.textContent = '空单';
       statusEl.className = 'v ok';
       return;
     }
     changeEl.textContent = `${money(change)} €`;
 
-    if(total <= 0){
-      statusEl.textContent = '空单';
-      statusEl.className = 'v ok';
-      return;
-    }
     if(change >= 0){
-      statusEl.textContent = '已收款';
+      statusEl.textContent = (total > 0) ? '已收款' : '已退款';
       statusEl.className = 'v ok';
     }else{
-      statusEl.textContent = '实收不足';
+      statusEl.textContent = (total > 0) ? '实收不足' : '退款不足';
       statusEl.className = 'v warn';
     }
   }
@@ -1512,7 +1519,7 @@ render();
   // ===== Checkout modal + 80mm printing + auto clear on success =====
   function openCheckout(){
     const { total, sumQty } = calcTotals();
-    if(total <= 0){ lineEl.focus(); return; }
+    if(total === 0){ lineEl.focus(); return; }
 
     modalTotal.textContent = money(total);
     modalQty.textContent = String(sumQty);
@@ -1544,7 +1551,7 @@ render();
   }
   function fillExact(){
     const { total } = calcTotals();
-    modalPaid.value = money(total);
+    modalPaid.value = money(total > 0 ? total : 0);
     updateModalChange();
     modalPaid.focus();
     modalPaid.select();
@@ -1795,12 +1802,12 @@ body{
 function settleNoPrint(){
     // 在结账窗口内：不打印，直接入账（默认刚好付清，或用你输入的实收）
     const { total } = calcTotals();
-    if(total <= 0){ closeCheckout(); return; }
+    if(total === 0){ closeCheckout(); return; }
 
     const raw = String(modalPaid.value || '').trim();
     let paid = toNumber(raw);
     if(!raw || !Number.isFinite(paid)){
-      paid = total; // default: exact amount
+      paid = (total > 0 ? total : 0); // default: exact sale; refund defaults to 0 received
       modalPaid.value = money(paid);
     }
     const change = paid - total;
@@ -1836,15 +1843,15 @@ function settleNoPrint(){
   function quickSettleNoModal(){
     // 不弹出收款窗口：默认“刚好付清”，直接入账（不打印）
     const { total, sumQty } = calcTotals();
-    if(total <= 0){
+    if(total === 0){
       lineEl.focus(); lineEl.select();
       return;
     }
 
     const now = new Date();
     const billNo = billNoFromDate(now);
-    const paid = total;
-    const change = 0;
+    const paid = (total > 0 ? total : 0);
+    const change = paid - total;
 
     const payload = {
       ts: now.toLocaleString(),
@@ -2514,7 +2521,7 @@ function __ensureMadridClock(){
 })();
 
 /* ===== Cloud Sync (Boss Cloud) ===== */
-const CLOUD_API = "https://pos123516269.miangelitomoda.workers.dev";
+const CLOUD_API = "https://www.miangelitomoda.com";
 const POS_API_KEY = "miangelito_2026_secure_key_83927_123516269";
 const SHOP_ID = "miangelito";
 let MACHINE_ID = localStorage.getItem("pos_machine_id") || "A";
