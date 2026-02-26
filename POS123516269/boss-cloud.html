@@ -1,618 +1,912 @@
-<!DOCTYPE html>
-
-<html lang="es">
+<!doctype html>
+<html lang="zh">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width,initial-scale=1" name="viewport"/>
-<title>Mi Angelito Moda · Panel del dueño (Cloud)</title>
-<style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>后台管理界面</title>
+  <style>
     :root{
-      --bg:#f5f5f5;
-      --panel:#ffffff;
-      --line:#e8e8e8;
-      --text:#111111;
-      --muted:#6f6f6f;
-      --accent:#111111;
-      font-family: system-ui,-apple-system,Segoe UI,Roboto,"PingFang SC","Microsoft YaHei",sans-serif;
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --text:#0f172a;
+      --muted:#64748b;
+      --line:rgba(15,23,42,.10);
+      --shadow:0 10px 30px rgba(15,23,42,.08);
+      --radius:18px;
+      --radius2:14px;
+      --tap:54px;
+      --mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
     }
     *{box-sizing:border-box}
     body{margin:0;background:var(--bg);color:var(--text)}
-    .wrap{max-width:1200px;margin:0 auto;padding:14px}
-    .top{
-      background:#fff;border:1px solid var(--line);border-radius:14px;
-      padding:12px 14px;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;
-    }
-    .brand{display:flex;gap:10px;align-items:center}
-    .logo{height:32px;width:auto;object-fit:contain;filter:grayscale(100%);opacity:.92;mix-blend-mode:multiply}
-    .title{font-weight:950}
-    .sub{font-size:12px;color:var(--muted);margin-top:2px}
-    .controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:flex-end}
-    input,select,button,textarea{font:inherit;}
-    .ctl{display:flex;gap:8px;align-items:center;padding:8px 10px;border:1px solid var(--line);border-radius:12px;background:#fff;}
-    .ctl label{font-size:12px;color:var(--muted)}
-    .ctl input,.ctl select{border:0;outline:0;background:transparent;min-width:120px;font-variant-numeric: tabular-nums;}
-    .btn{padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:#fff;cursor:pointer;}
-    .btn:hover{background:#f6f6f6}
-    .btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
-    .btn.danger{border-color:#d1d1d1}
-    .grid{display:grid;grid-template-columns: 1.1fr .9fr;gap:12px;margin-top:12px;}
-    @media (max-width: 980px){.grid{grid-template-columns:1fr}}
-    .card{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;}
-    .cardHead{padding:12px 14px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:10px;}
-    .cardHead .h{font-weight:900}
-    .cardHead .m{font-size:12px;color:var(--muted)}
-    .cardBody{padding:12px 14px}
-    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-    @media (max-width: 980px){.stats{grid-template-columns:repeat(2,1fr)}}
-    .stat{border:1px solid var(--line);border-radius:12px;padding:10px;background:#fff;}
-    .stat .t{font-size:12px;color:var(--muted)}
-    .stat .v{font-size:22px;font-weight:950;margin-top:6px;font-variant-numeric: tabular-nums}
-    .small{font-size:12px;color:var(--muted)}
-    .table{width:100%;border-collapse:collapse;table-layout:fixed;}
-    .table thead th{
-      position:sticky;top:0;z-index:2;
-      background:#fff;border-bottom:1px solid var(--line);
-      padding:10px 8px;text-align:left;font-size:12px;color:var(--muted);
-      font-weight:700;white-space:nowrap;
-    }
-    .table tbody td{
-      border-bottom:1px solid #f0f0f0;
-      padding:8px 8px;font-size:13px;vertical-align:middle;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-      font-variant-numeric: tabular-nums;
-    }
-    .tdR{text-align:right}
-    .tdC{text-align:center}
-    .pill{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:#fff;padding:4px 10px;border-radius:999px;font-size:12px;color:var(--text);white-space:nowrap;}
-    .pill.ok .dot{background:#111}
-    .pill.bad .dot{background:#b91c1c}
-    .dot{width:8px;height:8px;border-radius:50%;background:#9ca3af}
-    .hr{border-top:1px solid var(--line);margin:12px 0}
-    .kpiRow{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-    .kpiRow .pill{background:#fafafa}
-    .notice{border:1px dashed var(--line);border-radius:12px;padding:10px;background:#fff;color:var(--muted);font-size:12px;line-height:1.55;}
-    .mono{font-family: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;}
-  
 
-/* ===== Mobile first: optimized for iPhone 16 Pro Max (430px) ===== */
-.wrap{max-width:520px;margin:0 auto;padding:10px}
-.topbar{padding:10px;border-radius:16px}
-.controls{display:flex;flex-wrap:wrap;gap:8px}
-.controls > *{flex:1 1 auto;min-width:0}
-.controls .btn{padding:10px 12px;border-radius:14px}
-.grid2{display:grid;grid-template-columns:1fr;gap:10px}
-.cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.card{border-radius:16px;padding:12px}
-.tableWrap{overflow:auto;border-radius:16px}
-table{min-width:720px}
-.rowTap{cursor:pointer}
-@media (max-width:520px){
-  body{font-size:15px}
-  h1{font-size:18px}
-  .cards .kpi{font-size:22px}
-  table{min-width:640px}
-  th.colPaid, td.colPaid, th.colChange, td.colChange{display:none}
-}
-/* ===== Receipt modal ===== */
-.modal{position:fixed;inset:0;display:none;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.45);z-index:9999;padding:12px}
-.modal.show{display:flex}
-.modalCard{width:100%;max-width:520px;background:#fff;border-radius:18px;box-shadow:0 10px 30px rgba(0,0,0,.25);overflow:hidden}
-.modalHead{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid #eee}
-.modalHead .title{font-weight:700}
-.modalHead button{border:0;background:transparent;font-size:22px;line-height:1;padding:6px 10px;border-radius:12px}
-.modalBody{padding:12px 14px;max-height:55vh;overflow:auto}
-.modalActions{display:flex;gap:10px;padding:12px 14px;border-top:1px solid #eee}
-.modalActions .btn{flex:1}
-.receiptPre{white-space:pre-wrap;word-break:break-word;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;line-height:1.25;margin:0}
-body.modalOpen{overflow:hidden}
-</style>
+    .wrap{max-width:860px;margin:0 auto;padding:14px 14px calc(110px + env(safe-area-inset-bottom));}
+    .top{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:14px;
+      position:sticky; top:0; z-index:50;
+    }
+    .brand{display:flex;gap:12px;align-items:center;margin-bottom:10px}
+    .logo{width:36px;height:36px;border-radius:10px;border:1px solid var(--line);background:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden}
+    .logo img{width:100%;height:100%;object-fit:cover}
+    .ttl{font-weight:800;letter-spacing:.2px;font-size:18px;line-height:1.1}
+    .sub{color:var(--muted);font-size:12px;margin-top:2px}
+
+    .controls{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .row{display:flex;gap:10px;align-items:center}
+
+    label{font-size:12px;color:var(--muted);display:block;margin:0 0 6px}
+    select,input[type="date"],input[type="text"]{
+      width:100%;
+      height:var(--tap);
+      border-radius:var(--radius2);
+      border:1px solid var(--line);
+      background:#fff;
+      padding:0 12px;
+      font-size:16px;
+      outline:none;
+    }
+
+    .btn{
+      height:var(--tap);
+      border-radius:var(--radius2);
+      border:1px solid var(--line);
+      background:#fff;
+      padding:0 14px;
+      font-weight:700;
+      font-size:15px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      cursor:pointer;
+      user-select:none;
+      -webkit-tap-highlight-color:transparent;
+    }
+    .btn:active{transform:translateY(1px)}
+    .btn.primary{background:#111827;color:#fff;border-color:#111827}
+    .btn.soft{background:#f1f5f9}
+
+    .grid{margin-top:14px;display:grid;grid-template-columns:1fr;gap:12px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px}
+    .card h3{margin:0 0 2px;font-size:16px}
+    .hint{color:var(--muted);font-size:12px;margin:0 0 10px}
+
+    .kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+    .kpi{border:1px solid var(--line);border-radius:var(--radius2);padding:12px;background:#fff}
+    .kpi .k{font-size:12px;color:var(--muted)}
+    .kpi .v{font-size:22px;font-weight:900;margin-top:4px}
+
+    .pillRow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    .pill{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 10px;font-size:12px;color:var(--muted)}
+    .dot{width:8px;height:8px;border-radius:999px;background:#94a3b8}
+    .dot.ok{background:#22c55e}
+    .dot.bad{background:#ef4444}
+    .mono{font-family:var(--mono)}
+
+    .note{margin-top:10px;border:1px dashed rgba(15,23,42,.18);border-radius:14px;padding:10px;background:rgba(241,245,249,.7);color:var(--muted);font-size:12px;line-height:1.35}
+
+    .statusBox{font-family:var(--mono);font-size:12px;white-space:pre-wrap;line-height:1.35;color:#0b1220;min-height:40px}
+
+    .tableWrap{overflow:auto;border:1px solid var(--line);border-radius:16px;background:#fff}
+    table{width:100%;border-collapse:collapse;min-width:740px}
+    th,td{padding:12px 10px;border-bottom:1px solid var(--line);text-align:left;font-size:13px}
+    th{font-size:12px;color:var(--muted);position:sticky;top:0;background:#fff;z-index:1}
+    tr:last-child td{border-bottom:none}
+
+    .actions{display:flex;gap:8px;align-items:center}
+    .mini{height:38px;padding:0 10px;border-radius:12px;font-weight:800;font-size:12px}
+
+    /* Bottom sheet modal */
+    .modal{position:fixed;inset:0;display:none;z-index:1000}
+    .modal.show{display:block}
+    .backdrop{position:absolute;inset:0;background:rgba(2,6,23,.55)}
+    .sheet{position:absolute;left:0;right:0;bottom:0;background:#fff;border-radius:22px 22px 0 0;box-shadow:0 -20px 60px rgba(2,6,23,.25);max-height:88vh;display:flex;flex-direction:column}
+    .sheetHeader{display:flex;align-items:center;justify-content:space-between;padding:14px 14px 10px;border-bottom:1px solid var(--line)}
+    .sheetHeader .title{font-weight:900}
+    .x{width:42px;height:42px;border-radius:14px;border:1px solid var(--line);background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer}
+    .sheetBody{padding:12px 14px;overflow:auto}
+    .receiptBox{border:1px solid var(--line);border-radius:16px;background:#fff;overflow:hidden}
+    .receiptFrame{width:100%;height:420px;border:0;background:#fff}
+    .receiptText{padding:12px;font-family:var(--mono);font-size:12px;white-space:pre-wrap;line-height:1.35}
+    .sheetActions{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;padding:12px 14px 14px;border-top:1px solid var(--line);background:#fff}
+    .sheetActions .btn{height:48px}
+
+    /* iPhone 16 Pro Max: keep things roomy */
+    @media (min-width: 430px){
+      .wrap{padding-left:16px;padding-right:16px}
+      .kpis{grid-template-columns:repeat(4,1fr)}
+      .controls{grid-template-columns:1.2fr 1fr 1fr 1fr}
+    }
+  .miniTable{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px}
+    .miniTable th,.miniTable td{border-bottom:1px solid var(--line);padding:8px 6px;vertical-align:top}
+    .miniTable th{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+    .tdName{max-width:320px}
+    .tdNum{text-align:right;white-space:nowrap}
+    .miniMeta{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+    .miniMeta .k{color:var(--muted);margin-right:6px}
+  </style>
 </head>
 <body>
-<div class="wrap">
-<div class="top">
-<div class="brand">
-<img alt="Mi Angelito MODA" class="logo" src="https://www.miangelitomoda.com/logo.jpg"/>
-<div>
-<div class="title">Panel del dueño</div>
-<div class="sub">Ventas y tickets · Datos en la nube (Worker + D1)</div>
-</div>
-</div>
-<div class="controls">
-<div class="ctl">
-<label for="shopId">Tienda</label>
-<select id="shopId">
-<option value="miangelito">miangelito</option>
-</select>
-</div>
-<div class="ctl">
-<label for="dateFrom">Desde</label>
-<input id="dateFrom" type="date"/>
-</div>
-<div class="ctl">
-<label for="dateTo">Hasta</label>
-<input id="dateTo" type="date"/>
-</div>
-<button class="btn" id="btnToday">Hoy</button>
-<button class="btn" id="btnReload">Actualizar</button>
-<button class="btn" id="btnExportCSV">Exportar CSV</button>
-<button class="btn" id="btnExportJSON">Exportar JSON</button>
-</div>
-</div>
-<div class="grid">
-<div class="card">
-<div class="cardHead">
-<div>
-<div class="h">Resumen</div>
-<div class="m" id="rangeLabel">—</div>
-</div>
-<div class="pill ok" id="pillWrap"><span class="dot"></span><span id="statusPill">Conectado</span></div>
-</div>
-<div class="cardBody">
-<div class="stats">
-<div class="stat"><div class="t">Ingresos</div><div class="v" id="kTotal">€ 0.00</div></div>
-<div class="stat"><div class="t">Tickets</div><div class="v" id="kTickets">0</div></div>
-<div class="stat"><div class="t">Piezas</div><div class="v" id="kPiezas">0</div></div>
-<div class="stat"><div class="t">Ticket medio</div><div class="v" id="kAvg">€ 0.00</div></div>
-</div>
-<div class="hr"></div>
-<div class="kpiRow">
-<span class="pill"><span class="dot"></span><span>Último ticket: <b id="kLast">—</b></span>
-<span class="pill"><span class="dot"></span><span>Hora pico: <b id="kPeak">—</b></span>
-<span class="pill"><span class="dot"></span><span>Fuente: <b class="mono">https://pos123516269.miangelitomoda.workers.dev</b></span>
-</span></span></span></div>
-<div class="hr"></div>
-<div class="notice">
-<div><b>Nota:</b> Este panel lee datos desde la nube (Worker + D1).</div>
-<div class="small">Si hoy ves 0, significa que el POS todavía no está enviando tickets a <span class="mono">/api/bill</span>.</div>
-<div class="small">Por ahora, la lista se basa en los <b>últimos 100 tickets</b> (límite del API actual).</div>
-</div>
-</div>
-</div>
-<div class="card">
-<div class="cardHead">
-<div>
-<div class="h">Estado</div>
-<div class="m">Conexión y permisos</div>
-</div>
-<button class="btn" id="btnPing">Probar conexión</button>
-</div>
-<div class="cardBody">
-<div class="small mono" id="debugBox">—</div>
-</div>
-</div>
-</div>
-<div class="card" style="margin-top:12px">
-<div class="cardHead">
-<div>
-<div class="h">Tickets</div>
-<div class="m">Últimos tickets (cloud)</div>
-</div>
-<div class="small">Mostrar: <b id="listCount">0</b></div>
-</div>
-<div class="cardBody" style="padding:0">
-<div style="max-height:520px;overflow:auto">
-<table class="table">
-<colgroup>
-<col style="width:170px"/>
-<col style="width:220px"/>
-<col style="width:90px"/>
-<col style="width:120px"/>
-<col style="width:120px"/>
-<col style="width:120px"/>
-</colgroup>
-<thead>
-<tr>
-<th>Nº ticket</th>
-<th>Fecha</th>
-<th class="tdR">Máq.</th>
-<th class="tdR">Total</th>
-<th class="tdR colPaid">Pagado</th>
-<th class="tdR colChange">Cambio</th>
-</tr>
-</thead>
-<tbody id="tbody"></tbody>
-</table>
-</div>
-</div>
-</div>
-</div>
-<script>
-(() => {
-  // ===== Cloud config =====
-  const API_URL = "https://pos123516269.miangelitomoda.workers.dev";
-  const API_KEY = "miangelito_2026_secure_key_83927_123516269";
-  const DEFAULT_SHOP_ID = "miangelito";
+  <div class="wrap">
+    <div class="top">
+      <div class="brand">
+        <div class="logo"><img alt="M" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Crect width='120' height='120' fill='%23ffffff'/%3E%3Ctext x='60' y='74' text-anchor='middle' font-size='56' font-family='Arial' fill='%23111827'%3EM%3C/text%3E%3C/svg%3E"/></div>
+        <div>
+          <div class="ttl">后台面板</div>
+          <div class="sub">销售与统计</div>
+        </div>
+      </div>
 
-  // ===== Helpers =====
-  function money(n){ n = Number(n) || 0; return (Math.round(n * 100) / 100).toFixed(2); }
-  function eur(n){ return `€ ${money(n)}`; }
-  function escapeHtml(s){ return String(s ?? "").replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
-  function ymd(d){ const z=new Date(d); const y=z.getFullYear(); const m=String(z.getMonth()+1).padStart(2,"0"); const dd=String(z.getDate()).padStart(2,"0"); return `${y}-${m}-${dd}`; }
-  function startOfDay(d){ const x=new Date(d); x.setHours(0,0,0,0); return x; }
-  function endOfDay(d){ const x=new Date(d); x.setHours(23,59,59,999); return x; }
-  function downloadText(filename, text, mime="text/plain") {
-    const blob = new Blob([text], {type:mime});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url; a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    setTimeout(()=>{ URL.revokeObjectURL(url); a.remove(); }, 0);
-  }
+      <div class="controls">
+        <div>
+          <label>MODA</label>
+          <select id="shop">
+            <option value="miangelito">MODA</option>
+          </select>
+        </div>
+        <div>
+          <label>开始日期</label>
+          <input id="from" type="date" />
+        </div>
+        <div>
+          <label>结束日期</label>
+          <input id="to" type="date" />
+        </div>
+        <div class="row" style="align-self:end;justify-content:flex-end">
+          <button class="btn soft" id="btnToday">今天</button>
+          <button class="btn primary" id="btnRefresh">刷新</button>
+        </div>
+        <div class="row" style="grid-column:1/-1;justify-content:space-between;gap:10px">
+          <button class="btn" id="btnCSV">导出 CSV</button>
+          <button class="btn" id="btnJSON">导出 JSON</button>
+          <button class="btn" id="btnKey">API 密钥</button>
+        </div>
+      </div>
+    </div>
 
-  async function apiFetch(path) {
-    const res = await fetch(API_URL + path, {
-      headers: {
-        "X-API-KEY": API_KEY
+    <div class="grid">
+      <div class="card">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px">
+          <div>
+            <h3>汇总</h3>
+            <div class="hint" id="rangeLabel">—</div>
+          </div>
+          <div class="pill"><span class="dot" id="dotConn"></span><span id="connLabel">未连接</span></div>
+        </div>
+
+        <div class="kpis">
+          <div class="kpi"><div class="k">营业额</div><div class="v" id="k总计">€ 0.00</div></div>
+          <div class="kpi"><div class="k">订单数</div><div class="v" id="k单数">0</div></div>
+          <div class="kpi"><div class="k">件数</div><div class="v" id="kPieces">0</div></div>
+          <div class="kpi"><div class="k">平均客单价</div><div class="v" id="kAvg">€ 0.00</div></div>
+        </div>
+
+        <div class="pillRow">
+          <span class="pill"><span class="dot"></span><span>最后一单： <b id="kLast">—</b></span></span>
+          <span class="pill"><span class="dot"></span><span>高峰时段： <b id="kPeak">—</b></span></span>
+          <span class="pill"><span class="dot"></span><span>数据源： <b class="mono" id="kApi">—</b></span></span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px">
+          <div>
+            <h3>状态</h3>
+            <div class="hint">连接与权限</div>
+          </div>
+          <button class="btn" id="btnTest">连接</button>
+        </div>
+        <div class="statusBox" id="status">—</div>
+      </div>
+
+      
+      <div class="card">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px">
+          <div>
+            <h3>按日期汇总</h3>
+          </div>
+          <div class="hint" id="dayCountLabel">天数： 0</div>
+        </div>
+        <div class="tableWrap">
+          <table style="min-width:520px">
+            <thead>
+              <tr>
+                <th>日期</th>
+                <th>订单数</th>
+                <th>件数</th>
+                <th>营业额</th>
+              </tr>
+            </thead>
+            <tbody id="tbodyDays">
+              <tr><td colspan="4" class="hint">—</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+
+      <div class="card">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px">
+          <div>
+            <h3>订单数</h3>
+            <div class="hint">云端小票</div>
+          </div>
+          <div class="hint" id="countLabel">显示： 0</div>
+        </div>
+        <div class="tableWrap">
+          <table>
+            <thead>
+              <tr>
+                <th class="col-no">小票号</th>
+                <th class="col-date">日期</th>
+                <th class="col-machine">电脑</th>
+                <th class="col-pieces">件数</th>
+                <th class="col-kinds">款数</th>
+                <th class="col-avg">平均件单价</th>
+                <th class="col-total">总计</th>
+                <th class="col-paid">实收</th>
+                <th class="col-change">找零</th>
+                <th class="col-actions">操作</th>
+              </tr>
+            </thead>
+            <tbody id="tbody">
+              <tr><td colspan="10" class="hint">加载中…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Receipt preview bottom sheet -->
+  <div class="modal" id="modal">
+    <div class="backdrop" id="modalBg"></div>
+    <div class="sheet" role="dialog" aria-modal="true" aria-label="Ticket">
+      <div class="sheetHeader">
+        <div>
+          <div class="title" id="mTitle">Ticket</div>
+          <div class="hint" id="mSub">—</div>
+        </div>
+        <button class="x" id="mClose" aria-label="Cerrar">✕</button>
+      </div>
+      <div class="sheetBody">
+        <div class="receiptBox" id="receiptBox">
+          <iframe class="receiptFrame" id="receiptFrame" title="Vista previa" style="display:none"></iframe>
+          <div class="receiptText" id="receiptText">加载中…</div>
+        </div>
+        <div class="note" id="mNote" style="margin-top:10px;display:none"></div>
+      </div>
+      <div class="sheetActions">
+        <button class="btn" id="mPrint">打印 / PDF</button>
+        <button class="btn" id="mShare">分享 / 复制</button>
+        <button class="btn" id="mWA">WhatsApp</button>
+        <button class="btn" id="m邮件">邮件</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ===== Config =====
+    const API_BASE = 'https://pos123516269.miangelitomoda.workers.dev';
+    const KEY_STORAGE = 'MIANGELITO_POS_API_KEY';
+
+    // ===== Helpers =====
+    const $ = (id)=>document.getElementById(id);
+    const fmtEUR = (n)=> new Intl.NumberFormat('es-ES',{style:'currency',currency:'EUR'}).format(Number(n||0));
+    const ymd = (d)=>{
+      if(!d) return '';
+      const dt = (d instanceof Date) ? d : new Date(d);
+      const y = dt.getFullYear();
+      const m = String(dt.getMonth()+1).padStart(2,'0');
+      const da = String(dt.getDate()).padStart(2,'0');
+      return `${y}-${m}-${da}`;
+    };
+    const clampDay = (dt)=> new Date(dt.getFullYear(), dt.getMonth(), dt.getDate());
+
+    function getKey(){
+      return localStorage.getItem(KEY_STORAGE) || '';
+    }
+    function setKey(k){
+      localStorage.setItem(KEY_STORAGE, (k||'').trim());
+    }
+
+    async function apiFetch(path, opts={}){
+      const headers = Object.assign({
+        'Content-Type':'application/json',
+        'X-API-KEY': getKey()
+      }, opts.headers||{});
+      const res = await fetch(API_BASE + path, Object.assign({}, opts, { headers }));
+      const text = await res.text();
+      let data;
+      try{ data = text ? JSON.parse(text) : null; }catch{ data = text; }
+      if(!res.ok){
+        const msg = (data && data.error) ? data.error : (typeof data==='string'?data:res.statusText);
+        throw new Error(`${res.status} ${msg}`);
       }
-    });
-    const txt = await res.text();
-    let data = null;
-    try { data = JSON.parse(txt); } catch(e) { data = txt; }
-    if(!res.ok) {
-      const err = (data && data.error) ? data.error : ("HTTP " + res.status);
-      throw new Error(err);
-    }
-    return data;
-  }
-
-  function parseBillTime(b) {
-    // ts_text can be "YYYY-MM-DD HH:MM:SS" or "YYYY/M/D HH:MM:SS" etc.
-    const s = String(b.ts_text ?? b.ts ?? "").trim();
-    if(!s) return null;
-
-    const m = s.match(/^(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})(?:[ T](\d{1,2}):(\d{2})(?::(\d{2}))?)?$/);
-    if(m){
-      const y  = Number(m[1]);
-      const mo = Number(m[2]) - 1;
-      const d  = Number(m[3]);
-      const hh = Number(m[4] || 0);
-      const mm = Number(m[5] || 0);
-      const ss = Number(m[6] || 0);
-      const dt = new Date(y, mo, d, hh, mm, ss, 0);
-      return Number.isFinite(dt.getTime()) ? dt : null;
+      return data;
     }
 
-    // Fallback: try ISO normalize for other variants
-    const iso = s.replace(" ", "T").replaceAll("/", "-");
-    const t = Date.parse(iso);
-    return Number.isFinite(t) ? new Date(t) : null;
-  }
-
-  function withinRange(dateObj, from, to) {
-    if(!dateObj) return false;
-    const t = dateObj.getTime();
-    return t >= from.getTime() && t <= to.getTime();
-  }
-
-  function computePeakHour(bills) {
-    const buckets = new Array(24).fill(0);
-    bills.forEach(b=>{
-      const d = parseBillTime(b);
-      if(!d) return;
-      buckets[d.getHours()] += Number(b.total)||0;
-    });
-    let bestH=-1,bestV=-1;
-    buckets.forEach((v,h)=>{ if(v>bestV){ bestV=v; bestH=h; } });
-    if(bestH<0) return "—";
-    return `${String(bestH).padStart(2,"0")}:00`;
-  }
-
-  function lastBillLabel(bills) {
-    if(!bills.length) return "—";
-    const b = bills[0]; // newest first
-    const id = b.bill_no ?? b.billNo ?? "—";
-    const ts = b.ts_text ?? b.ts ?? "";
-    return `#${id} · ${eur(b.total)} · ${ts}`;
-  }
-
-  function exportCSV(bills) {
-    const header = ["bill_no","ts_text","machine_id","sum_qty","total","paid","change"].join(",");
-    const rows = bills.map(b => [
-      b.bill_no ?? "",
-      `"${String(b.ts_text ?? "").replaceAll('"','""')}"`
-      ,
-      b.machine_id ?? "",
-      b.sum_qty ?? "",
-      money(b.total),
-      money(b.paid),
-      money(b.change),
-    ].join(","));
-    return [header, ...rows].join("\n");
-  }
-
-  // ===== DOM =====
-  const shopIdEl = document.getElementById("shopId");
-  const dateFromEl = document.getElementById("dateFrom");
-  const dateToEl   = document.getElementById("dateTo");
-  const btnToday   = document.getElementById("btnToday");
-  const btnReload  = document.getElementById("btnReload");
-  const btnExportCSV = document.getElementById("btnExportCSV");
-  const btnExportJSON= document.getElementById("btnExportJSON");
-
-  const rangeLabel = document.getElementById("rangeLabel");
-  const statusPill = document.getElementById("statusPill");
-  const pillWrap   = document.getElementById("pillWrap");
-  const debugBox   = document.getElementById("debugBox");
-  const btnPing    = document.getElementById("btnPing");
-
-  const kTotal   = document.getElementById("kTotal");
-  const kTickets = document.getElementById("kTickets");
-  const kPiezas  = document.getElementById("kPiezas");
-  const kAvg     = document.getElementById("kAvg");
-  const kLast    = document.getElementById("kLast");
-  const kPeak    = document.getElementById("kPeak");
-
-  const tbody = document.getElementById("tbody");
-  const listCount = document.getElementById("listCount");
-
-  // ===== State =====
-  let __allBills = [];
-  let __filteredBills = [];
-
-  function setStatus(ok, text, extra="") {
-    statusPill.textContent = text;
-    pillWrap.classList.remove("ok","bad");
-    pillWrap.classList.add(ok ? "ok" : "bad");
-    debugBox.textContent = extra || "—";
-  }
-
-  function setToday() {
-    const today = ymd(new Date());
-    dateFromEl.value = today;
-    dateToEl.value = today;
-  }
-
-  function applyFilter() {
-    const from = dateFromEl.value ? startOfDay(dateFromEl.value) : startOfDay(new Date());
-    const to   = dateToEl.value ? endOfDay(dateToEl.value) : endOfDay(new Date());
-
-    __filteredBills = __allBills.filter(b => {
-      const d = parseBillTime(b);
-      return withinRange(d, from, to);
-    });
-
-    // newest first
-    __filteredBills.sort((a,b)=>{
-      const da = parseBillTime(a), db = parseBillTime(b);
-      return (db?.getTime()||0) - (da?.getTime()||0);
-    });
-
-    rangeLabel.textContent = `${ymd(from)} → ${ymd(to)} · ${__filteredBills.length} tickets (últimos 100 del cloud)`;
-  }
-
-  function renderSummary() {
-    const bills = __filteredBills;
-
-    let total=0, piezas=0;
-    bills.forEach(b=>{
-      total += Number(b.total)||0;
-      piezas += Number(b.sum_qty ?? b.sumQty ?? 0)||0;
-    });
-    const tickets = bills.length;
-    const avg = tickets ? total / tickets : 0;
-
-    kTotal.textContent = eur(total);
-    kTickets.textContent = String(tickets);
-    kPiezas.textContent = String(piezas);
-    kAvg.textContent = eur(avg);
-
-    kLast.textContent = lastBillLabel(bills);
-    kPeak.textContent = computePeakHour(bills);
-  }
-
-  function renderList() {
-    const bills = __filteredBills;
-    listCount.textContent = String(bills.length);
-
-    tbody.innerHTML = "";
-    if(!bills.length) {
-      const tr = document.createElement("tr");
-      tr.innerHTML = `<td colspan="6" style="padding:14px;color:#6f6f6f;font-size:12px">
-        No hay tickets en este rango (cloud).
-      </td>`;
-      tbody.appendChild(tr);
-      return;
+    function setConn(ok, label){
+      const dot = $('dotConn');
+      dot.classList.remove('ok','bad');
+      dot.classList.add(ok ? 'ok' : 'bad');
+      $('connLabel').textContent = label;
     }
 
-    bills.forEach(b=>{
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td class="mono">#${escapeHtml(b.bill_no ?? b.billNo ?? "—")}</td>
-        <td title="${escapeHtml(b.ts_text ?? "")}">${escapeHtml(b.ts_text ?? "")}</td>
-        <td class="tdR">${escapeHtml(String(b.machine_id ?? ""))}</td>
-        <td class="tdR"><b>${eur(b.total)}</b></td>
-        <td class="tdR colPaid">${eur(b.paid)}</td>
-        <td class="tdR colChange">${eur(b.change)}</td>
-      `;
-      tr.classList.add("rowTap");
-      tr.addEventListener("click", ()=>openReceipt(b));
-      tbody.appendChild(tr);
-    });
-  }
-
-  async function loadFromCloud() {
-    const shopId = shopIdEl.value || DEFAULT_SHOP_ID;
-    setStatus(true, "Cargando…");
-
-    try {
-      // Get last 100 bills (current API limit)
-      const bills = await apiFetch(`/api/bills?shop_id=${encodeURIComponent(shopId)}`);
-      __allBills = Array.isArray(bills) ? bills : [];
-
-      applyFilter();
-      renderSummary();
-      renderList();
-
-      setStatus(true, "Conectado", `OK · tickets recibidos: ${__allBills.length}`);
-    } catch(err) {
-      __allBills = [];
-      __filteredBills = [];
-      renderSummary();
-      renderList();
-
-      setStatus(false, "Error", String(err?.message || err));
-    }
-  }
-
-  // ===== Events =====
-  btnToday.onclick = () => { setToday(); applyFilter(); renderSummary(); renderList(); };
-  btnReload.onclick = () => loadFromCloud();
-  shopIdEl.onchange = () => loadFromCloud();
-  dateFromEl.onchange = () => { applyFilter(); renderSummary(); renderList(); };
-  dateToEl.onchange = () => { applyFilter(); renderSummary(); renderList(); };
-
-  btnExportCSV.onclick = () => {
-    const csv = exportCSV(__filteredBills);
-    downloadText(`ventas_cloud_${ymd(new Date())}.csv`, csv, "text/csv");
-  };
-  btnExportJSON.onclick = () => {
-    downloadText(`ventas_cloud_${ymd(new Date())}.json`, JSON.stringify(__filteredBills, null, 2), "application/json");
-  };
-
-  btnPing.onclick = async () => {
-    try {
-      const shopId = shopIdEl.value || DEFAULT_SHOP_ID;
-      const s = await apiFetch(`/api/summary?shop_id=${encodeURIComponent(shopId)}`);
-      setStatus(true, "Conectado", "summary: " + JSON.stringify(s));
-    } catch(err) {
-      setStatus(false, "Error", String(err?.message || err));
-    }
-  };
-
-
-  // ===== Receipt preview / print / share (mobile-friendly) =====
-  const modal = document.getElementById("receiptModal");
-  const modalBody = document.getElementById("receiptBody");
-  const modalTitle = document.getElementById("receiptTitle");
-  let __currentBill = null;
-
-  function toast(msg){
-    try{ statusBox.textContent = String(msg); }catch(e){}
-  }
-
-  function esc(s){
-    return String(s ?? "").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;");
-  }
-
-  function buildReceiptText(b){
-    const lines = [];
-    lines.push("Mi Angelito Moda");
-    lines.push("Ticket: " + (b.bill_no ?? ""));
-    lines.push("Fecha: " + (b.ts_text ?? ""));
-    if(b.machine_id) lines.push("Máquina: " + b.machine_id);
-    lines.push("------------------------------");
-
-    let items = [];
-    try{
-      const raw = b.items_json ?? b.items ?? b.payload_items ?? null;
-      if(typeof raw === "string" && raw.trim()) items = JSON.parse(raw);
-      else if(Array.isArray(raw)) items = raw;
-    }catch(e){}
-
-    if(Array.isArray(items) && items.length){
-      items.forEach(it=>{
-        const qty = (it.qty ?? it.q ?? 1);
-        const name = (it.name ?? it.n ?? "ITEM");
-        const price = (it.price ?? it.p ?? it.unit ?? 0);
-        const lineTotal = (it.total ?? (Number(qty)||0) * (Number(price)||0));
-        lines.push(`${qty} x ${name}  €${Number(price).toFixed(2)}  = €${Number(lineTotal).toFixed(2)}`);
-      });
-      lines.push("------------------------------");
+    function setStatus(line){
+      $('status').textContent = line;
     }
 
-    lines.push("TOTAL: €" + Number(b.total ?? 0).toFixed(2));
-    if(b.paid != null) lines.push("PAGADO: €" + Number(b.paid ?? 0).toFixed(2));
-    if(b.change != null) lines.push("CAMBIO: €" + Number(b.change ?? 0).toFixed(2));
-    if(b.sum_qty != null) lines.push("PIEZAS: " + Number(b.sum_qty ?? 0));
-    lines.push("");
-    lines.push("IVA incluido");
-    return lines.join("\n");
-  }
+    function todayRange(){
+      const now = new Date();
+      const d = ymd(now);
+      $('from').value = d;
+      $('to').value = d;
+    }
 
-  function buildReceiptHtml(b){
-    const txt = buildReceiptText(b);
-    return `<pre class="receiptPre">${esc(txt)}</pre>`;
-  }
+    // ===== Data & UI state =====
+    let allBills = [];
+    let filteredBills = [];
+    let lastReceipt = { html:'', text:'', meta:null };
 
-  function openReceipt(b){
-    __currentBill = b;
-    modalTitle.textContent = `Ticket ${b.bill_no ?? ""}`;
-    modalBody.innerHTML = buildReceiptHtml(b);
-    modal.classList.add("show");
-    document.body.classList.add("modalOpen");
-  }
+    function parseBillNo(b){
+      return (b.bill_no || b.billNo || b.id || '').toString();
+    }
 
-  function closeReceipt(){
-    modal.classList.remove("show");
-    document.body.classList.remove("modalOpen");
-  }
+    function billDate(b){
+      // Prefer ts_ms (number), fallback ts_text (string)
+      if (typeof b.ts_ms === 'number') return new Date(b.ts_ms);
+      const t = b.ts_text || b.ts || b.date || '';
+      const dt = new Date(t);
+      return isNaN(dt.getTime()) ? null : dt;
+    }
 
-  document.getElementById("receiptClose").addEventListener("click", closeReceipt);
-  modal.addEventListener("click", (e)=>{ if(e.target === modal) closeReceipt(); });
+    function billPieces(b){
+      // Prefer precomputed field from cloud; fallback to summing items if present.
+      const direct = (b.sum_qty ?? b.piezas ?? b.pieces);
+      if(direct !== undefined && direct !== null && direct !== '') return Number(direct)||0;
 
-  document.getElementById("btnPrintReceipt").addEventListener("click", ()=>{
-    if(!__currentBill) return;
-    const w = window.open("", "_blank");
-    const html = `
-<!doctype html><html><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Ticket ${esc(__currentBill.bill_no ?? "")}</title>
-<style>
-  body{margin:0;padding:14px;font-family:ui-monospace,Menlo,Consolas,monospace;background:#fff;color:#111}
-  pre{white-space:pre-wrap;word-break:break-word;font-size:14px;line-height:1.25}
-  @media print{body{padding:0}pre{font-size:12px}}
-</style>
-</head><body>${buildReceiptHtml(__currentBill)}</body></html>`;
-    w.document.open(); w.document.write(html); w.document.close();
-    w.focus();
-    setTimeout(()=>{ try{ w.print(); }catch(e){} }, 350);
-  });
+      const items = b.items || b.lines || b.items_json;
+      if(Array.isArray(items)){
+        let s = 0;
+        for(const it of items){
+          const q = Number(it.qty ?? it.quantity ?? it.q ?? 0);
+          if(!isNaN(q)) s += q;
+        }
+        return s;
+      }
+      return 0;
+    }
 
-  document.getElementById("btnShareReceipt").addEventListener("click", async ()=>{
-    if(!__currentBill) return;
-    const text = buildReceiptText(__currentBill);
-    const title = `Ticket ${__currentBill.bill_no ?? ""}`;
-    try{
-      if(navigator.share){
-        await navigator.share({ title, text });
+
+    function withinRange(dt, from, to){
+      if(!dt) return false;
+      const x = clampDay(dt).getTime();
+      return x >= from.getTime() && x <= to.getTime();
+    }
+
+    function computeSummary(list){
+      const tickets = list.length;
+      let total = 0;
+      let pieces = 0;
+      for(const b of list){
+        total += Number(b.total||0);
+        pieces += billPieces(b);
+      }
+      const avg = tickets ? total / tickets : 0;
+      return { tickets, total, pieces, avg };
+    }
+
+    function computePeakHour(list){
+      const bucket = new Array(24).fill(0);
+      for(const b of list){
+        const dt = billDate(b);
+        if(!dt) continue;
+        bucket[dt.getHours()]++;
+      }
+      let best = -1, bestV = 0;
+      for(let i=0;i<24;i++) if(bucket[i]>bestV){ bestV=bucket[i]; best=i; }
+      if(best<0 || bestV===0) return '—';
+      return String(best).padStart(2,'0')+':00';
+    }
+
+    function render(){
+      const from = new Date($('from').value + 'T00:00:00');
+      const to = new Date($('to').value + 'T00:00:00');
+      const shop = $('shop').value;
+
+      filteredBills = allBills.filter(b => (b.shop_id||b.shopId||shop) === shop)
+        .filter(b => withinRange(billDate(b), from, to));
+
+      $('rangeLabel').textContent = `${ymd(from)} → ${ymd(to)} · ${filteredBills.length} tickets`;
+      $('countLabel').textContent = `显示： ${filteredBills.length}`;
+
+      const s = computeSummary(filteredBills);
+      $('k总计').textContent = fmtEUR(s.total);
+      $('k单数').textContent = String(s.tickets);
+      $('kPieces').textContent = String(s.pieces);
+      $('kAvg').textContent = fmtEUR(s.avg);
+
+      // ---- Daily breakdown (group by date) ----
+      const map = new Map(); // y-m-d -> {tickets,total,pieces}
+      for(const b of filteredBills){
+        const dt = billDate(b);
+        if(!dt) continue;
+        const key = ymd(dt);
+        const cur = map.get(key) || { tickets:0, total:0, pieces:0 };
+        cur.tickets += 1;
+        cur.total += Number(b.total||0);
+        cur.pieces += billPieces(b);
+        map.set(key, cur);
+      }
+      const days = Array.from(map.entries()).sort((a,b)=> b[0].localeCompare(a[0])); // desc
+      $('dayCountLabel').textContent = `天数： ${days.length}`;
+      const tbodyDays = $('tbodyDays');
+      if(!days.length){
+        tbodyDays.innerHTML = `<tr><td colspan="4" class="hint">该日期范围没有数据。</td></tr>`;
+      }else{
+        tbodyDays.innerHTML = '';
+        for(const [day, v] of days){
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td><b>${day}</b></td>
+            <td>${v.tickets}</td>
+            <td>${v.pieces}</td>
+            <td><b>${fmtEUR(v.total)}</b></td>
+          `;
+          tbodyDays.appendChild(tr);
+        }
+      }
+
+
+      const last = filteredBills.length ? [...filteredBills].sort((a,b)=>(Number(b.ts_ms||0)-Number(a.ts_ms||0)))[0] : null;
+      const lastNo = last ? parseBillNo(last) : '—';
+      $('kLast').textContent = lastNo || '—';
+      $('kPeak').textContent = computePeakHour(filteredBills);
+      $('kApi').textContent = API_BASE;
+
+      const tbody = $('tbody');
+      if(!filteredBills.length){
+        tbody.innerHTML = `<tr><td colspan="10" class="hint">该日期范围没有小票（云端）。</td></tr>`;
         return;
       }
-    }catch(e){}
-    try{
-      await navigator.clipboard.writeText(text);
-      toast("Copiado al portapapeles");
-    }catch(e){
-      alert(text);
+
+      // Sort desc by time
+      const list = [...filteredBills].sort((a,b)=>(Number(b.ts_ms||0)-Number(a.ts_ms||0)) || String(b.ts_text||'').localeCompare(String(a.ts_text||'')));
+
+      tbody.innerHTML = '';
+      for(const b of list){
+        const no = parseBillNo(b);
+        const dt = billDate(b);
+        const fecha = dt ? `${dt.getFullYear()}/${dt.getMonth()+1}/${dt.getDate()} ${String(dt.getHours()).padStart(2,'0')}:${String(dt.getMinutes()).padStart(2,'0')}:${String(dt.getSeconds()).padStart(2,'0')}` : (b.ts_text||'');
+        const maq = (b.machine_id || b.machineId || '');
+        const total = fmtEUR(b.total||0);
+        const pagado = fmtEUR(b.paid||0);
+        const cambio = fmtEUR(b.change||0);
+
+        const piezasN = billPieces(b);
+        const modelosN = Number(b.kinds ?? 0);
+        const precioMedioN = piezasN ? (Number(b.total||0) / piezasN) : 0;
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="col-no"><b>#${no}</b></td>
+          <td class="col-date">${fecha}</td>
+          <td class="col-machine">${maq}</td>
+          <td class="col-pieces"><b>${piezasN}</b></td>
+          <td class="col-kinds">${modelosN}</td>
+          <td class="col-avg">${fmtEUR(precioMedioN)}</td>
+          <td class="col-total"><b>${total}</b></td>
+          <td class="col-paid">${pagado}</td>
+          <td class="col-change">${cambio}</td>
+          <td class="col-actions">
+            <div class="actions">
+              <button class="btn mini" data-action="view" data-bill="${encodeURIComponent(no)}">查看</button>
+              <button class="btn mini" data-action="copy" data-bill="${encodeURIComponent(no)}">复制</button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      }
+
+      tbody.querySelectorAll('button[data-action]').forEach(btn=>{
+        btn.addEventListener('click', async ()=>{
+          const act = btn.getAttribute('data-action');
+          const billNo = decodeURIComponent(btn.getAttribute('data-bill')||'');
+          if(act==='view') return openReceipt(shop, billNo);
+          if(act==='copy'){
+            const basic = `Ticket #${billNo}`;
+            await copyText(basic);
+            toast(`Copiado: ${basic}`);
+          }
+        });
+      });
     }
-  });
 
-  document.getElementById("btnEmailReceipt").addEventListener("click", ()=>{
-    if(!__currentBill) return;
-    const subject = encodeURIComponent(`Ticket ${__currentBill.bill_no ?? ""} - Mi Angelito Moda`);
-    const body = encodeURIComponent(buildReceiptText(__currentBill));
-    window.location.href = `mailto:?subject=${subject}&body=${body}`;
-  });
+    // ===== Receipt preview =====
+    function showModal(){ $('modal').classList.add('show'); }
+    function hideModal(){ $('modal').classList.remove('show'); }
 
-  // ===== Init =====
-  shopIdEl.value = DEFAULT_SHOP_ID;
-  setToday();
-  loadFromCloud();
-})();
-</script>
+    $('mClose').addEventListener('click', hideModal);
+    $('modalBg').addEventListener('click', hideModal);
 
-<div aria-hidden="true" class="modal" id="receiptModal">
-<div class="modalCard">
-<div class="modalHead">
-<div class="title" id="receiptTitle">Ticket</div>
-<button aria-label="Cerrar" id="receiptClose">✕</button>
-</div>
-<div class="modalBody" id="receiptBody"></div>
-<div class="modalActions">
-<button class="btn" id="btnPrintReceipt">Imprimir / PDF</button>
-<button class="btn" id="btnShareReceipt">Compartir / Copiar</button>
-<button class="btn" id="btnEmailReceipt">Email</button>
-</div>
-</div>
-</div>
+    async function openReceipt(shop, billNo){
+      $('mTitle').textContent = `Ticket #${billNo}`;
+      $('mSub').textContent = `店铺： ${shop}`;
+      $('mNote').style.display = 'none';
+
+      // Reset
+      $('receiptFrame').style.display = 'none';
+      $('receiptText').style.display = 'block';
+      $('receiptText').textContent = '加载中…';
+      lastReceipt = { html:'', text:'', meta:{ shop, billNo } };
+      showModal();
+
+      // We try a "full ticket" endpoint (recommended). If not available, show fallback.
+      // Expected response formats:
+      // 1) { html: "<html...>", text: "..." }
+      // 2) { receipt_html, receipt_text }
+      // 3) raw text
+      let data = null;
+      try{
+        data = await apiFetch(`/api/bill?shop_id=${encodeURIComponent(shop)}&bill_no=${encodeURIComponent(billNo)}`);
+      }catch(e){
+        $('receiptText').textContent = `无法加载该小票。\n\n${e.message}`;
+        $('mNote').style.display = 'block';
+        $('mNote').innerHTML = `Revisa que el Worker tenga <span class="mono">GET /api/bill</span> y que estés usando la API 密钥 correcta.`;
+        return;
+      }
+
+      const html = (data && (data.html || data.receipt_html)) ? (data.html || data.receipt_html) : '';
+      const text = (data && (data.text || data.receipt_text)) ? (data.text || data.receipt_text) : (typeof data === 'string' ? data : JSON.stringify(data, null, 2));
+
+      lastReceipt.html = html;
+      lastReceipt.text = text;
+
+      if(html){
+        const frame = $('receiptFrame');
+        frame.style.display = 'block';
+        $('receiptText').style.display = 'none';
+        frame.srcdoc = html;
+      }else{
+        const box = $('receiptText');
+        box.style.display = 'block';
+
+        // If we received payload/items, render a printable ticket view.
+        const items = data && (data.payload?.items || data.items || data.lines);
+        if(Array.isArray(items) && items.length){
+          const ticketHtml = buildTicketHtml({shop, billNo}, data, items);
+          lastReceipt.html = ticketHtml; // ensure Imprimir/PDF prints a real ticket
+          lastReceipt.text = buildTicketText({shop, billNo}, data, items);
+          const frame = $('receiptFrame');
+          frame.style.display = 'block';
+          $('receiptText').style.display = 'none';
+          frame.srcdoc = ticketHtml;
+        }else{
+          box.textContent = text || '—';
+        }
+      }
+    }
+
+    
+    function buildTicketHtml(meta, data, items){
+      const shop = meta.shop || data.shop_id || '';
+      const billNo = meta.billNo || data.bill_no || '';
+      const ts = data.ts_text || data.ts || '';
+      const total = Number(data.total ?? 0);
+      const paid = Number(data.paid ?? 0);
+      const change = Number(data.change ?? 0);
+      const piezas = Number(data.sum_qty ?? data.sumQty ?? 0) || items.reduce((a,it)=>a+Number(it.qty??it.quantity??0),0);
+
+      const rows = items.map(it=>{
+        const name = escapeHtml(it.name || it.nombre || it.title || '—');
+        const qty = Number(it.qty ?? it.quantity ?? 0);
+        const price = Number(it.price ?? it.unit ?? it.unit_price ?? it.unitPrice ?? it.pvp ?? 0);
+        const amount = Number(it.amount ?? it.line总计 ?? it.total ?? it.subtotal ?? (qty*price) ?? 0);
+        return `<tr>
+          <td class="name">${name}</td>
+          <td class="qty">${qty}</td>
+          <td class="price">${fmtEUR(price)}</td>
+          <td class="amt">${fmtEUR(amount)}</td>
+        </tr>`;
+      }).join('');
+
+      return `<!doctype html><html><head><meta charset="utf-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>Ticket ${escapeHtml(billNo)}</title>
+        <style>
+          :root{--w:80mm;}
+          body{margin:0; padding:8px; font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace; color:#000;}
+          .ticket{max-width:var(--w); margin:0 auto;}
+          .c{text-align:center}
+          .h1{font-weight:700; font-size:14px; margin:0}
+          .meta{font-size:12px; line-height:1.35; margin:6px 0 8px}
+          table{width:100%; border-collapse:collapse; font-size:12px}
+          th,td{padding:3px 0; vertical-align:top}
+          th{border-bottom:1px dashed #000; font-weight:700}
+          td{border-bottom:1px dotted #bbb}
+          td.name{width:44%}
+          td.qty{width:12%; text-align:right}
+          td.price{width:22%; text-align:right}
+          td.amt{width:22%; text-align:right; font-weight:700}
+          .tot{margin-top:8px; font-size:12px; line-height:1.5}
+          .tot .row{display:flex; justify-content:space-between}
+          .tot .grand{font-size:14px; font-weight:800; border-top:1px dashed #000; padding-top:6px; margin-top:6px}
+          .foot{margin-top:10px; font-size:11px}
+          
+    /* 手机精简列：默认只显示 票号/日期/件数/总计/操作，其余列在窄屏隐藏 */
+    @media (max-width: 520px){
+      th.col-machine, td.col-machine,
+      th.col-kinds, td.col-kinds,
+      th.col-avg, td.col-avg,
+      th.col-paid, td.col-paid,
+      th.col-change, td.col-change{
+        display:none;
+      }
+      .tableWrap{overflow-x:auto;}
+      table{min-width: 520px;}
+      /* 在手机上把日期显示更紧凑 */
+      td.col-date{font-size:12px;}
+    }
+
+@media print{
+            body{padding:0}
+            .ticket{max-width:100%}
+          }
+        </style></head><body>
+          <div class="ticket">
+            <div class="c">
+              <p class="h1">Mi Angelito Moda</p>
+              <div style="font-size:11px">COPIAS</div>
+            </div>
+            <div class="meta">
+              <div><b>TIENDA：</b> ${escapeHtml(shop)}</div>
+              <div><b>TICKET：</b> ${escapeHtml(billNo)}</div>
+              <div><b>FECHA:</b> ${escapeHtml(ts)}</div>
+            </div>
+            <table>
+              <thead><tr><th>CONCEPTO</th><th style="text-align:right">Qty</th><th style="text-align:right">€/u</th><th style="text-align:right">Importe</th></tr></thead>
+              <tbody>${rows}</tbody>
+            </table>
+            <div class="tot">
+              <div class="row"><span>PIEZAS</span><b>${piezas}</b></div>
+              <div class="row grand"><span>TOTAL</span><span>${fmtEUR(total)}</span></div>
+              <div class="row"><span>PAGADO</span><span>${fmtEUR(paid)}</span></div>
+              <div class="row"><span>CAMBIO</span><span>${fmtEUR(change)}</span></div>
+            </div>
+            <div class="foot c">Gracias</div>
+          </div>
+          <script>setTimeout(()=>{try{window.focus()}catch(e){}},10)<\/script>
+        </body></html>`;
+    }
+
+function buildTicketText(meta, data, items){
+      const shop = meta.shop || data.shop_id || '';
+      const billNo = meta.billNo || data.bill_no || '';
+      const ts = data.ts_text || data.ts || '';
+      const total = Number(data.total ?? 0);
+      const paid = Number(data.paid ?? 0);
+      const change = Number(data.change ?? 0);
+      const piezas = Number(data.sum_qty ?? data.sumQty ?? 0) || items.reduce((a,it)=>a+Number(it.qty??it.quantity??0),0);
+
+      const lines = [];
+      lines.push(`Mi Angelito Moda`);
+      lines.push(`TICKET: ${billNo}`);
+      if(ts) lines.push(`FECHA: ${ts}`);
+      lines.push('--------------------------------');
+      for(const it of items){
+        const name = String(it.name || it.nombre || it.title || '—');
+        const qty = Number(it.qty ?? it.quantity ?? 0);
+        const price = Number(it.price ?? it.unit ?? it.unit_price ?? it.unitPrice ?? it.pvp ?? 0);
+        const amount = Number(it.amount ?? it.total ?? it.subtotal ?? (qty*price) ?? 0);
+        lines.push(`${name}`);
+        lines.push(`  ${qty} x ${price.toFixed(2)}€ = ${amount.toFixed(2)}€`);
+      }
+      lines.push('--------------------------------');
+      lines.push(`PIEZAS: ${piezas}`);
+      lines.push(`TOTAL: ${total.toFixed(2)}€`);
+      lines.push(`PAGADO: ${paid.toFixed(2)}€`);
+      lines.push(`CAMBIO: ${change.toFixed(2)}€`);
+      lines.push('Gracias');
+      return lines.join('\n');
+    }
+
+function openPrintWindow(){
+      const html = lastReceipt.html;
+      const text = lastReceipt.text;
+      const meta = lastReceipt.meta || {};
+
+      const doc = html || `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>Ticket ${meta.billNo||''}</title>
+        <style>body{font-family:ui-monospace,Menlo,monospace;padding:14px}pre{white-space:pre-wrap;line-height:1.35;font-size:12px}</style>
+      </head><body><pre>${escapeHtml(text||'')}</pre></body></html>`;
+
+      const w = window.open('', '_blank');
+      if(!w){ toast('被浏览器拦截了弹窗'); return; }
+      w.document.open();
+      w.document.write(doc);
+      w.document.close();
+      w.focus();
+      // Let render, then print
+      setTimeout(()=>w.print(), 300);
+    }
+
+    function escapeHtml(s){
+      return String(s||'').replace(/[&<>"']/g, (c)=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+    }
+
+    async function copyText(text){
+      try{
+        await navigator.clipboard.writeText(text);
+        return true;
+      }catch{
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position='fixed';ta.style.left='-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        return true;
+      }
+    }
+
+    function toast(msg){
+      const t = document.createElement('div');
+      t.textContent = msg;
+      t.style.cssText = 'position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#111827;color:#fff;padding:10px 12px;border-radius:14px;font-weight:800;font-size:13px;z-index:2000;box-shadow:0 16px 40px rgba(2,6,23,.35);max-width:92vw;text-align:center;'
+      document.body.appendChild(t);
+      setTimeout(()=>{ t.style.opacity='0'; t.style.transition='opacity .25s'; }, 1100);
+      setTimeout(()=>t.remove(), 1400);
+    }
+
+    $('mPrint').addEventListener('click', ()=>{
+      if(!lastReceipt.text && !lastReceipt.html){ toast('请先打开一张小票'); return; }
+      openPrintWindow();
+    });
+
+    $('mShare').addEventListener('click', async ()=>{
+      if(!lastReceipt.text && !lastReceipt.html){ toast('请先打开一张小票'); return; }
+      const meta = lastReceipt.meta || {};
+      const shareText = `Ticket #${meta.billNo||''}\n店铺： ${meta.shop||''}\n\n${lastReceipt.text||''}`.trim();
+      if(navigator.share){
+        try{ await navigator.share({ title:`Ticket #${meta.billNo||''}`, text: shareText }); return; }catch{}
+      }
+      await copyText(shareText);
+      toast('已复制到剪贴板');
+    });
+
+    $('mWA').addEventListener('click', async ()=>{
+      if(!lastReceipt.text && !lastReceipt.html){ toast('请先打开一张小票'); return; }
+      const meta = lastReceipt.meta || {};
+      const text = (lastReceipt.text || '').trim() || `Ticket #${meta.billNo||''} · ${meta.shop||''}`;
+      const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
+      // iOS/Android: opens WhatsApp app if installed, otherwise web WhatsApp
+      window.open(url, '_blank');
+    });
+
+
+    $('m邮件').addEventListener('click', ()=>{
+      if(!lastReceipt.text && !lastReceipt.html){ toast('请先打开一张小票'); return; }
+      const meta = lastReceipt.meta || {};
+      const subject = encodeURIComponent(`Ticket #${meta.billNo||''} · ${meta.shop||''}`);
+      const body = encodeURIComponent((lastReceipt.text||'').slice(0, 8000));
+      // Note: mailto cannot attach files; this is the most stable option.
+      window.location.href = `mailto:?subject=${subject}&body=${body}`;
+    });
+
+    // ===== Export =====
+    function download(filename, content, mime='text/plain'){
+      const blob = new Blob([content], { type: mime });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    $('btnCSV').addEventListener('click', ()=>{
+      const rows = [['bill_no','ts_text','ts_ms','machine_id','total','paid','change','sum_qty','shop_id']];
+      for(const b of filteredBills){
+        rows.push([
+          parseBillNo(b),
+          b.ts_text||'',
+          b.ts_ms||'',
+          b.machine_id||'',
+          b.total||0,
+          b.paid||0,
+          b.change||0,
+          billPieces(b),
+          (b.shop_id||$('shop').value)
+        ]);
+      }
+      const csv = rows.map(r=>r.map(v=>{
+        const s = String(v ?? '');
+        return /[",\n]/.test(s) ? '"'+s.replace(/"/g,'""')+'"' : s;
+      }).join(',')).join('\n');
+      download(`tickets_${$('shop').value}_${$('from').value}_${$('to').value}.csv`, csv, 'text/csv');
+    });
+
+    $('btnJSON').addEventListener('click', ()=>{
+      download(`tickets_${$('shop').value}_${$('from').value}_${$('to').value}.json`, JSON.stringify(filteredBills, null, 2), 'application/json');
+    });
+
+    // ===== Actions =====
+    $('btnToday').addEventListener('click', ()=>{ todayRange(); render(); });
+
+    $('btnRefresh').addEventListener('click', async ()=>{ await load(); });
+
+    $('btnTest').addEventListener('click', async ()=>{
+      try{
+        const shop = $('shop').value;
+        const r = await apiFetch(`/api/summary?shop_id=${encodeURIComponent(shop)}`);
+        setConn(true,'已连接');
+        setStatus('OK · ' + JSON.stringify(r));
+      }catch(e){
+        setConn(false,'无法访问');
+        setStatus(String(e.message||e));
+      }
+    });
+
+    $('btnKey').addEventListener('click', ()=>{
+      const cur = getKey();
+      const next = prompt('请输入 POS_API_KEY（只保存在本设备）：', cur||'');
+      if(next===null) return;
+      setKey(next);
+      toast('API 密钥 guardada');
+    });
+
+    $('from').addEventListener('change', render);
+    $('to').addEventListener('change', render);
+    $('shop').addEventListener('change', render);
+
+    async function load(){
+      const shop = $('shop').value;
+      setStatus('加载中…');
+      try{
+        // Ensure key exists
+        if(!getKey()){
+          setConn(false,'Falta API 密钥');
+          setStatus('Configura primero la API 密钥 (botón "API 密钥").');
+          allBills = []; filteredBills = [];
+          render();
+          return;
+        }
+
+        // Try list endpoint
+        const rows = await apiFetch(`/api/bills?shop_id=${encodeURIComponent(shop)}`);
+        // Expected: array
+        allBills = Array.isArray(rows) ? rows : (rows && rows.results) ? rows.results : [];
+
+        setConn(true,'已连接');
+        setStatus(`OK · 已获取小票数： ${allBills.length}`);
+
+        // Default range to today if empty
+        if(!$('from').value || !$('to').value) todayRange();
+
+        render();
+      }catch(e){
+        setConn(false,'无法访问');
+        setStatus(String(e.message||e));
+        allBills = []; filteredBills=[];
+        render();
+      }
+    }
+
+    // Init
+    (function init(){
+      $('kApi').textContent = API_BASE;
+      todayRange();
+      // If key missing, still render UI; user can set key then refresh
+      load();
+    })();
+  </script>
 </body>
 </html>
