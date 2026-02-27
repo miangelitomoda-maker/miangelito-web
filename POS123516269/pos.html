@@ -378,6 +378,16 @@
   }
 
   function setStep(next){
+    setTimeout(()=>{
+      const btn = $('btnEnter');
+      if(btn){
+        if(next === 'qty'){
+          btn.textContent = '下一步（输入价格）';
+        }else{
+          btn.textContent = '确认添加';
+        }
+      }
+    },0);
     step = next;
     const line = $('line');
     if(step === 'qty'){
@@ -569,13 +579,23 @@
 
   
   
-  // On-screen Enter button (for iPhone numeric keyboard without Enter)
+  
+  // Dynamic big button (Next Step logic)
   const btnEnter = $('btnEnter');
+  function updateEnterLabel(){
+    if(step === 'qty'){
+      btnEnter.textContent = '下一步（输入价格）';
+    }else{
+      btnEnter.textContent = '确认添加';
+    }
+  }
   if(btnEnter){
     btnEnter.addEventListener('click', ()=>{
       handleEnter();
+      setTimeout(updateEnterLabel, 0);
     });
   }
+
 
   // ===== Disable refresh on mobile too (F5 / Ctrl+R / Ctrl+Shift+R) =====
   document.addEventListener('keydown', function (e) {
