@@ -123,13 +123,54 @@
     /* Pure mobile (iPhone 16 Pro Max / small screens) */
     @media (max-width: 520px){
       .wrap{max-width:100%;padding:12px 12px calc(120px + env(safe-area-inset-bottom));}
-      .top{padding:12px}
-      .controls{grid-template-columns:1fr;gap:10px}
-      .controls .row{flex-wrap:wrap;align-items:stretch;justify-content:flex-start}
-      .controls .row .btn{flex:1;min-width:120px}
+
+      /* 顶部：手机端取消“悬浮/粘住”效果，变成正常流式布局 */
+      .top{
+        padding:12px;
+        position:static;
+        top:auto;
+        z-index:auto;
+        box-shadow:none;
+      }
+
+      /* 控件：三行排版（更紧凑，不会溢出） */
+      .controls{
+        grid-template-columns:repeat(3, minmax(0, 1fr));
+        gap:10px;
+      }
+      /* 让第4块（今天/刷新）占满一行，并变成两列 */
+      .controls .row{
+        gap:10px;
+        align-items:stretch;
+      }
+      .controls > .row:nth-of-type(1){
+        grid-column:1/-1;
+        display:grid;
+        grid-template-columns:1fr 1fr;
+      }
+      /* 让第5块（导出/密钥）占满一行，并变成三列 */
+      .controls > .row:nth-of-type(2){
+        grid-column:1/-1;
+        display:grid;
+        grid-template-columns:1fr 1fr 1fr;
+      }
+
+      /* 覆盖原来 inline style 的对齐方式，避免在手机上挤出屏幕 */
+      .controls > .row:nth-of-type(1),
+      .controls > .row:nth-of-type(2){
+        justify-content:stretch !important;
+      }
+      .controls > .row:nth-of-type(1) .btn,
+      .controls > .row:nth-of-type(2) .btn{
+        width:100%;
+        min-width:0;
+      }
+
+      /* KPI */
       .kpis{grid-template-columns:1fr 1fr}
       .pillRow{gap:6px}
       .pill{padding:8px 10px}
+
       /* Tables -> card list */
       .tableWrap{overflow:visible;border:none;background:transparent}
       table{min-width:0}

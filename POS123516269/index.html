@@ -2556,5 +2556,128 @@ async function syncBillToCloud(payload){
 }
 
 </script>
+<script>
+(() => {
+  // =========================
+  // 1) 自动全屏（首次交互触发）
+  // =========================
+  const FULLSCREEN_ON_FIRST_GESTURE = true;
+
+  function requestFs(){
+    const el = document.documentElement;
+    const req = el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen || el.msRequestFullscreen;
+    if(req) {
+      try { req.call(el); } catch(e){}
+    }
+  }
+  function isFs(){
+    return !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement);
+  }
+  function bindFirstGestureFs(){
+    if(!FULLSCREEN_ON_FIRST_GESTURE) return;
+    const go = () => {
+      if(!isFs()) requestFs();
+      // 只触发一次
+      window.removeEventListener('pointerdown', go, true);
+      window.removeEventListener('keydown', go, true);
+      window.removeEventListener('touchstart', go, true);
+    };
+    window.addEventListener('pointerdown', go, true);
+    window.addEventListener('touchstart', go, true);
+    window.addEventListener('keydown', go, true);
+  }
+  bindFirstGestureFs();
+
+  // =========================
+  // 2) 禁右键
+  // =========================
+  document.addEventListener('contextmenu', (e) => {
+    e.preventDefault();
+  }, true);
+
+  // =========================
+  // 3) 禁缩小，但允许放大
+  // - 禁：Ctrl + '-'、Ctrl + '0'
+  // - 允许：Ctrl + '+' / '='（大多数键盘 + 需要按 =）
+  // =========================
+  document.addEventListener('keydown', (e) => {
+    const key = (e.key || '').toLowerCase();
+
+    // F12
+    if (e.key === 'F12') {
+      e.preventDefault();
+      e.stopPropagation();
+      return;
+    }
+
+    // 常见 DevTools 快捷键（尽量拦）
+    if (e.ctrlKey && e.shiftKey && (key === 'i' || key === 'j' || key === 'c')) {
+      e.preventDefault();
+      e.stopPropagation();
+      return;
+    }
+    // 查看源代码
+    if (e.ctrlKey && key === 'u') {
+      e.preventDefault();
+      e.stopPropagation();
+      return;
+    }
+
+    // 缩放：只禁缩小/还原
+    if (e.ctrlKey && (e.key === '-' || e.key === '0')) {
+      e.preventDefault();
+      e.stopPropagation();
+      return;
+    }
+
+    // 允许放大：Ctrl + '+' 或 '=' -> 不拦截
+  }, true);
+
+  // =========================
+  // 4) Ctrl + 滚轮：只禁“缩小”（滚轮向下），允许“放大”（滚轮向上）
+  // =========================
+  document.addEventListener('wheel', (e) => {
+    if (!e.ctrlKey) return;
+    // deltaY > 0 通常表示滚轮向下（缩小）
+    if (e.deltaY > 0) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    // deltaY < 0 (滚轮向上) 允许放大
+  }, { passive: false, capture: true });
+
+  // =========================
+  // 5) DevTools 打开检测：打开就遮罩提示（不能 100% 防）
+  // =========================
+  const overlay = document.createElement('div');
+  overlay.style.cssText = `
+    position:fixed; inset:0; z-index:2147483647;
+    background:rgba(0,0,0,.85); color:#fff;
+    display:none; align-items:center; justify-content:center;
+    text-align:center; padding:24px;
+    font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  `;
+  overlay.innerHTML = `
+    <div style="max-width:520px">
+      <div style="font-size:20px;font-weight:800;margin-bottom:10px">已禁止调试</div>
+      <div style="opacity:.9;line-height:1.6">请关闭开发者工具后继续使用。</div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  function devtoolsOpen(){
+    // 经验检测：窗口外框差值（不保证所有环境准确）
+    const w = window.outerWidth - window.innerWidth;
+    const h = window.outerHeight - window.innerHeight;
+    return (w > 160 || h > 160);
+  }
+
+  setInterval(() => {
+    const open = devtoolsOpen();
+    overlay.style.display = open ? 'flex' : 'none';
+  }, 600);
+
+})();
+</script>
 </body>
 </html>
