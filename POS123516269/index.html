@@ -2678,6 +2678,24 @@ async function syncBillToCloud(payload){
   }, 600);
 
 })();
+// ===== 禁止刷新（F5 / Ctrl+R）=====
+document.addEventListener('keydown', function (e) {
+
+  // F5
+  if (e.key === 'F5') {
+    e.preventDefault();
+    e.stopPropagation();
+    return false;
+  }
+
+  // Ctrl + R
+  if (e.ctrlKey && (e.key === 'r' || e.key === 'R')) {
+    e.preventDefault();
+    e.stopPropagation();
+    return false;
+  }
+
+}, true);
 </script>
 </body>
 </html>
