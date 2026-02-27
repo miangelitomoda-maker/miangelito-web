@@ -1,0 +1,571 @@
+<!doctype html>
+<html lang="zh">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>POS · 手机简易版</title>
+  <style>
+    :root{
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --text:#0f172a;
+      --muted:#64748b;
+      --line:rgba(15,23,42,.10);
+      --shadow:0 10px 30px rgba(15,23,42,.08);
+      --radius:18px;
+      --radius2:14px;
+      --tap:54px;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--text)}
+    .wrap{max-width:520px;margin:0 auto;padding:12px 12px calc(120px + env(safe-area-inset-bottom));}
+    .top{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:12px;
+      box-shadow:none; /* 纯手机版：不做悬浮 */
+    }
+    .row{display:flex;gap:10px;align-items:center}
+    .row + .row{margin-top:10px}
+    .ttl{font-weight:950;font-size:18px;line-height:1}
+    .sub{font-size:12px;color:var(--muted);margin-top:4px}
+    .pill{
+      margin-left:auto;
+      display:inline-flex;align-items:center;gap:8px;
+      border:1px solid var(--line);border-radius:999px;
+      padding:8px 10px;background:#fff;font-size:12px;color:var(--muted);
+      white-space:nowrap;
+    }
+    .dot{width:8px;height:8px;border-radius:999px;background:#94a3b8}
+    .dot.ok{background:#22c55e}
+    .dot.bad{background:#ef4444}
+
+    .kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+    .kpi{background:#fff;border:1px solid var(--line);border-radius:var(--radius2);padding:12px}
+    .kpi .k{font-size:12px;color:var(--muted)}
+    .kpi .v{font-size:22px;font-weight:950;margin-top:6px;font-variant-numeric:tabular-nums}
+
+    .card{
+      margin-top:12px;
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:12px;
+      box-shadow:var(--shadow);
+    }
+
+    .input{
+      width:100%;
+      height:64px;
+      border-radius:16px;
+      border:1px solid var(--line);
+      padding:0 14px;
+      font-size:22px;
+      font-weight:900;
+      outline:none;
+      background:#fff;
+      font-variant-numeric:tabular-nums;
+    }
+    .hint{margin-top:8px;font-size:12px;color:var(--muted);line-height:1.35}
+    .hint b{color:var(--text)}
+    .mini{font-size:12px;color:var(--muted)}
+    .list{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+    .it{
+      border:1px solid var(--line);
+      border-radius:16px;
+      background:#fff;
+      padding:10px 12px;
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+    }
+    .it .main{flex:1;min-width:0}
+    .it .name{font-weight:900;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .it .meta{margin-top:4px;color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums}
+    .it .amt{font-weight:950;font-variant-numeric:tabular-nums;white-space:nowrap}
+    .btns{
+      position:fixed;left:0;right:0;bottom:0;
+      background:#fff;border-top:1px solid var(--line);
+      padding:10px 12px calc(10px + env(safe-area-inset-bottom));
+      display:grid;
+      grid-template-columns:1fr 1fr 1.4fr;
+      gap:10px;
+      max-width:520px;
+      margin:0 auto;
+    }
+    .btn{
+      height:52px;border-radius:16px;
+      border:1px solid var(--line);
+      background:#fff;
+      font-weight:900;font-size:15px;
+      display:flex;align-items:center;justify-content:center;
+      user-select:none;
+      -webkit-tap-highlight-color:transparent;
+      cursor:pointer;
+    }
+    .btn.primary{background:#111827;color:#fff;border-color:#111827}
+    .btn.danger{background:#fff}
+    .btn:active{transform:translateY(1px)}
+    .btn.small{
+      height:36px;border-radius:12px;font-size:12px;padding:0 10px;
+    }
+
+    /* Bottom sheet: 收款 */
+    .mask{position:fixed;inset:0;display:none;z-index:9999;align-items:flex-end;justify-content:center;background:rgba(2,6,23,.55);padding:12px}
+    .sheet{
+      width:min(520px, 100%);
+      background:#fff;border-radius:22px 22px 0 0;
+      border:1px solid var(--line);
+      box-shadow:0 -20px 60px rgba(2,6,23,.25);
+      overflow:hidden;
+    }
+    .sheetHead{display:flex;justify-content:space-between;align-items:center;padding:14px 14px 10px;border-bottom:1px solid var(--line)}
+    .sheetHead .h{font-weight:950}
+    .x{width:42px;height:42px;border-radius:14px;border:1px solid var(--line);background:#fff;font-weight:950}
+    .sheetBody{padding:12px 14px}
+    .sheetGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .field label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}
+    .field input{
+      width:100%;height:54px;border-radius:16px;border:1px solid var(--line);
+      padding:0 12px;font-size:18px;font-weight:900;outline:none;font-variant-numeric:tabular-nums;
+    }
+    .sheetBtns{display:grid;grid-template-columns:1fr 1fr 1.4fr;gap:10px;padding:12px 14px 14px;border-top:1px solid var(--line)}
+    .toast{
+      position:fixed;left:50%;bottom:20px;transform:translateX(-50%);
+      background:#111827;color:#fff;padding:10px 12px;border-radius:14px;
+      font-weight:900;font-size:13px;z-index:20000;box-shadow:0 16px 40px rgba(2,6,23,.35);
+      max-width:92vw;text-align:center;opacity:0;pointer-events:none;
+      transition:opacity .18s;
+    }
+    .toast.show{opacity:1}
+
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div class="row">
+        <div>
+          <div class="ttl">POS · 手机简易版</div>
+          <div class="sub">输入件数回车 → 输入单价回车</div>
+        </div>
+        <div class="pill"><span class="dot" id="dotConn"></span><span id="connLabel">未连接</span></div>
+      </div>
+
+      <div class="kpis">
+        <div class="kpi">
+          <div class="k">总计</div>
+          <div class="v big" id="kTotal">€ 0.00</div>
+        </div>
+        <div class="kpi">
+          <div class="k">件数 / 款数</div>
+          <div class="v"><span id="kPieces">0</span> / <span id="kKinds">0</span></div>
+        </div>
+      </div>
+
+      <div style="margin-top:10px" class="row">
+        <div class="mini">店铺：<b id="shopId">miangelito</b></div>
+        <div class="mini" style="margin-left:auto">机器：<button class="btn small" id="btnMachine">A</button></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <input id="line" class="input" inputmode="decimal" placeholder="先输入件数 回车" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="done" />
+      <div class="hint" id="stepHint">步骤 <b>1/2</b>：输入件数（例如 2 或 -1 退货），按回车。也可以点下面快捷数字。</div>
+</div>
+
+    <div class="card">
+      <div class="row" style="justify-content:space-between">
+        <div style="font-weight:950">当前清单</div>
+        <div class="mini">向下滚动查看更多</div>
+      </div>
+      <div class="list" id="list"></div>
+      <div class="hint" id="emptyHint" style="display:none">还没有任何商品。先输入 <b>件数</b> 回车，再输入 <b>单价</b> 回车。</div>
+    </div>
+  </div>
+
+  <div class="btns">
+    <button class="btn" id="btnUndo">撤销</button>
+    <button class="btn danger" id="btnClear">清空</button>
+    <button class="btn primary" id="btnPay">收款入账</button>
+  </div>
+
+  <!-- 收款 Bottom Sheet -->
+  <div class="mask" id="mask">
+    <div class="sheet" role="dialog" aria-modal="true" aria-label="收款">
+      <div class="sheetHead">
+        <div class="h">收款</div>
+        <button class="x" id="btnClose">✕</button>
+      </div>
+      <div class="sheetBody">
+        <div class="sheetGrid">
+          <div class="field">
+            <label>应收</label>
+            <input id="fTotal" readonly />
+          </div>
+          <div class="field">
+            <label>实收（可空：默认刚好付清）</label>
+            <input id="fPaid" inputmode="decimal" placeholder="例如 20" />
+          </div>
+        </div>
+        <div class="hint" id="payHint" style="margin-top:10px">找零：<b id="fChange">0.00</b> €</div>
+      </div>
+      <div class="sheetBtns">
+        <button class="btn" id="btnExact">刚好付清</button>
+        <button class="btn" id="btnSaveNoPrint">保存（不打印）</button>
+        <button class="btn primary" id="btnSave">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+<script>
+(() => {
+  // ===== Cloud Sync (same as POS desktop) =====
+  const CLOUD_API = "https://www.miangelitomoda.com";
+  const POS_API_KEY = "miangelito_2026_secure_key_83927_123516269";
+  const SHOP_ID = "miangelito";
+
+  let MACHINE_ID = localStorage.getItem("pos_machine_id") || "A";
+  localStorage.setItem("pos_machine_id", MACHINE_ID);
+
+  async function syncBillToCloud(payload){
+    try{
+      await fetch(CLOUD_API + "/api/bill", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-API-KEY": POS_API_KEY
+        },
+        body: JSON.stringify({
+          shop_id: SHOP_ID,
+          machine_id: MACHINE_ID,
+          billNo: payload.billNo,
+          tsMs: Date.now(),
+          tsText: payload.ts,
+          total: payload.total,
+          paid: payload.paid,
+          change: payload.change,
+          sumQty: payload.sumQty,
+          kinds: payload.kinds,
+          customerName: payload.customerName || "",
+          payload
+        })
+      });
+      setConn(true, "已连接");
+    }catch(e){
+      console.warn("Cloud sync failed", e);
+      setConn(false, "离线");
+    }
+  }
+
+  // ===== Helpers =====
+  const $ = (id)=>document.getElementById(id);
+  const fmtEUR = (n)=> new Intl.NumberFormat('es-ES',{style:'currency',currency:'EUR'}).format(Number(n||0));
+  const money = (n)=> (Math.round((Number(n)||0)*100)/100).toFixed(2);
+  function toNumber(x){
+    const s = String(x||'').trim().replace(',', '.');
+    if(!s) return NaN;
+    const n = Number(s);
+    return Number.isFinite(n) ? n : NaN;
+  }
+  function toast(msg){
+    const t = $('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toast._tm);
+    toast._tm = setTimeout(()=>t.classList.remove('show'), 1300);
+  }
+  function setConn(ok, label){
+    const dot = $('dotConn');
+    dot.classList.remove('ok','bad');
+    dot.classList.add(ok ? 'ok' : 'bad');
+    $('connLabel').textContent = label;
+  }
+  function flashErr(msg){
+    toast(msg);
+    $('line').style.borderColor = '#ef4444';
+    setTimeout(()=> $('line').style.borderColor = 'rgba(15,23,42,.10)', 600);
+  }
+
+  // ===== State =====
+  const STORAGE_CUR = 'POS_MOBILE_CUR_v1';
+  let items = []; // {qty, price, amount}
+
+  // mobile 2-step input
+  let step = 'qty'; // qty -> price
+  let tmpQty = null;
+
+  function loadCur(){
+    try{
+      const raw = localStorage.getItem(STORAGE_CUR);
+      const v = raw ? JSON.parse(raw) : null;
+      items = Array.isArray(v?.items) ? v.items : [];
+    }catch{ items = []; }
+  }
+  function saveCur(){
+    localStorage.setItem(STORAGE_CUR, JSON.stringify({ items }));
+  }
+
+  function calc(){
+    let total = 0, sumQty = 0;
+    for(const it of items){
+      total += Number(it.amount||0);
+      sumQty += Number(it.qty||0);
+    }
+    return { total, sumQty, kinds: items.length };
+  }
+  function render(){
+    $('shopId').textContent = SHOP_ID;
+    $('btnMachine').textContent = MACHINE_ID;
+
+    const { total, sumQty, kinds } = calc();
+    $('kTotal').textContent = fmtEUR(total);
+    $('kPieces').textContent = String(sumQty);
+    $('kKinds').textContent = String(kinds);
+
+    const list = $('list');
+    list.innerHTML = '';
+    $('emptyHint').style.display = items.length ? 'none' : 'block';
+
+    items.forEach((it, idx) => {
+      const row = document.createElement('div');
+      row.className = 'it';
+      row.innerHTML = `
+        <div class="main">
+          <div class="name">款式 ${idx+1}</div>
+          <div class="meta">${it.qty} × €${money(it.price)} </div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+          <div class="amt">€ ${money(it.amount)}</div>
+          <button class="btn small" data-del="${idx}">删除</button>
+        </div>
+      `;
+      list.appendChild(row);
+    });
+
+    list.querySelectorAll('button[data-del]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const i = Number(btn.getAttribute('data-del'));
+        if(Number.isFinite(i)){
+          items.splice(i,1);
+          saveCur();
+          render();
+          toast('已删除');
+        }
+      });
+    });
+  }
+
+  function setStep(next){
+    step = next;
+    const line = $('line');
+    if(step === 'qty'){
+      line.placeholder = '先输入件数 回车';
+      $('stepHint').innerHTML = '步骤 <b>1/2</b>：输入件数（例如 2 或 -1 退货），按回车。也可以点下面快捷数字。';
+    }else{
+      line.placeholder = '输入单价 回车';
+      $('stepHint').innerHTML = '步骤 <b>2/2</b>：输入单价（例如 6.0），按回车。';
+    }
+    line.focus();
+    line.select();
+  }
+
+  function addItem(qty, price){
+    const q = Number(qty);
+    const p = Number(price);
+    if(!Number.isFinite(q) || q === 0){ flashErr('件数不对'); return false; }
+    if(!Number.isFinite(p) || p < 0){ flashErr('单价不对'); return false; }
+    const amount = Math.round(q*p*100)/100;
+    items.push({ qty:q, price:p, amount });
+    saveCur();
+    render();
+    return true;
+  }
+
+  function handleEnter(){
+    const line = $('line');
+    const raw = String(line.value||'').trim();
+    if(!raw) return;
+    const n = toNumber(raw);
+    if(step === 'qty'){
+      if(!Number.isFinite(n) || n === 0){ flashErr('件数不对（例如 2 或 -1）'); return; }
+      tmpQty = n;
+      line.value = '';
+      setStep('price');
+      toast('下一步：输入单价');
+      return;
+    }
+    if(step === 'price'){
+      if(!Number.isFinite(n) || n < 0){ flashErr('单价不对（例如 6.0）'); return; }
+      const ok = addItem(tmpQty, n);
+      if(ok){
+        line.value = '';
+        tmpQty = null;
+        setStep('qty');
+        toast('已添加（下一款）');
+      }
+      return;
+    }
+  }
+
+  // ===== Checkout =====
+  const mask = $('mask');
+  function openPay(){
+    const { total } = calc();
+    if(total === 0){ toast('没有商品'); return; }
+    $('fTotal').value = money(total);
+    $('fPaid').value = '';
+    $('fChange').textContent = '0.00';
+    mask.style.display = 'flex';
+    setTimeout(()=>{ $('fPaid').focus(); $('fPaid').select(); }, 0);
+  }
+  function closePay(){
+    mask.style.display = 'none';
+    $('line').focus(); $('line').select();
+  }
+  function updateChange(){
+    const total = toNumber($('fTotal').value);
+    const paid = toNumber($('fPaid').value);
+    if(!Number.isFinite(paid)){
+      $('fChange').textContent = '0.00';
+      return;
+    }
+    $('fChange').textContent = money(paid - total);
+  }
+  function billNoFromDate(d){
+    const y = d.getFullYear();
+    const m = String(d.getMonth()+1).padStart(2,'0');
+    const da = String(d.getDate()).padStart(2,'0');
+    const hh = String(d.getHours()).padStart(2,'0');
+    const mm = String(d.getMinutes()).padStart(2,'0');
+    const ss = String(d.getSeconds()).padStart(2,'0');
+    return `${y}${m}${da}-${hh}${mm}${ss}`;
+  }
+  function buildPayload(paidOverride){
+    const { total, sumQty, kinds } = calc();
+    const now = new Date();
+    const billNo = billNoFromDate(now);
+    const paid = Number.isFinite(paidOverride) ? paidOverride : total;
+    const change = paid - total;
+    return {
+      ts: now.toLocaleString(),
+      billNo,
+      items: items.map(it => ({ name:'—', qty:it.qty, price:it.price, amount:it.amount })),
+      total, paid, change, sumQty, kinds
+    };
+  }
+  function finalize(paidOverride){
+    const { total } = calc();
+    if(total === 0) return;
+    const paid = Number.isFinite(paidOverride) ? paidOverride : (total > 0 ? total : 0);
+    const payload = buildPayload(paid);
+    // cloud sync
+    syncBillToCloud(payload);
+    // clear
+    items = [];
+    saveCur();
+    render();
+    tmpQty = null;
+    setStep('qty');
+    closePay();
+    toast('已入账');
+  }
+
+  // ===== Bind =====
+  $('line').addEventListener('keydown', (e) => {
+    if(e.key === 'Enter'){
+      e.preventDefault();
+      handleEnter();
+    }
+  });
+
+  $('btnUndo').addEventListener('click', ()=>{
+    if(!items.length){ toast('没有可撤销'); return; }
+    items.pop();
+    saveCur();
+    render();
+    toast('已撤销');
+    $('line').focus(); $('line').select();
+  });
+  $('btnClear').addEventListener('click', ()=>{
+    if(!items.length){ toast('已经是空'); return; }
+    toast('长按 1 秒清空');
+  });
+
+  // Long-press to clear (safer on mobile)
+  let __clearTm = null;
+  $('btnClear').addEventListener('touchstart', ()=>{
+    if(!items.length) return;
+    __clearTm = setTimeout(()=>{
+      items = [];
+      saveCur();
+      render();
+      tmpQty = null;
+      setStep('qty');
+      toast('已清空');
+    }, 900);
+  }, {passive:true});
+  $('btnClear').addEventListener('touchend', ()=>{ if(__clearTm){ clearTimeout(__clearTm); __clearTm=null; } });
+  $('btnClear').addEventListener('touchcancel', ()=>{ if(__clearTm){ clearTimeout(__clearTm); __clearTm=null; } });
+  $('btnPay').addEventListener('click', openPay);
+
+  $('btnClose').addEventListener('click', closePay);
+  mask.addEventListener('click', (e)=>{ if(e.target === mask) closePay(); });
+
+  $('fPaid').addEventListener('input', updateChange);
+  $('btnExact').addEventListener('click', ()=>{
+    const total = toNumber($('fTotal').value);
+    $('fPaid').value = money(total > 0 ? total : 0);
+    updateChange();
+    $('fPaid').focus(); $('fPaid').select();
+  });
+  $('btnSaveNoPrint').addEventListener('click', ()=>{
+    // no print: just finalize; if paid empty default exact
+    const total = toNumber($('fTotal').value);
+    const raw = String($('fPaid').value||'').trim();
+    const paid = raw ? toNumber(raw) : (total > 0 ? total : 0);
+    if(!Number.isFinite(paid)){ flashErr('实收不对'); return; }
+    finalize(paid);
+  });
+  $('btnSave').addEventListener('click', ()=>{
+    // same as no print for mobile (printing handled on desktop)
+    const total = toNumber($('fTotal').value);
+    const raw = String($('fPaid').value||'').trim();
+    const paid = raw ? toNumber(raw) : (total > 0 ? total : 0);
+    if(!Number.isFinite(paid)){ flashErr('实收不对'); return; }
+    finalize(paid);
+  });
+
+  $('btnMachine').addEventListener('click', ()=>{
+    const cur = MACHINE_ID;
+    const next = prompt('设置机器编号（例如 A / B / iPhone）：', cur);
+    if(next === null) return;
+    MACHINE_ID = String(next||'').trim() || 'A';
+    localStorage.setItem('pos_machine_id', MACHINE_ID);
+    render();
+    toast('已保存机器编号');
+  });
+
+  
+  // ===== Disable refresh on mobile too (F5 / Ctrl+R / Ctrl+Shift+R) =====
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'F5') { e.preventDefault(); e.stopPropagation(); return false; }
+    if (e.ctrlKey && (e.key === 'r' || e.key === 'R')) { e.preventDefault(); e.stopPropagation(); return false; }
+    if (e.ctrlKey && e.shiftKey && (e.key === 'r' || e.key === 'R')) { e.preventDefault(); e.stopPropagation(); return false; }
+  }, true);
+
+  // init
+  loadCur();
+  render();
+  setStep('qty');
+  setConn(false, '未连接');
+  toast('就绪');
+})();
+</script>
+</body>
+</html>
