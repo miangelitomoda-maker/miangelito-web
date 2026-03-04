@@ -16,6 +16,7 @@
       --radius2:14px;
       --tap:54px;
       --mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+      --red:#ef4444;
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
     }
     *{box-sizing:border-box}
@@ -80,12 +81,13 @@
     .kpi{border:1px solid var(--line);border-radius:var(--radius2);padding:12px;background:#fff}
     .kpi .k{font-size:12px;color:var(--muted)}
     .kpi .v{font-size:22px;font-weight:900;margin-top:4px}
+    .negText{color:var(--red)}
 
     .pillRow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
     .pill{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 10px;font-size:12px;color:var(--muted)}
     .dot{width:8px;height:8px;border-radius:999px;background:#94a3b8}
     .dot.ok{background:#22c55e}
-    .dot.bad{background:#ef4444}
+    .dot.bad{background:var(--red)}
     .mono{font-family:var(--mono)}
 
     .note{margin-top:10px;border:1px dashed rgba(15,23,42,.18);border-radius:14px;padding:10px;background:rgba(241,245,249,.7);color:var(--muted);font-size:12px;line-height:1.35}
@@ -93,13 +95,12 @@
     .statusBox{font-family:var(--mono);font-size:12px;white-space:pre-wrap;line-height:1.35;color:#0b1220;min-height:40px}
 
     .tableWrap{overflow:auto;border:1px solid var(--line);border-radius:16px;background:#fff}
-    table{width:100%;border-collapse:collapse;min-width:740px}
+    table{width:100%;border-collapse:collapse;min-width:520px}
     th,td{padding:12px 10px;border-bottom:1px solid var(--line);text-align:left;font-size:13px}
     th{font-size:12px;color:var(--muted);position:sticky;top:0;background:#fff;z-index:1}
     tr:last-child td{border-bottom:none}
-
-    .actions{display:flex;gap:8px;align-items:center}
-    .mini{height:38px;padding:0 10px;border-radius:12px;font-weight:800;font-size:12px}
+    tbody tr.clickable{cursor:pointer}
+    tbody tr.clickable:hover{background:rgba(15,23,42,.03)}
 
     /* Bottom sheet modal */
     .modal{position:fixed;inset:0;display:none;z-index:1000}
@@ -116,62 +117,20 @@
     .sheetActions{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;padding:12px 14px 14px;border-top:1px solid var(--line);background:#fff}
     .sheetActions .btn{height:48px}
 
-    /* iPhone 16 Pro Max: keep things roomy */
     @media (min-width: 430px){
       .wrap{padding-left:16px;padding-right:16px}
+    }
 
-    /* Pure mobile (iPhone 16 Pro Max / small screens) */
     @media (max-width: 520px){
       .wrap{max-width:100%;padding:12px 12px calc(120px + env(safe-area-inset-bottom));}
-
-      /* 顶部：手机端取消“悬浮/粘住”效果，变成正常流式布局 */
-      .top{
-        padding:12px;
-        position:static;
-        top:auto;
-        z-index:auto;
-        box-shadow:none;
-      }
-
-      /* 控件：三行排版（更紧凑，不会溢出） */
-      .controls{
-        grid-template-columns:repeat(3, minmax(0, 1fr));
-        gap:10px;
-      }
-      /* 让第4块（今天/刷新）占满一行，并变成两列 */
-      .controls .row{
-        gap:10px;
-        align-items:stretch;
-      }
-      .controls > .row:nth-of-type(1){
-        grid-column:1/-1;
-        display:grid;
-        grid-template-columns:1fr 1fr;
-      }
-      /* 让第5块（导出/密钥）占满一行，并变成三列 */
-      .controls > .row:nth-of-type(2){
-        grid-column:1/-1;
-        display:grid;
-        grid-template-columns:1fr 1fr 1fr;
-      }
-
-      /* 覆盖原来 inline style 的对齐方式，避免在手机上挤出屏幕 */
-      .controls > .row:nth-of-type(1),
-      .controls > .row:nth-of-type(2){
-        justify-content:stretch !important;
-      }
-      .controls > .row:nth-of-type(1) .btn,
-      .controls > .row:nth-of-type(2) .btn{
-        width:100%;
-        min-width:0;
-      }
-
-      /* KPI */
+      .top{padding:12px}
+      .controls{grid-template-columns:1fr;gap:10px}
+      .controls .row{flex-wrap:wrap;align-items:stretch;justify-content:flex-start}
+      .controls .row .btn{flex:1;min-width:120px}
       .kpis{grid-template-columns:1fr 1fr}
       .pillRow{gap:6px}
       .pill{padding:8px 10px}
 
-      /* Tables -> card list */
       .tableWrap{overflow:visible;border:none;background:transparent}
       table{min-width:0}
       thead{display:none}
@@ -199,28 +158,16 @@
         font-weight:800;
         letter-spacing:.02em;
       }
-      td.col-actions{padding-top:10px}
-      td.col-actions::before{content:"操作"}
-      .actions{display:flex;gap:10px;width:100%}
-      .actions .btn.mini{flex:1;height:46px;padding:0 12px;border-radius:14px;font-size:14px}
     }
-      .kpis{grid-template-columns:repeat(4,1fr)}
-      .controls{grid-template-columns:1.2fr 1fr 1fr 1fr}
-    }
-  .miniTable{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px}
-    .miniTable th,.miniTable td{border-bottom:1px solid var(--line);padding:8px 6px;vertical-align:top}
-    .miniTable th{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
-    .tdName{max-width:320px}
-    .tdNum{text-align:right;white-space:nowrap}
-    .miniMeta{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
-    .miniMeta .k{color:var(--muted);margin-right:6px}
   </style>
 </head>
 <body>
   <div class="wrap">
     <div class="top">
       <div class="brand">
-        <div class="logo"><img alt="M" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Crect width='120' height='120' fill='%23ffffff'/%3E%3Ctext x='60' y='74' text-anchor='middle' font-size='56' font-family='Arial' fill='%23111827'%3EM%3C/text%3E%3C/svg%3E"/></div>
+        <div class="logo">
+          <img alt="M" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Crect width='120' height='120' fill='%23ffffff'/%3E%3Ctext x='60' y='74' text-anchor='middle' font-size='56' font-family='Arial' fill='%23111827'%3EM%3C/text%3E%3C/svg%3E"/>
+        </div>
         <div>
           <div class="ttl">后台面板</div>
           <div class="sub">销售与统计</div>
@@ -243,6 +190,7 @@
           <input id="to" type="date" />
         </div>
         <div class="row" style="align-self:end;justify-content:flex-end">
+          <button class="btn soft" id="btnYesterday">上一天</button>
           <button class="btn soft" id="btnToday">今天</button>
           <button class="btn primary" id="btnRefresh">刷新</button>
         </div>
@@ -265,10 +213,12 @@
         </div>
 
         <div class="kpis">
-          <div class="kpi"><div class="k">营业额</div><div class="v" id="k总计">€ 0.00</div></div>
+          <div class="kpi"><div class="k">营业额（净额）</div><div class="v" id="k总计">€ 0.00</div></div>
           <div class="kpi"><div class="k">订单数</div><div class="v" id="k单数">0</div></div>
           <div class="kpi"><div class="k">件数</div><div class="v" id="kPieces">0</div></div>
           <div class="kpi"><div class="k">平均客单价</div><div class="v" id="kAvg">€ 0.00</div></div>
+          <div class="kpi"><div class="k">负数小票合计</div><div class="v negText" id="kNegTotal">€ 0.00</div></div>
+          <div class="kpi"><div class="k">负数小票数量</div><div class="v negText" id="kNegCount">0</div></div>
         </div>
 
         <div class="pillRow">
@@ -289,7 +239,6 @@
         <div class="statusBox" id="status">—</div>
       </div>
 
-      
       <div class="card">
         <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px">
           <div>
@@ -314,12 +263,11 @@
         </div>
       </div>
 
-
       <div class="card">
         <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px">
           <div>
             <h3>订单数</h3>
-            <div class="hint">云端小票</div>
+            <div class="hint">云端小票（点击行查看；负数红色）</div>
           </div>
           <div class="hint" id="countLabel">显示： 0</div>
         </div>
@@ -328,27 +276,20 @@
             <thead>
               <tr>
                 <th class="col-no">小票号</th>
-                <th class="col-date">日期</th>
-                <th class="col-machine">电脑</th>
                 <th class="col-pieces">件数</th>
-                <th class="col-kinds">款数</th>
-                <th class="col-avg">平均件单价</th>
                 <th class="col-total">总计</th>
-                <th class="col-paid">实收</th>
-                <th class="col-change">找零</th>
-                <th class="col-actions">操作</th>
               </tr>
             </thead>
             <tbody id="tbody">
-              <tr><td colspan="10" class="hint">加载中…</td></tr>
+              <tr><td colspan="3" class="hint">加载中…</td></tr>
             </tbody>
           </table>
         </div>
       </div>
+
     </div>
   </div>
 
-  <!-- Receipt preview bottom sheet -->
   <div class="modal" id="modal">
     <div class="backdrop" id="modalBg"></div>
     <div class="sheet" role="dialog" aria-modal="true" aria-label="Ticket">
@@ -393,12 +334,8 @@
     };
     const clampDay = (dt)=> new Date(dt.getFullYear(), dt.getMonth(), dt.getDate());
 
-    function getKey(){
-      return localStorage.getItem(KEY_STORAGE) || '';
-    }
-    function setKey(k){
-      localStorage.setItem(KEY_STORAGE, (k||'').trim());
-    }
+    function getKey(){ return localStorage.getItem(KEY_STORAGE) || ''; }
+    function setKey(k){ localStorage.setItem(KEY_STORAGE, (k||'').trim()); }
 
     async function apiFetch(path, opts={}){
       const headers = Object.assign({
@@ -422,16 +359,25 @@
       dot.classList.add(ok ? 'ok' : 'bad');
       $('connLabel').textContent = label;
     }
+    function setStatus(line){ $('status').textContent = line; }
 
-    function setStatus(line){
-      $('status').textContent = line;
+    function setSingleDayRangeByOffset(offsetDays){
+      const d = new Date();
+      d.setDate(d.getDate() + (offsetDays||0));
+      const s = ymd(d);
+      $('from').value = s;
+      $('to').value = s;
     }
+    function todayRange(){ setSingleDayRangeByOffset(0); }
 
-    function todayRange(){
-      const now = new Date();
-      const d = ymd(now);
-      $('from').value = d;
-      $('to').value = d;
+    // ✅ 连续往前翻：基于当前 from/to 整体 -1 天
+    function prevDayRange(){
+      const f = $('from').value ? new Date($('from').value + 'T00:00:00') : new Date();
+      const t = $('to').value ? new Date($('to').value + 'T00:00:00') : new Date();
+      f.setDate(f.getDate() - 1);
+      t.setDate(t.getDate() - 1);
+      $('from').value = ymd(f);
+      $('to').value = ymd(t);
     }
 
     // ===== Data & UI state =====
@@ -442,17 +388,13 @@
     function parseBillNo(b){
       return (b.bill_no || b.billNo || b.id || '').toString();
     }
-
     function billDate(b){
-      // Prefer ts_ms (number), fallback ts_text (string)
       if (typeof b.ts_ms === 'number') return new Date(b.ts_ms);
       const t = b.ts_text || b.ts || b.date || '';
       const dt = new Date(t);
       return isNaN(dt.getTime()) ? null : dt;
     }
-
     function billPieces(b){
-      // Prefer precomputed field from cloud; fallback to summing items if present.
       const direct = (b.sum_qty ?? b.piezas ?? b.pieces);
       if(direct !== undefined && direct !== null && direct !== '') return Number(direct)||0;
 
@@ -467,8 +409,6 @@
       }
       return 0;
     }
-
-
     function withinRange(dt, from, to){
       if(!dt) return false;
       const x = clampDay(dt).getTime();
@@ -477,14 +417,23 @@
 
     function computeSummary(list){
       const tickets = list.length;
-      let total = 0;
+      let total = 0;          // 净额（包含负数）
       let pieces = 0;
+
+      let negTotal = 0;       // 负数合计（负数相加，结果为负）
+      let negCount = 0;
+
       for(const b of list){
-        total += Number(b.total||0);
+        const t = Number(b.total||0);
+        total += t;
         pieces += billPieces(b);
+        if(t < 0){
+          negTotal += t;
+          negCount += 1;
+        }
       }
       const avg = tickets ? total / tickets : 0;
-      return { tickets, total, pieces, avg };
+      return { tickets, total, pieces, avg, negTotal, negCount };
     }
 
     function computePeakHour(list){
@@ -505,7 +454,8 @@
       const to = new Date($('to').value + 'T00:00:00');
       const shop = $('shop').value;
 
-      filteredBills = allBills.filter(b => (b.shop_id||b.shopId||shop) === shop)
+      filteredBills = allBills
+        .filter(b => (b.shop_id||b.shopId||shop) === shop)
         .filter(b => withinRange(billDate(b), from, to));
 
       $('rangeLabel').textContent = `${ymd(from)} → ${ymd(to)} · ${filteredBills.length} tickets`;
@@ -517,7 +467,11 @@
       $('kPieces').textContent = String(s.pieces);
       $('kAvg').textContent = fmtEUR(s.avg);
 
-      // ---- Daily breakdown (group by date) ----
+      // ✅ 新增：负数统计（即使没有负数也显示 0，方便一眼确认）
+      $('kNegTotal').textContent = fmtEUR(s.negTotal);
+      $('kNegCount').textContent = String(s.negCount);
+
+      // ---- Daily breakdown ----
       const map = new Map(); // y-m-d -> {tickets,total,pieces}
       for(const b of filteredBills){
         const dt = billDate(b);
@@ -548,69 +502,41 @@
         }
       }
 
-
       const last = filteredBills.length ? [...filteredBills].sort((a,b)=>(Number(b.ts_ms||0)-Number(a.ts_ms||0)))[0] : null;
       const lastNo = last ? parseBillNo(last) : '—';
       $('kLast').textContent = lastNo || '—';
       $('kPeak').textContent = computePeakHour(filteredBills);
       $('kApi').textContent = API_BASE;
 
+      // ---- Tickets table: only bill_no / pieces / total ----
       const tbody = $('tbody');
       if(!filteredBills.length){
-        tbody.innerHTML = `<tr><td colspan="10" class="hint">该日期范围没有小票（云端）。</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="3" class="hint">该日期范围没有小票（云端）。</td></tr>`;
         return;
       }
 
-      // Sort desc by time
-      const list = [...filteredBills].sort((a,b)=>(Number(b.ts_ms||0)-Number(a.ts_ms||0)) || String(b.ts_text||'').localeCompare(String(a.ts_text||'')));
+      const list = [...filteredBills].sort((a,b)=>
+        (Number(b.ts_ms||0)-Number(a.ts_ms||0)) ||
+        String(b.ts_text||'').localeCompare(String(a.ts_text||''))
+      );
 
       tbody.innerHTML = '';
       for(const b of list){
         const no = parseBillNo(b);
-        const dt = billDate(b);
-        const fecha = dt ? `${dt.getFullYear()}/${dt.getMonth()+1}/${dt.getDate()} ${String(dt.getHours()).padStart(2,'0')}:${String(dt.getMinutes()).padStart(2,'0')}:${String(dt.getSeconds()).padStart(2,'0')}` : (b.ts_text||'');
-        const maq = (b.machine_id || b.machineId || '');
-        const total = fmtEUR(b.total||0);
-        const pagado = fmtEUR(b.paid||0);
-        const cambio = fmtEUR(b.change||0);
-
         const piezasN = billPieces(b);
-        const modelosN = Number(b.kinds ?? 0);
-        const precioMedioN = piezasN ? (Number(b.total||0) / piezasN) : 0;
+        const totalNum = Number(b.total||0);
+        const totalStr = fmtEUR(totalNum);
 
         const tr = document.createElement('tr');
+        tr.className = 'clickable';
         tr.innerHTML = `
           <td class="col-no" data-label="小票号"><b>#${no}</b></td>
-          <td class="col-date" data-label="日期">${fecha}</td>
-          <td class="col-machine" data-label="电脑">${maq}</td>
           <td class="col-pieces" data-label="件数"><b>${piezasN}</b></td>
-          <td class="col-kinds" data-label="款数">${modelosN}</td>
-          <td class="col-avg" data-label="平均件单价">${fmtEUR(precioMedioN)}</td>
-          <td class="col-total" data-label="总计"><b>${total}</b></td>
-          <td class="col-paid" data-label="实收">${pagado}</td>
-          <td class="col-change" data-label="找零">${cambio}</td>
-          <td class="col-actions" data-label="操作">
-            <div class="actions">
-              <button class="btn mini" data-action="view" data-bill="${encodeURIComponent(no)}">查看</button>
-              <button class="btn mini" data-action="copy" data-bill="${encodeURIComponent(no)}">复制</button>
-            </div>
-          </td>
+          <td class="col-total" data-label="总计"><b class="${totalNum < 0 ? 'negText' : ''}">${totalStr}</b></td>
         `;
+        tr.addEventListener('click', ()=> openReceipt(shop, no));
         tbody.appendChild(tr);
       }
-
-      tbody.querySelectorAll('button[data-action]').forEach(btn=>{
-        btn.addEventListener('click', async ()=>{
-          const act = btn.getAttribute('data-action');
-          const billNo = decodeURIComponent(btn.getAttribute('data-bill')||'');
-          if(act==='view') return openReceipt(shop, billNo);
-          if(act==='copy'){
-            const basic = `Ticket #${billNo}`;
-            await copyText(basic);
-            toast(`Copiado: ${basic}`);
-          }
-        });
-      });
     }
 
     // ===== Receipt preview =====
@@ -625,18 +551,12 @@
       $('mSub').textContent = `店铺： ${shop}`;
       $('mNote').style.display = 'none';
 
-      // Reset
       $('receiptFrame').style.display = 'none';
       $('receiptText').style.display = 'block';
       $('receiptText').textContent = '加载中…';
       lastReceipt = { html:'', text:'', meta:{ shop, billNo } };
       showModal();
 
-      // We try a "full ticket" endpoint (recommended). If not available, show fallback.
-      // Expected response formats:
-      // 1) { html: "<html...>", text: "..." }
-      // 2) { receipt_html, receipt_text }
-      // 3) raw text
       let data = null;
       try{
         data = await apiFetch(`/api/bill?shop_id=${encodeURIComponent(shop)}&bill_no=${encodeURIComponent(billNo)}`);
@@ -662,11 +582,10 @@
         const box = $('receiptText');
         box.style.display = 'block';
 
-        // If we received payload/items, render a printable ticket view.
         const items = data && (data.payload?.items || data.items || data.lines);
         if(Array.isArray(items) && items.length){
           const ticketHtml = buildTicketHtml({shop, billNo}, data, items);
-          lastReceipt.html = ticketHtml; // ensure Imprimir/PDF prints a real ticket
+          lastReceipt.html = ticketHtml;
           lastReceipt.text = buildTicketText({shop, billNo}, data, items);
           const frame = $('receiptFrame');
           frame.style.display = 'block';
@@ -678,7 +597,6 @@
       }
     }
 
-    
     function buildTicketHtml(meta, data, items){
       const shop = meta.shop || data.shop_id || '';
       const billNo = meta.billNo || data.bill_no || '';
@@ -692,7 +610,7 @@
         const name = escapeHtml(it.name || it.nombre || it.title || '—');
         const qty = Number(it.qty ?? it.quantity ?? 0);
         const price = Number(it.price ?? it.unit ?? it.unit_price ?? it.unitPrice ?? it.pvp ?? 0);
-        const amount = Number(it.amount ?? it.line总计 ?? it.total ?? it.subtotal ?? (qty*price) ?? 0);
+        const amount = Number(it.amount ?? it.total ?? it.subtotal ?? (qty*price) ?? 0);
         return `<tr>
           <td class="name">${name}</td>
           <td class="qty">${qty}</td>
@@ -723,26 +641,7 @@
           .tot .row{display:flex; justify-content:space-between}
           .tot .grand{font-size:14px; font-weight:800; border-top:1px dashed #000; padding-top:6px; margin-top:6px}
           .foot{margin-top:10px; font-size:11px}
-          
-    /* 手机精简列：默认只显示 票号/日期/件数/总计/操作，其余列在窄屏隐藏 */
-    @media (max-width: 520px){
-      th.col-machine, td.col-machine,
-      th.col-kinds, td.col-kinds,
-      th.col-avg, td.col-avg,
-      th.col-paid, td.col-paid,
-      th.col-change, td.col-change{
-        display:none;
-      }
-      .tableWrap{overflow-x:auto;}
-      table{min-width: 520px;}
-      /* 在手机上把日期显示更紧凑 */
-      td.col-date{font-size:12px;}
-    }
-
-@media print{
-            body{padding:0}
-            .ticket{max-width:100%}
-          }
+          @media print{ body{padding:0} .ticket{max-width:100%} }
         </style></head><body>
           <div class="ticket">
             <div class="c">
@@ -770,7 +669,7 @@
         </body></html>`;
     }
 
-function buildTicketText(meta, data, items){
+    function buildTicketText(meta, data, items){
       const shop = meta.shop || data.shop_id || '';
       const billNo = meta.billNo || data.bill_no || '';
       const ts = data.ts_text || data.ts || '';
@@ -801,7 +700,7 @@ function buildTicketText(meta, data, items){
       return lines.join('\n');
     }
 
-function openPrintWindow(){
+    function openPrintWindow(){
       const html = lastReceipt.html;
       const text = lastReceipt.text;
       const meta = lastReceipt.meta || {};
@@ -817,7 +716,6 @@ function openPrintWindow(){
       w.document.write(doc);
       w.document.close();
       w.focus();
-      // Let render, then print
       setTimeout(()=>w.print(), 300);
     }
 
@@ -866,26 +764,22 @@ function openPrintWindow(){
       toast('已复制到剪贴板');
     });
 
-    $('mWA').addEventListener('click', async ()=>{
+    $('mWA').addEventListener('click', ()=>{
       if(!lastReceipt.text && !lastReceipt.html){ toast('请先打开一张小票'); return; }
       const meta = lastReceipt.meta || {};
       const text = (lastReceipt.text || '').trim() || `Ticket #${meta.billNo||''} · ${meta.shop||''}`;
       const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
-      // iOS/Android: opens WhatsApp app if installed, otherwise web WhatsApp
       window.open(url, '_blank');
     });
-
 
     $('m邮件').addEventListener('click', ()=>{
       if(!lastReceipt.text && !lastReceipt.html){ toast('请先打开一张小票'); return; }
       const meta = lastReceipt.meta || {};
       const subject = encodeURIComponent(`Ticket #${meta.billNo||''} · ${meta.shop||''}`);
       const body = encodeURIComponent((lastReceipt.text||'').slice(0, 8000));
-      // Note: mailto cannot attach files; this is the most stable option.
       window.location.href = `mailto:?subject=${subject}&body=${body}`;
     });
 
-    // ===== Export =====
     function download(filename, content, mime='text/plain'){
       const blob = new Blob([content], { type: mime });
       const url = URL.createObjectURL(blob);
@@ -923,9 +817,8 @@ function openPrintWindow(){
       download(`tickets_${$('shop').value}_${$('from').value}_${$('to').value}.json`, JSON.stringify(filteredBills, null, 2), 'application/json');
     });
 
-    // ===== Actions =====
+    $('btnYesterday').addEventListener('click', ()=>{ prevDayRange(); render(); });
     $('btnToday').addEventListener('click', ()=>{ todayRange(); render(); });
-
     $('btnRefresh').addEventListener('click', async ()=>{ await load(); });
 
     $('btnTest').addEventListener('click', async ()=>{
@@ -945,7 +838,7 @@ function openPrintWindow(){
       const next = prompt('请输入 POS_API_KEY（只保存在本设备）：', cur||'');
       if(next===null) return;
       setKey(next);
-      toast('API 密钥 guardada');
+      toast('API 密钥已保存');
     });
 
     $('from').addEventListener('change', render);
@@ -956,26 +849,21 @@ function openPrintWindow(){
       const shop = $('shop').value;
       setStatus('加载中…');
       try{
-        // Ensure key exists
         if(!getKey()){
           setConn(false,'Falta API 密钥');
-          setStatus('Configura primero la API 密钥 (botón "API 密钥").');
+          setStatus('请先设置 API 密钥（点击 “API 密钥” 按钮）。');
           allBills = []; filteredBills = [];
           render();
           return;
         }
 
-        // Try list endpoint
         const rows = await apiFetch(`/api/bills?shop_id=${encodeURIComponent(shop)}`);
-        // Expected: array
         allBills = Array.isArray(rows) ? rows : (rows && rows.results) ? rows.results : [];
 
         setConn(true,'已连接');
         setStatus(`OK · 已获取小票数： ${allBills.length}`);
 
-        // Default range to today if empty
         if(!$('from').value || !$('to').value) todayRange();
-
         render();
       }catch(e){
         setConn(false,'无法访问');
@@ -985,11 +873,9 @@ function openPrintWindow(){
       }
     }
 
-    // Init
     (function init(){
       $('kApi').textContent = API_BASE;
       todayRange();
-      // If key missing, still render UI; user can set key then refresh
       load();
     })();
   </script>
