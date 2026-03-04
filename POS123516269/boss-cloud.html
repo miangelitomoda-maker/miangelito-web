@@ -11,6 +11,7 @@
       --text:#0f172a;
       --muted:#64748b;
       --line:rgba(15,23,42,.10);
+      --shadow:0 10px 30px rgba(15,23,42,.08);
       --radius:18px;
       --radius2:14px;
       --tap:54px;
@@ -21,18 +22,15 @@
     *{box-sizing:border-box}
     body{margin:0;background:var(--bg);color:var(--text)}
 
-    .wrap{max-width:860px;margin:0 auto;padding:14px 14px calc(110px + env(safe-area-inset-bottom));}
-
-    /* ✅ 不要悬浮：取消 sticky + 阴影 */
+    .wrap{max-width:860px;margin:0 auto;padding:14px 14px calc(24px + env(safe-area-inset-bottom));}
     .top{
       background:var(--card);
       border:1px solid var(--line);
       border-radius:var(--radius);
+      box-shadow:var(--shadow);
       padding:14px;
-      position:static;
-      box-shadow:none;
+      position:relative;
     }
-
     .brand{display:flex;gap:12px;align-items:center;margin-bottom:10px}
     .logo{width:36px;height:36px;border-radius:10px;border:1px solid var(--line);background:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden}
     .logo img{width:100%;height:100%;object-fit:cover}
@@ -70,20 +68,12 @@
       user-select:none;
       -webkit-tap-highlight-color:transparent;
     }
+    .btn:active{transform:translateY(1px)}
     .btn.primary{background:#111827;color:#fff;border-color:#111827}
     .btn.soft{background:#f1f5f9}
 
     .grid{margin-top:14px;display:grid;grid-template-columns:1fr;gap:12px}
-
-    /* ✅ 不要悬浮：取消卡片阴影 */
-    .card{
-      background:var(--card);
-      border:1px solid var(--line);
-      border-radius:var(--radius);
-      padding:14px;
-      box-shadow:none;
-    }
-
+    .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px}
     .card h3{margin:0 0 2px;font-size:16px}
     .hint{color:var(--muted);font-size:12px;margin:0 0 10px}
 
@@ -112,7 +102,7 @@
     tbody tr.clickable{cursor:pointer}
     tbody tr.clickable:hover{background:rgba(15,23,42,.03)}
 
-    /* Bottom sheet modal (保留功能，不属于“悬浮面板”范畴) */
+    /* Bottom sheet modal */
     .modal{position:fixed;inset:0;display:none;z-index:1000}
     .modal.show{display:block}
     .backdrop{position:absolute;inset:0;background:rgba(2,6,23,.55)}
@@ -149,9 +139,9 @@
         background:#fff;
         border:1px solid var(--line);
         border-radius:16px;
+        box-shadow:var(--shadow);
         padding:10px 12px;
         margin:0 0 10px;
-        box-shadow:none; /* ✅ 不要悬浮：取消移动端卡片阴影 */
       }
       td{
         border:none !important;
@@ -227,8 +217,8 @@
           <div class="kpi"><div class="k">订单数</div><div class="v" id="k单数">0</div></div>
           <div class="kpi"><div class="k">件数</div><div class="v" id="kPieces">0</div></div>
           <div class="kpi"><div class="k">平均客单价</div><div class="v" id="kAvg">€ 0.00</div></div>
-          <div class="kpi"><div class="k">减去小票合计</div><div class="v negText" id="kNegTotal">€ 0.00</div></div>
-          <div class="kpi"><div class="k">负数小票数量</div><div class="v negText" id="kNegCount">0</div></div>
+          <div class="kpi"><div class="k">发票 ·未付合计</div><div class="v negText" id="kNegTotal">€ 0.00</div></div>
+          <div class="kpi"><div class="k">小票数</div><div class="v negText" id="kNegCount">0</div></div>
         </div>
 
         <div class="pillRow">
@@ -468,14 +458,16 @@
         .filter(b => (b.shop_id||b.shopId||shop) === shop)
         .filter(b => withinRange(billDate(b), from, to));
 
-      $('rangeLabel').textContent = `${ymd(from)} → ${ymd(to)} · ${filteredBills.length} 小票`;
+      $('rangeLabel').textContent = `${ymd(from)} → ${ymd(to)} · ${filteredBills.length} 张小票`;
       $('countLabel').textContent = `显示： ${filteredBills.length}`;
 
       const s = computeSummary(filteredBills);
       $('k总计').textContent = fmtEUR(s.total);
-      $('k单数').textContent = String(s.tickets);
+      $('k单数').textContent = String(s.tickets11);
       $('kPieces').textContent = String(s.pieces);
       $('kAvg').textContent = fmtEUR(s.avg);
+
+      // ✅ 新增：负数统计（即使没有负数也显示 0，方便一眼确认）
       $('kNegTotal').textContent = fmtEUR(s.negTotal);
       $('kNegCount').textContent = String(s.negCount);
 
@@ -516,7 +508,7 @@
       $('kPeak').textContent = computePeakHour(filteredBills);
       $('kApi').textContent = API_BASE;
 
-      // ---- Tickets table ----
+      // ---- Tickets table: only bill_no / pieces / total ----
       const tbody = $('tbody');
       if(!filteredBills.length){
         tbody.innerHTML = `<tr><td colspan="3" class="hint">该日期范围没有小票（云端）。</td></tr>`;
@@ -587,8 +579,125 @@
         $('receiptText').style.display = 'none';
         frame.srcdoc = html;
       }else{
-        $('receiptText').textContent = text || '—';
+        const box = $('receiptText');
+        box.style.display = 'block';
+
+        const items = data && (data.payload?.items || data.items || data.lines);
+        if(Array.isArray(items) && items.length){
+          const ticketHtml = buildTicketHtml({shop, billNo}, data, items);
+          lastReceipt.html = ticketHtml;
+          lastReceipt.text = buildTicketText({shop, billNo}, data, items);
+          const frame = $('receiptFrame');
+          frame.style.display = 'block';
+          $('receiptText').style.display = 'none';
+          frame.srcdoc = ticketHtml;
+        }else{
+          box.textContent = text || '—';
+        }
       }
+    }
+
+    function buildTicketHtml(meta, data, items){
+      const shop = meta.shop || data.shop_id || '';
+      const billNo = meta.billNo || data.bill_no || '';
+      const ts = data.ts_text || data.ts || '';
+      const total = Number(data.total ?? 0);
+      const paid = Number(data.paid ?? 0);
+      const change = Number(data.change ?? 0);
+      const piezas = Number(data.sum_qty ?? data.sumQty ?? 0) || items.reduce((a,it)=>a+Number(it.qty??it.quantity??0),0);
+
+      const rows = items.map(it=>{
+        const name = escapeHtml(it.name || it.nombre || it.title || '—');
+        const qty = Number(it.qty ?? it.quantity ?? 0);
+        const price = Number(it.price ?? it.unit ?? it.unit_price ?? it.unitPrice ?? it.pvp ?? 0);
+        const amount = Number(it.amount ?? it.total ?? it.subtotal ?? (qty*price) ?? 0);
+        return `<tr>
+          <td class="name">${name}</td>
+          <td class="qty">${qty}</td>
+          <td class="price">${fmtEUR(price)}</td>
+          <td class="amt">${fmtEUR(amount)}</td>
+        </tr>`;
+      }).join('');
+
+      return `<!doctype html><html><head><meta charset="utf-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>Ticket ${escapeHtml(billNo)}</title>
+        <style>
+          :root{--w:80mm;}
+          body{margin:0; padding:8px; font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace; color:#000;}
+          .ticket{max-width:var(--w); margin:0 auto;}
+          .c{text-align:center}
+          .h1{font-weight:700; font-size:14px; margin:0}
+          .meta{font-size:12px; line-height:1.35; margin:6px 0 8px}
+          table{width:100%; border-collapse:collapse; font-size:12px}
+          th,td{padding:3px 0; vertical-align:top}
+          th{border-bottom:1px dashed #000; font-weight:700}
+          td{border-bottom:1px dotted #bbb}
+          td.name{width:44%}
+          td.qty{width:12%; text-align:right}
+          td.price{width:22%; text-align:right}
+          td.amt{width:22%; text-align:right; font-weight:700}
+          .tot{margin-top:8px; font-size:12px; line-height:1.5}
+          .tot .row{display:flex; justify-content:space-between}
+          .tot .grand{font-size:14px; font-weight:800; border-top:1px dashed #000; padding-top:6px; margin-top:6px}
+          .foot{margin-top:10px; font-size:11px}
+          @media print{ body{padding:0} .ticket{max-width:100%} }
+        </style></head><body>
+          <div class="ticket">
+            <div class="c">
+              <p class="h1">Mi Angelito Moda</p>
+              <div style="font-size:11px">COPIAS</div>
+            </div>
+            <div class="meta">
+              <div><b>TIENDA：</b> ${escapeHtml(shop)}</div>
+              <div><b>TICKET：</b> ${escapeHtml(billNo)}</div>
+              <div><b>FECHA:</b> ${escapeHtml(ts)}</div>
+            </div>
+            <table>
+              <thead><tr><th>CONCEPTO</th><th style="text-align:right">Qty</th><th style="text-align:right">€/u</th><th style="text-align:right">Importe</th></tr></thead>
+              <tbody>${rows}</tbody>
+            </table>
+            <div class="tot">
+              <div class="row"><span>PIEZAS</span><b>${piezas}</b></div>
+              <div class="row grand"><span>TOTAL</span><span>${fmtEUR(total)}</span></div>
+              <div class="row"><span>PAGADO</span><span>${fmtEUR(paid)}</span></div>
+              <div class="row"><span>CAMBIO</span><span>${fmtEUR(change)}</span></div>
+            </div>
+            <div class="foot c">Gracias</div>
+          </div>
+          <script>setTimeout(()=>{try{window.focus()}catch(e){}},10)<\/script>
+        </body></html>`;
+    }
+
+    function buildTicketText(meta, data, items){
+      const shop = meta.shop || data.shop_id || '';
+      const billNo = meta.billNo || data.bill_no || '';
+      const ts = data.ts_text || data.ts || '';
+      const total = Number(data.total ?? 0);
+      const paid = Number(data.paid ?? 0);
+      const change = Number(data.change ?? 0);
+      const piezas = Number(data.sum_qty ?? data.sumQty ?? 0) || items.reduce((a,it)=>a+Number(it.qty??it.quantity??0),0);
+
+      const lines = [];
+      lines.push(`Mi Angelito Moda`);
+      lines.push(`TICKET: ${billNo}`);
+      if(ts) lines.push(`FECHA: ${ts}`);
+      lines.push('--------------------------------');
+      for(const it of items){
+        const name = String(it.name || it.nombre || it.title || '—');
+        const qty = Number(it.qty ?? it.quantity ?? 0);
+        const price = Number(it.price ?? it.unit ?? it.unit_price ?? it.unitPrice ?? it.pvp ?? 0);
+        const amount = Number(it.amount ?? it.total ?? it.subtotal ?? (qty*price) ?? 0);
+        lines.push(`${name}`);
+        lines.push(`  ${qty} x ${price.toFixed(2)}€ = ${amount.toFixed(2)}€`);
+      }
+      lines.push('--------------------------------');
+      lines.push(`PIEZAS: ${piezas}`);
+      lines.push(`TOTAL: ${total.toFixed(2)}€`);
+      lines.push(`PAGADO: ${paid.toFixed(2)}€`);
+      lines.push(`CAMBIO: ${change.toFixed(2)}€`);
+      lines.push('Gracias');
+      return lines.join('\n');
     }
 
     function openPrintWindow(){
@@ -633,7 +742,7 @@
     function toast(msg){
       const t = document.createElement('div');
       t.textContent = msg;
-      t.style.cssText = 'position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#111827;color:#fff;padding:10px 12px;border-radius:14px;font-weight:800;font-size:13px;z-index:2000;max-width:92vw;text-align:center;'
+      t.style.cssText = 'position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#111827;color:#fff;padding:10px 12px;border-radius:14px;font-weight:800;font-size:13px;z-index:2000;box-shadow:0 16px 40px rgba(2,6,23,.35);max-width:92vw;text-align:center;'
       document.body.appendChild(t);
       setTimeout(()=>{ t.style.opacity='0'; t.style.transition='opacity .25s'; }, 1100);
       setTimeout(()=>t.remove(), 1400);
@@ -659,7 +768,8 @@
       if(!lastReceipt.text && !lastReceipt.html){ toast('请先打开一张小票'); return; }
       const meta = lastReceipt.meta || {};
       const text = (lastReceipt.text || '').trim() || `Ticket #${meta.billNo||''} · ${meta.shop||''}`;
-      window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+      const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
+      window.open(url, '_blank');
     });
 
     $('m邮件').addEventListener('click', ()=>{
@@ -751,7 +861,7 @@
         allBills = Array.isArray(rows) ? rows : (rows && rows.results) ? rows.results : [];
 
         setConn(true,'已连接');
-        setStatus(`在线 · 线上总小票数： ${allBills.length}`);
+        setStatus(`在线 · 系统总计小票数量： ${allBills.length}`);
 
         if(!$('from').value || !$('to').value) todayRange();
         render();
