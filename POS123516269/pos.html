@@ -223,6 +223,121 @@
     .dock .hint{margin-top:10px}
     .hiddenMeta{display:none}
 
+  
+    /* ===== Dock UI v3.2 (更像 App) ===== */
+    .dock{
+      border-radius:24px;
+      padding:12px 12px 10px;
+      border:1px solid rgba(15,23,42,.12);
+      box-shadow:0 14px 40px rgba(15,23,42,.12);
+      background:rgba(255,255,255,.92);
+      backdrop-filter:saturate(180%) blur(14px);
+      -webkit-backdrop-filter:saturate(180%) blur(14px);
+    }
+    .dockHead{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:10px;
+    }
+    .stepPill{
+      display:inline-flex;
+      align-items:center;
+      height:32px;
+      padding:0 12px;
+      border-radius:999px;
+      border:1px solid rgba(15,23,42,.12);
+      background:#fff;
+      font-weight:950;
+      font-size:12px;
+      color:#0f172a;
+      white-space:nowrap;
+    }
+    .dockMini{
+      height:32px;
+      padding:0 12px;
+      border-radius:999px;
+      border:1px solid rgba(15,23,42,.12);
+      background:#fff;
+      color:var(--muted);
+      font-weight:900;
+      font-size:12px;
+      -webkit-tap-highlight-color:transparent;
+    }
+    .dockMini:active{transform:translateY(1px)}
+
+    .dockBody{
+      display:flex;
+      gap:10px;
+      align-items:stretch;
+    }
+    .inputWrap{
+      flex:1;
+      position:relative;
+      display:flex;
+      align-items:center;
+      min-width:0;
+    }
+    .input{
+      height:62px;
+      border-radius:18px;
+      border:1px solid rgba(15,23,42,.16);
+      background:#f8fafc;
+      padding:0 56px 0 14px;
+      font-size:24px;
+      font-weight:950;
+      letter-spacing:.2px;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.7);
+    }
+    .input:focus{
+      border-color:#111827;
+      background:#fff;
+    }
+    .inBtn{
+      position:absolute;
+      right:10px;
+      width:42px;
+      height:42px;
+      border-radius:14px;
+      border:1px solid rgba(15,23,42,.14);
+      background:#fff;
+      font-weight:950;
+      font-size:16px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      -webkit-tap-highlight-color:transparent;
+    }
+    .inBtn:active{transform:translateY(1px)}
+
+    .nextBtn{
+      width:132px;
+      height:62px;
+      border-radius:18px;
+      border:1px solid #111827;
+      background:#111827;
+      color:#fff;
+      font-weight:950;
+      font-size:16px;
+      letter-spacing:.2px;
+      -webkit-tap-highlight-color:transparent;
+    }
+    .nextBtn:active{transform:translateY(1px)}
+
+    .dockTip{
+      margin-top:10px;
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.35;
+    }
+    .dockTip b{color:var(--text)}
+
+    @media (max-width: 390px){
+      .nextBtn{width:118px;font-size:15px}
+      .input{font-size:22px}
+    }
+
   </style>
 </head>
 <body>
@@ -241,7 +356,7 @@
           <div class="v big" id="kTotal">€ 0.00</div>
         </div>
         <div class="kpi">
-          <div class="k">Piezas/Modelos</div>
+          <div class="k">总件数 / 款数</div>
           <div class="v"><span id="kPieces">0</span> / <span id="kKinds">0</span></div>
         </div>
       </div>
@@ -249,8 +364,8 @@
       
       <!-- 当前清单：放在 Total / 总件数 下面 -->
       <div class="row" style="justify-content:space-between; margin-top:12px">
-        <div style="font-weight:950">Nota</div>
-        <div class="mini">Ver más</div>
+        <div style="font-weight:950">当前清单</div>
+        <div class="mini">向下滚动查看更多</div>
       </div>
       <div class="list" id="list"></div>
       <div class="hint" id="emptyHint" style="display:none">请添加商品</div>
@@ -266,16 +381,26 @@
     
   </div>
 
-  <!-- 单手操作：输入框放在数字键盘上面（固定在底部按钮上方） -->
-  <div class="dock" aria-label="输入与数字键盘">
-    <div class="inputRow">
-      <input id="line" class="input" inputmode="decimal" placeholder="输入件数" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="done" />
-      <button class="btnSign" id="btnSign" type="button" aria-label="正负">±</button>
-      <button class="enterBtn side" id="btnEnter" type="button">下一步</button>
+  <!-- 单手操作：输入框放在系统数字键盘上方（固定底部，键盘弹出自动上移） -->
+  <div class="dock" aria-label="输入区">
+    <div class="dockHead">
+      <div class="stepPill" id="stepPill">步骤 1/2 · 件数</div>
+      <button class="dockMini" id="btnDockClear" type="button">清空输入</button>
     </div>
+
+    <div class="dockBody">
+      <div class="inputWrap">
+        <input id="line" class="input" inputmode="decimal" placeholder="输入件数" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="done" />
+        <button class="inBtn" id="btnSign" type="button" aria-label="正负">±</button>
+      </div>
+      <button class="nextBtn" id="btnEnter" type="button">下一步</button>
+    </div>
+
+    <div class="dockTip" id="stepHint">步骤 <b>1/2</b>：输入件数（例如 2 或 -1 退货），点<b>下一步</b></div>
   </div>
 
   <div class="btns">
+
 
     <button class="btn" id="btnUndo">撤销</button>
     <button class="btn danger" id="btnClear">清空</button>
@@ -596,12 +721,20 @@
       line.setAttribute('placeholder','输入件数');
       line.setAttribute('enterkeyhint','next');
       $('stepHint').innerHTML = '步骤 <b>1/2</b>：输入件数（例如 2 或 -1 退货），点<b>下一步</b>';
+      const pill = $('stepPill'); if(pill) pill.textContent = '步骤 1/2 · 件数';
     }else{
       line.setAttribute('inputmode','decimal');
       line.setAttribute('placeholder','输入单价');
       line.setAttribute('enterkeyhint','done');
       $('stepHint').innerHTML = '步骤 <b>2/2</b>：输入单价（例如 12.5），点<b>确认</b>完成一条';
+      const pill = $('stepPill'); if(pill) pill.textContent = '步骤 2/2 · 单价';
     }
+  }
+
+  function updateEnterLabel(){
+    const btn = $('btnEnter');
+    if(!btn) return;
+    btn.textContent = (step === 'qty') ? '下一步' : '确认添加';
   }
 
   function setupViewportDock(){
@@ -624,6 +757,7 @@
   document.addEventListener('DOMContentLoaded', ()=>{
     $('btnEnter').addEventListener('click', handleEnter);
     $('btnSign').addEventListener('click', toggleSign);
+    const dc = $('btnDockClear'); if(dc) dc.addEventListener('click', ()=>{ $('line').value=''; $('line').focus(); });
 
     // 默认聚焦：更接近真 POS 的“开机就能输入”
     $('line').focus();
