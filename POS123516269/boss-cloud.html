@@ -98,6 +98,8 @@
     table{width:100%;border-collapse:collapse;min-width:520px}
     th,td{padding:12px 10px;border-bottom:1px solid var(--line);text-align:left;font-size:13px}
     th{font-size:12px;color:var(--muted);position:sticky;top:0;background:#fff;z-index:1}
+    th.col-idx, td.col-idx{width:52px;text-align:right;color:var(--muted)}
+    td.col-idx b{font-family:var(--mono)}
     tr:last-child td{border-bottom:none}
     tbody tr.clickable{cursor:pointer}
     tbody tr.clickable:hover{background:rgba(15,23,42,.03)}
@@ -122,7 +124,7 @@
     }
 
     @media (max-width: 520px){
-      .wrap{max-width:100%;padding:12px 12px calc(120px + env(safe-area-inset-bottom));}
+      .wrap{max-width:100%;padding:12px 12px calc(32px + env(safe-area-inset-bottom));}
       .top{padding:12px}
       .controls{grid-template-columns:1fr;gap:10px}
       .controls .row{flex-wrap:wrap;align-items:stretch;justify-content:flex-start}
@@ -275,13 +277,14 @@
           <table>
             <thead>
               <tr>
+                <th class="col-idx">#</th>
                 <th class="col-no">小票号</th>
                 <th class="col-pieces">件数</th>
                 <th class="col-total">总计</th>
               </tr>
             </thead>
             <tbody id="tbody">
-              <tr><td colspan="3" class="hint">加载中…</td></tr>
+              <tr><td colspan="4" class="hint">加载中…</td></tr>
             </tbody>
           </table>
         </div>
@@ -511,17 +514,17 @@
       // ---- Tickets table: only bill_no / pieces / total ----
       const tbody = $('tbody');
       if(!filteredBills.length){
-        tbody.innerHTML = `<tr><td colspan="3" class="hint">该日期范围没有小票（云端）。</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="4" class="hint">该日期范围没有小票（云端）。</td></tr>`;
         return;
       }
 
       const list = [...filteredBills].sort((a,b)=>
-        (Number(b.ts_ms||0)-Number(a.ts_ms||0)) ||
-        String(b.ts_text||'').localeCompare(String(a.ts_text||''))
+        (Number(a.ts_ms||0)-Number(b.ts_ms||0)) ||
+        String(a.ts_text||'').localeCompare(String(b.ts_text||''))
       );
 
-      tbody.innerHTML = '';
-      for(const b of list){
+            tbody.innerHTML = '';
+      list.forEach((b, i)=>{
         const no = parseBillNo(b);
         const piezasN = billPieces(b);
         const totalNum = Number(b.total||0);
@@ -530,13 +533,14 @@
         const tr = document.createElement('tr');
         tr.className = 'clickable';
         tr.innerHTML = `
+          <td class="col-idx" data-label="序号"><b>${i+1}</b></td>
           <td class="col-no" data-label="小票号"><b>#${no}</b></td>
           <td class="col-pieces" data-label="件数"><b>${piezasN}</b></td>
           <td class="col-total" data-label="总计"><b class="${totalNum < 0 ? 'negText' : ''}">${totalStr}</b></td>
         `;
         tr.addEventListener('click', ()=> openReceipt(shop, no));
         tbody.appendChild(tr);
-      }
+      });
     }
 
     // ===== Receipt preview =====
@@ -707,7 +711,76 @@
 
       const doc = html || `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
         <title>Ticket ${meta.billNo||''}</title>
-        <style>body{font-family:ui-monospace,Menlo,monospace;padding:14px}pre{white-space:pre-wrap;line-height:1.35;font-size:12px}</style>
+        <style>body{font-family:ui-monospace,Menlo,monospace;padding:14px}pre{white-space:pre-wrap;line-height:1.35;font-size:12px}
+
+    /* =========================
+       iPhone 16 Pro Max tuning
+       - Bigger touch targets
+       - Roomy cards, better typography
+       ========================= */
+    @media (max-width: 460px){
+      :root{ --tap:58px; }
+
+      .wrap{padding:14px 14px calc(32px + env(safe-area-inset-bottom));}
+      .ttl{font-size:20px}
+      .sub{font-size:12.5px}
+
+      select,input[type="date"],input[type="text"]{
+        height:58px;
+        font-size:17px;
+      }
+      .btn{height:58px;font-size:16px;border-radius:16px}
+      .btn.primary{font-weight:800}
+
+      .card{padding:14px}
+      .kpi{padding:14px;border-radius:16px}
+      .kpi .k{font-size:12.5px}
+      .kpi .v{font-size:24px}
+
+      /* Ticket cards on mobile: stronger separation */
+      tr{border-radius:18px;padding:12px 14px;margin:0 0 12px}
+      td{padding:9px 0;font-size:15px}
+      td::before{font-size:12.5px}
+
+      /* Bottom sheet: fit better */
+      .sheet{max-height:92vh}
+      .receiptFrame{height:460px}
+      .sheetActions{grid-template-columns:1fr 1fr; gap:10px}
+      .sheetActions .btn{height:54px}
+    }
+
+
+
+    /* =========================
+       KPI responsive emphasis (Summary area)
+       Target cards:
+       1) 营业额（净额）  -> .kpis .kpi:nth-child(1)
+       3) 件数           -> .kpis .kpi:nth-child(3)
+       5) 发票·未付合计  -> .kpis .kpi:nth-child(5)
+       ========================= */
+
+    /* Fluid grid: adapts by available width (desktop/tablet) */
+    @media (min-width: 521px){
+      .kpis{grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));}
+    }
+
+    /* Small screens: keep 2-column grid for the rest, but make the 3 key cards full-width */
+    @media (max-width: 520px){
+      .kpis{grid-template-columns:1fr 1fr;}
+      .kpis .kpi:nth-child(1),
+      .kpis .kpi:nth-child(3),
+      .kpis .kpi:nth-child(5){
+        grid-column:1 / -1;
+      }
+      /* Better visual hierarchy for these 3 cards */
+      .kpis .kpi:nth-child(1) .v,
+      .kpis .kpi:nth-child(3) .v,
+      .kpis .kpi:nth-child(5) .v{
+        font-size:26px;
+      }
+    }
+
+</style>
       </head><body><pre>${escapeHtml(text||'')}</pre></body></html>`;
 
       const w = window.open('', '_blank');
