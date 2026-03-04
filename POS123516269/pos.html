@@ -19,7 +19,7 @@
     }
     *{box-sizing:border-box}
     body{margin:0;background:var(--bg);color:var(--text)}
-    .wrap{max-width:520px;margin:0 auto;padding:12px 12px calc(120px + env(safe-area-inset-bottom));}
+    .wrap{max-width:520px;margin:0 auto;padding:12px 12px calc(210px + env(safe-area-inset-bottom));}
     .top{
       background:var(--card);
       border:1px solid var(--line);
@@ -94,25 +94,49 @@
       -webkit-tap-highlight-color:transparent;
     }
     .enterBtn.side:active{transform:translateY(1px)}
+    .btnSign{
+      width:64px;
+      height:64px;
+      border-radius:16px;
+      border:1px solid var(--line);
+      background:#fff;
+      font-weight:950;
+      font-size:18px;
+      -webkit-tap-highlight-color:transparent;
+    }
+    .btnSign:active{transform:translateY(1px)}
+
     @media (max-width: 390px){
       .enterBtn.side{width:120px;font-size:15px}
     }
 
     .mini{font-size:12px;color:var(--muted)}
-    .list{margin-top:12px;display:flex;flex-direction:column;gap:10px}
-    .it{
-      border:1px solid var(--line);
-      border-radius:16px;
-      background:#fff;
-      padding:10px 12px;
-      display:flex;
-      gap:10px;
-      align-items:flex-start;
-    }
-    .it .main{flex:1;min-width:0}
-    .it .name{font-weight:900;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-    .it .meta{margin-top:4px;color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums}
-    .it .amt{font-weight:950;font-variant-numeric:tabular-nums;white-space:nowrap}
+.list{margin-top:10px;display:flex;flex-direction:column;gap:8px}
+.it{
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:#fff;
+  padding:8px 10px;
+  display:grid;
+  grid-template-columns: 1fr auto auto;
+  gap:8px;
+  align-items:center;
+}
+.it .main{min-width:0}
+.it .line1{display:flex;gap:10px;align-items:baseline;min-width:0}
+.it .name{font-weight:950;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.it .calc{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap;flex:0 0 auto}
+.it .amt{font-weight:950;font-size:14px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.btnDel{
+  width:34px;height:34px;
+  border-radius:12px;
+  border:1px solid var(--line);
+  background:#fff;
+  font-weight:950;
+  line-height:1;
+  -webkit-tap-highlight-color:transparent;
+}
+.btnDel:active{transform:translateY(1px)}
     .btns{
       position:fixed;left:0;right:0;bottom:0;
       background:#fff;border-top:1px solid var(--line);
@@ -184,8 +208,21 @@
     }
     .enterBtn:active{transform:translateY(1px)}
 
-
+    /* ===== One-hand dock input + keypad ===== */
+    .dock{
+      position:fixed;left:0;right:0;
+      bottom:calc(82px + env(safe-area-inset-bottom));
+      will-change: transform;
+      max-width:520px;margin:0 auto;
+      padding:10px 12px 12px;
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:22px;
+      box-shadow:var(--shadow);
     }
+    .dock .hint{margin-top:10px}
+    .hiddenMeta{display:none}
+
   </style>
 </head>
 <body>
@@ -193,48 +230,53 @@
     <div class="top">
       <div class="row">
         <div>
-          <div class="ttl">POS · 手机简易版</div>
-          <div class="sub">输入件数回车 → 输入单价回车</div>
+          <div class="ttl">Alex · POS</div>
         </div>
         <div class="pill"><span class="dot" id="dotConn"></span><span id="connLabel">未连接</span></div>
       </div>
 
       <div class="kpis">
         <div class="kpi">
-          <div class="k">总计</div>
+          <div class="k">Total</div>
           <div class="v big" id="kTotal">€ 0.00</div>
         </div>
         <div class="kpi">
-          <div class="k">件数 / 款数</div>
+          <div class="k">Piezas/Modelos</div>
           <div class="v"><span id="kPieces">0</span> / <span id="kKinds">0</span></div>
         </div>
       </div>
 
-      <div style="margin-top:10px" class="row">
-        <div class="mini">店铺：<b id="shopId">miangelito</b></div>
-        <div class="mini" style="margin-left:auto">机器：<button class="btn small" id="btnMachine">A</button></div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="inputRow">
-        <input id="line" class="input" inputmode="decimal" placeholder="先输入件数 回车" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="done" />
-        <button class="enterBtn side" id="btnEnter" type="button">下一步（输入价格）</button>
-      </div>
-      <div class="hint" id="stepHint">步骤 <b>1/2</b>：输入件数（例如 2 或 -1 退货），按回车。也可以点下面快捷数字。</div>
-</div>
-
-    <div class="card">
-      <div class="row" style="justify-content:space-between">
-        <div style="font-weight:950">当前清单</div>
-        <div class="mini">向下滚动查看更多</div>
+      
+      <!-- 当前清单：放在 Total / 总件数 下面 -->
+      <div class="row" style="justify-content:space-between; margin-top:12px">
+        <div style="font-weight:950">Nota</div>
+        <div class="mini">Ver más</div>
       </div>
       <div class="list" id="list"></div>
-      <div class="hint" id="emptyHint" style="display:none">还没有任何商品。先输入 <b>件数</b> 回车，再输入 <b>单价</b> 回车。</div>
+      <div class="hint" id="emptyHint" style="display:none">请添加商品</div>
+
+      <!-- 仍保留字段给 JS 使用（但界面不显示） -->
+      <div class="hiddenMeta">
+        <b id="shopId">miangelito</b>
+        <button class="btn small" id="btnMachine" type="button">A</button>
+      </div>
+
+    </div>
+
+    
+  </div>
+
+  <!-- 单手操作：输入框放在数字键盘上面（固定在底部按钮上方） -->
+  <div class="dock" aria-label="输入与数字键盘">
+    <div class="inputRow">
+      <input id="line" class="input" inputmode="decimal" placeholder="输入件数" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="done" />
+      <button class="btnSign" id="btnSign" type="button" aria-label="正负">±</button>
+      <button class="enterBtn side" id="btnEnter" type="button">下一步</button>
     </div>
   </div>
 
   <div class="btns">
+
     <button class="btn" id="btnUndo">撤销</button>
     <button class="btn danger" id="btnClear">清空</button>
     <button class="btn primary" id="btnPay">收款入账</button>
@@ -384,13 +426,13 @@
       row.className = 'it';
       row.innerHTML = `
         <div class="main">
-          <div class="name">款式 ${idx+1}</div>
-          <div class="meta">${it.qty} × €${money(it.price)} </div>
+          <div class="line1">
+            <span class="name">Ropa ${idx+1}</span>
+            <span class="calc">${it.qty}×€${money(it.price)}</span>
+          </div>
         </div>
-        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
-          <div class="amt">€ ${money(it.amount)}</div>
-          <button class="btn small" data-del="${idx}">删除</button>
-        </div>
+        <div class="amt">€${money(it.amount)}</div>
+        <button class="btnDel" title="删除" aria-label="删除" data-del="${idx}">✕</button>
       `;
       list.appendChild(row);
     });
@@ -420,14 +462,8 @@
       }
     },0);
     step = next;
+    applyStepUI();
     const line = $('line');
-    if(step === 'qty'){
-      line.placeholder = '先输入件数 回车';
-      $('stepHint').innerHTML = '步骤 <b>1/2</b>：输入件数（例如 2 或 -1 退货），按回车。也可以点下面快捷数字。';
-    }else{
-      line.placeholder = '输入单价 回车';
-      $('stepHint').innerHTML = '步骤 <b>2/2</b>：输入单价（例如 6.0），按回车。';
-    }
     line.focus();
     line.select();
   }
@@ -543,96 +579,57 @@
     }
   });
 
-  $('btnUndo').addEventListener('click', ()=>{
-    if(!items.length){ toast('没有可撤销'); return; }
-    items.pop();
-    saveCur();
-    render();
-    toast('已撤销');
-    $('line').focus(); $('line').select();
-  });
-  $('btnClear').addEventListener('click', ()=>{
-    if(!items.length){ toast('已经是空'); return; }
-    toast('长按 1 秒清空');
-  });
+  // ===== Mobile dock controls (system keyboard) =====
+  function toggleSign(){
+    const el = $('line');
+    const v = String(el.value||'').trim();
+    if(!v){ el.value = '-'; el.focus(); return; }
+    if(v.startsWith('-')) el.value = v.slice(1);
+    else el.value = '-' + v;
+    el.focus();
+  }
 
-  // Long-press to clear (safer on mobile)
-  let __clearTm = null;
-  $('btnClear').addEventListener('touchstart', ()=>{
-    if(!items.length) return;
-    __clearTm = setTimeout(()=>{
-      items = [];
-      saveCur();
-      render();
-      tmpQty = null;
-      setStep('qty');
-      toast('已清空');
-    }, 900);
-  }, {passive:true});
-  $('btnClear').addEventListener('touchend', ()=>{ if(__clearTm){ clearTimeout(__clearTm); __clearTm=null; } });
-  $('btnClear').addEventListener('touchcancel', ()=>{ if(__clearTm){ clearTimeout(__clearTm); __clearTm=null; } });
-  $('btnPay').addEventListener('click', openPay);
-
-  $('btnClose').addEventListener('click', closePay);
-  mask.addEventListener('click', (e)=>{ if(e.target === mask) closePay(); });
-
-  $('fPaid').addEventListener('input', updateChange);
-  $('btnExact').addEventListener('click', ()=>{
-    const total = toNumber($('fTotal').value);
-    $('fPaid').value = money(total > 0 ? total : 0);
-    updateChange();
-    $('fPaid').focus(); $('fPaid').select();
-  });
-  $('btnSaveNoPrint').addEventListener('click', ()=>{
-    // no print: just finalize; if paid empty default exact
-    const total = toNumber($('fTotal').value);
-    const raw = String($('fPaid').value||'').trim();
-    const paid = raw ? toNumber(raw) : (total > 0 ? total : 0);
-    if(!Number.isFinite(paid)){ flashErr('实收不对'); return; }
-    finalize(paid);
-  });
-  $('btnSave').addEventListener('click', ()=>{
-    // same as no print for mobile (printing handled on desktop)
-    const total = toNumber($('fTotal').value);
-    const raw = String($('fPaid').value||'').trim();
-    const paid = raw ? toNumber(raw) : (total > 0 ? total : 0);
-    if(!Number.isFinite(paid)){ flashErr('实收不对'); return; }
-    finalize(paid);
-  });
-
-  $('btnMachine').addEventListener('click', ()=>{
-    const cur = MACHINE_ID;
-    const next = prompt('设置机器编号（例如 A / B / iPhone）：', cur);
-    if(next === null) return;
-    MACHINE_ID = String(next||'').trim() || 'A';
-    localStorage.setItem('pos_machine_id', MACHINE_ID);
-    render();
-    toast('已保存机器编号');
-  });
-
-  
-  
-  
-  // Dynamic big button (Next Step logic)
-    // Dynamic big button (Next Step logic)
-  function updateEnterLabel(){
-    const btn = $('btnEnter');
-    if(!btn) return;
+  function applyStepUI(){
+    const line = $('line');
     if(step === 'qty'){
-      btn.textContent = '下一步';
+      line.setAttribute('inputmode','numeric');
+      line.setAttribute('placeholder','输入件数');
+      line.setAttribute('enterkeyhint','next');
+      $('stepHint').innerHTML = '步骤 <b>1/2</b>：输入件数（例如 2 或 -1 退货），点<b>下一步</b>';
     }else{
-      btn.textContent = '确认添加';
+      line.setAttribute('inputmode','decimal');
+      line.setAttribute('placeholder','输入单价');
+      line.setAttribute('enterkeyhint','done');
+      $('stepHint').innerHTML = '步骤 <b>2/2</b>：输入单价（例如 12.5），点<b>确认</b>完成一条';
     }
   }
-  // Bind click
+
+  function setupViewportDock(){
+    const dock = document.querySelector('.dock');
+    const bar = document.querySelector('.btns');
+    const vv = window.visualViewport;
+    if(!dock || !vv) return;
+
+    const update = ()=>{
+      // iOS keyboard 会缩小 visualViewport，高度差就是被键盘占用的区域
+      const offset = Math.max(0, (window.innerHeight - vv.height - vv.offsetTop));
+      dock.style.transform = offset ? `translateY(${-offset}px)` : '';
+      bar.style.transform  = offset ? `translateY(${-offset}px)` : '';
+    };
+    vv.addEventListener('resize', update);
+    vv.addEventListener('scroll', update);
+    update();
+  }
+
   document.addEventListener('DOMContentLoaded', ()=>{
-    const btn = $('btnEnter');
-    if(btn){
-      btn.addEventListener('click', ()=>{
-        handleEnter();
-      });
-      updateEnterLabel();
-    }
+    $('btnEnter').addEventListener('click', handleEnter);
+    $('btnSign').addEventListener('click', toggleSign);
+
+    // 默认聚焦：更接近真 POS 的“开机就能输入”
+    $('line').focus();
+
+    applyStepUI();
+    setupViewportDock();
   });
 
 
