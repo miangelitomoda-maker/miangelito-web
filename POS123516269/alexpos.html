@@ -1,0 +1,716 @@
+<!doctype html>
+<html lang="zh">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>POS · 手机版</title>
+  <style>
+    :root{
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --text:#0f172a;
+      --muted:#64748b;
+      --line:rgba(15,23,42,.10);
+      --shadow:0 10px 30px rgba(15,23,42,.08);
+      --radius:18px;
+      --radius2:14px;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--text)}
+    .wrap{max-width:520px;margin:0 auto;padding:12px 12px calc(320px + env(safe-area-inset-bottom));}
+    .top{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:12px;
+      box-shadow:none;
+    }
+    .row{display:flex;gap:10px;align-items:center}
+    .ttl{font-weight:950;font-size:18px;line-height:1}
+    .pill{
+      margin-left:auto;
+      display:inline-flex;align-items:center;gap:8px;
+      border:1px solid var(--line);border-radius:999px;
+      padding:8px 10px;background:#fff;font-size:11px;color:var(--muted);
+      white-space:nowrap;
+    }
+    .dot{width:8px;height:8px;border-radius:999px;background:#94a3b8}
+    .dot.ok{background:#22c55e}
+    .dot.bad{background:#ef4444}
+
+    .actionBar{
+      margin-top:10px;
+      display:grid;
+      grid-template-columns:1fr 1fr 1.4fr;
+      gap:10px;
+    }
+    .abtn{
+      height:48px;border-radius:16px;
+      border:1px solid var(--line);
+      background:#fff;
+      font-weight:900;font-size:15px;
+      display:flex;align-items:center;justify-content:center;
+      user-select:none;-webkit-tap-highlight-color:transparent;
+      cursor:pointer;
+    }
+    .abtn.primary{background:#111827;color:#fff;border-color:#111827}
+    .abtn:active{transform:translateY(1px)}
+
+    .kpis{display:grid;grid-template-columns:1.2fr 1fr;gap:10px;margin-top:10px}
+    .kpi{background:#fff;border:1px solid var(--line);border-radius:var(--radius2);padding:12px}
+    .kpi .k{font-size:12px;color:var(--muted)}
+    .kpi .v{font-size:22px;font-weight:950;margin-top:6px;font-variant-numeric:tabular-nums}
+    .kpiRight .v{display:flex;align-items:center;gap:10px}
+    .pieces{font-size:22px;font-weight:950;min-width:36px}
+    .inputDisplay{
+      flex:1;height:44px;border-radius:14px;border:1px solid var(--line);
+      padding:0 12px;font-size:18px;font-weight:950;
+      background:#f8fafc;outline:none;font-variant-numeric:tabular-nums;
+    }
+    .inputDisplay::placeholder{color:#94a3b8;font-weight:800;font-size:13px}
+
+    .card{
+      margin-top:12px;
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:12px;
+      box-shadow:var(--shadow);
+    }
+
+    .mini{font-size:12px;color:var(--muted)}
+
+    .list{margin-top:10px;display:flex;flex-direction:column;gap:8px}
+    .it{border:1px solid var(--line);border-radius:16px;background:#fff;padding:10px 10px}
+    .lineRow{display:flex;align-items:center;gap:10px;width:100%}
+    .lName{font-weight:950;min-width:64px}
+    .lMid{color:var(--muted);font-size:12px;font-weight:800;font-variant-numeric:tabular-nums;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .lAmt{font-weight:950;font-variant-numeric:tabular-nums;white-space:nowrap}
+    .xDel{width:34px;height:34px;border-radius:12px;border:1px solid var(--line);background:#fff;font-weight:950;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent}
+    .xDel:active{transform:translateY(1px)}
+
+    /* Dock keypad */
+    .posDock{
+      position:fixed;left:0;right:0;bottom:0;
+      max-width:520px;margin:0 auto;
+      padding:12px 12px calc(12px + env(safe-area-inset-bottom));
+      background:rgba(255,255,255,.92);
+      backdrop-filter:saturate(140%) blur(14px);
+      border-top:1px solid var(--line);
+      z-index:9990;
+    }
+    .keypad{
+      display:grid;
+      grid-template-columns:repeat(4, 1fr);
+      gap:10px;
+    }
+    .kbtn{
+      height:56px;border-radius:18px;
+      border:1px solid var(--line);
+      background:#fff;
+      font-weight:950;
+      font-size:20px;
+      -webkit-tap-highlight-color:transparent;
+      user-select:none;
+      touch-action: manipulation;
+    }
+    .kbtn:active{transform:translateY(1px)}
+    .kbtnOk{background:#111827;color:#fff;border-color:#111827;font-size:18px}
+    .toast{
+      position:fixed;left:50%;bottom:20px;transform:translateX(-50%);
+      background:#111827;color:#fff;padding:10px 12px;border-radius:14px;
+      font-weight:900;font-size:13px;z-index:20000;box-shadow:0 16px 40px rgba(2,6,23,.35);
+      max-width:92vw;text-align:center;opacity:0;pointer-events:none;
+      transition:opacity .18s;
+    }
+    .toast.show{opacity:1}
+
+    /* Bottom sheet */
+    .mask{position:fixed;inset:0;display:none;z-index:9999;align-items:flex-end;justify-content:center;background:rgba(2,6,23,.55);padding:12px}
+    .sheet{width:min(520px, 100%);background:#fff;border-radius:22px 22px 0 0;border:1px solid var(--line);box-shadow:0 -20px 60px rgba(2,6,23,.25);overflow:hidden}
+    .sheetHead{display:flex;justify-content:space-between;align-items:center;padding:14px 14px 10px;border-bottom:1px solid var(--line)}
+    .sheetHead .h{font-weight:950}
+    .x{width:42px;height:42px;border-radius:14px;border:1px solid var(--line);background:#fff;font-weight:950}
+    .sheetBody{padding:12px 14px}
+    .sheetGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .field label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}
+    .field input{width:100%;height:54px;border-radius:16px;border:1px solid var(--line);padding:0 12px;font-size:18px;font-weight:900;outline:none;font-variant-numeric:tabular-nums;}
+    .sheetBtns{display:grid;grid-template-columns:1fr 1fr 1.4fr;gap:10px;padding:12px 14px 14px;border-top:1px solid var(--line)}
+    .btn{height:52px;border-radius:16px;border:1px solid var(--line);background:#fff;font-weight:900;font-size:15px;display:flex;align-items:center;justify-content:center;user-select:none;-webkit-tap-highlight-color:transparent;cursor:pointer}
+    .btn.primary{background:#111827;color:#fff;border-color:#111827}
+    .btn:active{transform:translateY(1px)}
+  
+    .inputDisplayBox{
+      flex:1;
+      height:44px;
+      border-radius:14px;
+      border:2px solid rgba(15,23,42,.15);
+      background:#ffffff;
+      display:flex;
+      align-items:center;
+      padding:0 12px;
+      font-size:18px;
+      font-weight:950;
+      font-variant-numeric:tabular-nums;
+      color:var(--text);
+      min-width:0;
+    }
+    .dockInputBar{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-bottom:10px;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:10px 12px;
+      box-shadow:0 10px 30px rgba(15,23,42,.06);
+    }
+    .dockInputLabel{
+      font-size:12px;
+      font-weight:950;
+      color:var(--muted);
+      white-space:nowrap;
+    }
+    .dockInput{
+      flex:1;
+      height:44px;
+      border-radius:14px;
+      border:2px solid rgba(15,23,42,.18);
+      padding:0 12px;
+      font-size:22px;
+      font-weight:950;
+      background:#f8fafc;
+      outline:none;
+      font-variant-numeric:tabular-nums;
+      min-width:0;
+    }
+
+  
+    /* ===== v6.2 KPI as button-like chips ===== */
+    .kpis{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      margin-top:10px;
+    }
+    .kpi{
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:10px 12px;
+      height:56px;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      box-shadow:none;
+    }
+    .kpi .k{font-size:12px;color:var(--muted);font-weight:900;line-height:1}
+    .kpi .v{margin-top:6px;font-size:20px;font-weight:950;font-variant-numeric:tabular-nums;line-height:1}
+    .kpi .v.big{font-size:20px}
+
+  
+    /* Current list scroll area */
+    #list{
+      max-height: calc(100vh - 420px);
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding-right: 2px;
+    }
+
+  
+/* ===== Compact list rows ===== */
+.list{
+  margin-top:6px;
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+}
+
+.it{
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:#fff;
+  padding:2px 6px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  min-height:20px;
+}
+
+.lineRow{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  width:100%;
+  font-size:12px;
+}
+
+.lName{
+  font-weight:800;
+  min-width:46px;
+}
+
+.lMid{
+  color:var(--muted);
+  font-size:11px;
+  font-weight:700;
+  font-variant-numeric:tabular-nums;
+  flex:1;
+  white-space:nowrap;
+}
+
+.lAmt{
+  font-weight:900;
+  font-size:12px;
+  font-variant-numeric:tabular-nums;
+  white-space:nowrap;
+}
+
+.xDel{
+  width:22px;
+  height:22px;
+  border-radius:6px;
+  border:1px solid var(--line);
+  background:#fff;
+  font-size:11px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div class="row">
+        <div class="ttl">Alex · POS</div>
+        <div class="pill"><span class="dot" id="dotConn"></span><span id="connLabel">未连接</span></div>
+      </div>
+
+      <div class="actionBar" id="actionBar">
+        <button class="abtn" id="btnUndo" type="button">撤销</button>
+        <button class="abtn" id="btnClear" type="button">清空</button>
+        <button class="abtn primary" id="btnPay" type="button">收款入账</button>
+      </div>
+
+      <div class="kpis">
+        <div class="kpi">
+          <div class="k">Total</div>
+          <div class="v" id="kTotal">€ 0.00</div>
+        </div>
+        <div class="kpi kpiRight">
+          <div class="k">总件数</div>
+          <div class="v">
+            <div class="pieces" id="kPieces">0</div>
+</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="row" style="justify-content:space-between">
+        <div style="font-weight:950">Nota</div>
+        <div class="mini">Ver más</div>
+      </div>
+      <div class="list" id="list"></div>
+      <div class="mini" id="emptyHint" style="display:none;margin-top:10px">请添加商品</div>
+    </div>
+  </div>
+
+  <div class="posDock">
+      <div class="dockInputBar">
+        <div class="dockInputLabel">输入</div>
+        <input id="line" class="dockInput" readonly inputmode="none" placeholder="件数 → 按 + → 单价 → 回车" />
+      </div>
+
+    <div class="keypad" id="keypad">
+      <button class="kbtn" data-k="7">7</button>
+      <button class="kbtn" data-k="8">8</button>
+      <button class="kbtn" data-k="9">9</button>
+      <button class="kbtn" data-k="bk">⌫</button>
+
+      <button class="kbtn" data-k="4">4</button>
+      <button class="kbtn" data-k="5">5</button>
+      <button class="kbtn" data-k="6">6</button>
+      <button class="kbtn" data-k="minus">-</button>
+
+      <button class="kbtn" data-k="1">1</button>
+      <button class="kbtn" data-k="2">2</button>
+      <button class="kbtn" data-k="3">3</button>
+      <button class="kbtn" data-k="plus">+</button>
+
+      <button class="kbtn" data-k="0">0</button>
+      <button class="kbtn" data-k="dot">.</button>
+      <button class="kbtn" data-k="c">C</button>
+      <button class="kbtn kbtnOk" data-k="ok">回车</button>
+    </div>
+  </div>
+
+  <!-- 收款 Bottom Sheet -->
+  <div class="mask" id="mask">
+    <div class="sheet" role="dialog" aria-modal="true" aria-label="收款">
+      <div class="sheetHead">
+        <div class="h">收款</div>
+        <button class="x" id="btnClose">✕</button>
+      </div>
+      <div class="sheetBody">
+        <div class="sheetGrid">
+          <div class="field">
+            <label>应收</label>
+            <input id="fTotal" readonly />
+          </div>
+          <div class="field">
+            <label>实收（可空：默认刚好付清）</label>
+            <input id="fPaid" inputmode="decimal" placeholder="例如 20" />
+          </div>
+        </div>
+        <div class="mini" id="payHint" style="margin-top:10px">找零：<b id="fChange">0.00</b> €</div>
+      </div>
+      <div class="sheetBtns">
+        <button class="btn" id="btnExact">刚好付清</button>
+        <button class="btn" id="btnSaveNoPrint">保存（不打印）</button>
+        <button class="btn primary" id="btnSave">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+<script>
+(() => {
+  // ===== Cloud Sync =====
+  const CLOUD_API = "https://www.miangelitomoda.com";
+  const POS_API_KEY = "miangelito_2026_secure_key_83927_123516269";
+  const SHOP_ID = "miangelito";
+  let MACHINE_ID = localStorage.getItem("pos_machine_id") || "A";
+  localStorage.setItem("pos_machine_id", MACHINE_ID);
+
+  async function syncBillToCloud(payload){
+    try{
+      await fetch(CLOUD_API + "/api/bill", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-API-KEY": POS_API_KEY
+        },
+        body: JSON.stringify({
+          shop_id: SHOP_ID,
+          machine_id: MACHINE_ID,
+          billNo: payload.billNo,
+          tsMs: Date.now(),
+          tsText: payload.ts,
+          total: payload.total,
+          paid: payload.paid,
+          change: payload.change,
+          sumQty: payload.sumQty,
+          kinds: payload.kinds,
+          customerName: payload.customerName || "",
+          payload
+        })
+      });
+      setConn(true, "已连接");
+    }catch(e){
+      console.warn("Cloud sync failed", e);
+      setConn(false, "离线");
+    }
+  }
+
+  const $ = (id)=>document.getElementById(id);
+  const fmtEUR = (n)=> new Intl.NumberFormat('es-ES',{style:'currency',currency:'EUR'}).format(Number(n||0));
+  const money = (n)=> (Math.round((Number(n)||0)*100)/100).toFixed(2);
+  function toNumber(x){
+    const s = String(x||'').trim().replace(',', '.');
+    if(!s) return NaN;
+    const n = Number(s);
+    return Number.isFinite(n) ? n : NaN;
+  }
+  function toast(msg){
+    const t = $('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toast._tm);
+    toast._tm = setTimeout(()=>t.classList.remove('show'), 1200);
+  }
+  function setConn(ok, label){
+    const dot = $('dotConn');
+    dot.classList.remove('ok','bad');
+    dot.classList.add(ok ? 'ok' : 'bad');
+    $('connLabel').textContent = label;
+  }
+
+  const STORAGE_CUR = 'POS_MOBILE_CUR_v5';
+  let items = [];
+  let step = 'qty'; // qty -> price
+  let tmpQty = null;
+
+  function loadCur(){
+    try{
+      const raw = localStorage.getItem(STORAGE_CUR);
+      const v = raw ? JSON.parse(raw) : null;
+      items = Array.isArray(v?.items) ? v.items : [];
+    }catch{ items = []; }
+  }
+  function saveCur(){ localStorage.setItem(STORAGE_CUR, JSON.stringify({ items })); }
+
+  function calc(){
+    let total = 0, sumQty = 0;
+    for(const it of items){
+      total += Number(it.amount||0);
+      sumQty += Number(it.qty||0);
+    }
+    return { total, sumQty, kinds: items.length };
+  }
+
+  function render(){
+    const { total, sumQty } = calc();
+    $('kTotal').textContent = fmtEUR(total);
+    $('kPieces').textContent = String(sumQty);
+
+    const list = $('list');
+    list.innerHTML = '';
+    $('emptyHint').style.display = items.length ? 'none' : 'block';
+
+    items.forEach((it, idx) => {
+      const row = document.createElement('div');
+      row.className = 'it';
+      row.innerHTML = `
+        <div class="lineRow">
+          <div class="lName">Ropa ${idx+1}</div>
+          <div class="lMid">${it.qty}×€${money(it.price)}</div>
+          <div class="lAmt">€${money(it.amount)}</div>
+          <button class="xDel" aria-label="删除" data-del="${idx}">✕</button>
+        </div>
+      `;
+      list.appendChild(row);
+    });
+
+    list.querySelectorAll('button[data-del]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const i = Number(btn.getAttribute('data-del'));
+        
+    // Auto scroll to bottom (latest item)
+    requestAnimationFrame(()=>{ try{ list.scrollTop = list.scrollHeight; }catch(e){} });
+if(Number.isFinite(i)){
+          items.splice(i,1);
+          saveCur();
+          render();
+          toast('已删除');
+        }
+      });
+    });
+  }
+
+  function setStep(next){
+    step = next;
+    const entry = $('line');
+    if(step === 'qty'){
+      entry.placeholder = '...';
+    }else{
+      entry.placeholder = '输入单价（可小数）→ 回车';
+    }
+    entry.value = '';
+  }
+
+  function addItem(qty, price){
+    const q = Number(qty);
+    const p = Number(price);
+    if(!Number.isFinite(q) || q === 0){ toast('件数不对'); return false; }
+    if(!Number.isFinite(p) || p < 0){ toast('单价不对'); return false; }
+    const amount = Math.round(q*p*100)/100;
+    items.push({ qty:q, price:p, amount });
+    saveCur();
+    render();
+    return true;
+  }
+
+  function handleEnter(){
+    const raw = String($('line').value||'').trim();
+    if(!raw) return;
+    const n = toNumber(raw);
+
+    if(step === 'qty'){
+      if(!Number.isFinite(n) || n === 0){ toast('件数不对'); return; }
+      tmpQty = n;
+      setStep('price');
+      toast('输入单价');
+      return;
+    }
+    if(step === 'price'){
+      if(!Number.isFinite(n) || n < 0){ toast('单价不对'); return; }
+      const ok = addItem(tmpQty, n);
+      if(ok){
+        tmpQty = null;
+        setStep('qty');
+        toast('已添加');
+      }
+      return;
+    }
+  }
+
+  // ===== Custom keypad =====
+  function setEntry(v){ $('line').value = v; 
+  }
+  function getEntry(){ return String($('line').value||''); }
+  function appendChar(ch){
+    let v = getEntry();
+    if(ch === '.') {
+      if(!v) return setEntry('0.');
+      if(v.includes('.')) return;
+      return setEntry(v + '.');
+    }
+    if(/^\d$/.test(ch)){
+      if(v === '0' && !v.includes('.')) return setEntry(ch);
+      if(v === '-0' && !v.includes('.')) return setEntry('-' + ch);
+      return setEntry(v + ch);
+    }
+  }
+  function backspace(){
+    const v = getEntry();
+    if(!v) return;
+    setEntry(v.slice(0,-1));
+  }
+  function clearEntry(){ setEntry(''); }
+  function toggleSign(){
+    let v = getEntry();
+    if(!v) return setEntry('-');
+    if(v === '-') return setEntry('');
+    if(v.startsWith('-')) return setEntry(v.slice(1));
+    return setEntry('-' + v);
+  }
+
+  const keypadEl = $('keypad');
+  function onKey(e){
+    const b = e.target.closest('button');
+    if(!b) return;
+    const k = b.getAttribute('data-k');
+    if(!k) return;
+    e.preventDefault();
+
+    if(k === 'bk') return backspace();
+    if(k === 'c') return clearEntry();
+    if(k === 'dot') return appendChar('.');
+    if(k === 'minus') return toggleSign();
+    if(k === 'plus') return handleEnter(); // qty: next step
+    if(k === 'ok') return handleEnter();   // price: confirm add
+    return appendChar(k);
+  }
+  keypadEl.addEventListener('click', onKey, {passive:false});
+  keypadEl.addEventListener('touchstart', onKey, {passive:false});
+
+  // ===== Checkout =====
+  const mask = $('mask');
+  function openPay(){
+    const { total } = calc();
+    if(total === 0){ toast('没有商品'); return; }
+    $('fTotal').value = money(total);
+    $('fPaid').value = '';
+    $('fChange').textContent = '0.00';
+    mask.style.display = 'flex';
+    setTimeout(()=>{ $('fPaid').focus(); $('fPaid').select(); }, 0);
+  }
+  function closePay(){ mask.style.display = 'none'; }
+  function updateChange(){
+    const total = toNumber($('fTotal').value);
+    const paid = toNumber($('fPaid').value);
+    if(!Number.isFinite(paid)){ $('fChange').textContent = '0.00'; return; }
+    $('fChange').textContent = money(paid - total);
+  }
+  function billNoFromDate(d){
+    const y = d.getFullYear();
+    const m = String(d.getMonth()+1).padStart(2,'0');
+    const da = String(d.getDate()).padStart(2,'0');
+    const hh = String(d.getHours()).padStart(2,'0');
+    const mm = String(d.getMinutes()).padStart(2,'0');
+    const ss = String(d.getSeconds()).padStart(2,'0');
+    return `${y}${m}${da}-${hh}${mm}${ss}`;
+  }
+  function buildPayload(paidOverride){
+    const { total, sumQty, kinds } = calc();
+    const now = new Date();
+    const billNo = billNoFromDate(now);
+    const paid = Number.isFinite(paidOverride) ? paidOverride : total;
+    const change = paid - total;
+    return {
+      ts: now.toLocaleString(),
+      billNo,
+      items: items.map((it,i)=>({ name:`Ropa ${i+1}`, qty:it.qty, price:it.price, amount:it.amount })),
+      total, paid, change, sumQty, kinds
+    };
+  }
+  function finalize(paidOverride){
+    const { total } = calc();
+    if(total === 0) return;
+    const paid = Number.isFinite(paidOverride) ? paidOverride : (total > 0 ? total : 0);
+    const payload = buildPayload(paid);
+    syncBillToCloud(payload);
+    items = [];
+    saveCur();
+    render();
+    tmpQty = null;
+    setStep('qty');
+    closePay();
+    toast('已入账');
+  }
+
+  $('btnUndo').addEventListener('click', ()=>{
+    if(!items.length) return toast('没有可撤销');
+    items.pop(); saveCur(); render(); toast('已撤销');
+  });
+  // long press clear
+  let __clearTm = null;
+  $('btnClear').addEventListener('touchstart', ()=>{
+    if(!items.length) return;
+    __clearTm = setTimeout(()=>{
+      items = []; saveCur(); render(); tmpQty=null; setStep('qty'); toast('已清空');
+    }, 900);
+  }, {passive:true});
+  $('btnClear').addEventListener('touchend', ()=>{ if(__clearTm){clearTimeout(__clearTm);__clearTm=null;} });
+  $('btnClear').addEventListener('click', ()=>{ if(items.length) toast('长按 1 秒清空'); else toast('已经是空'); });
+  $('btnPay').addEventListener('click', openPay);
+
+  $('btnClose').addEventListener('click', closePay);
+  mask.addEventListener('click', (e)=>{ if(e.target === mask) closePay(); });
+  $('fPaid').addEventListener('input', updateChange);
+  $('btnExact').addEventListener('click', ()=>{
+    const total = toNumber($('fTotal').value);
+    $('fPaid').value = money(total > 0 ? total : 0);
+    updateChange();
+    $('fPaid').focus(); $('fPaid').select();
+  });
+  $('btnSaveNoPrint').addEventListener('click', ()=>{
+    const total = toNumber($('fTotal').value);
+    const raw = String($('fPaid').value||'').trim();
+    const paid = raw ? toNumber(raw) : (total > 0 ? total : 0);
+    if(!Number.isFinite(paid)) return toast('实收不对');
+    finalize(paid);
+  });
+  $('btnSave').addEventListener('click', ()=>{
+    const total = toNumber($('fTotal').value);
+    const raw = String($('fPaid').value||'').trim();
+    const paid = raw ? toNumber(raw) : (total > 0 ? total : 0);
+    if(!Number.isFinite(paid)) return toast('实收不对');
+    finalize(paid);
+  });
+
+  // init
+  loadCur();
+  render();
+  
+  // Fallback auto-scroll for iOS: watch list changes
+  try{
+    const __list = document.getElementById('list');
+    if(__list){
+      const obs = new MutationObserver(()=>{ requestAnimationFrame(()=>{ __list.scrollTop = __list.scrollHeight; }); });
+      obs.observe(__list, { childList:true, subtree:true });
+    }
+  }catch(e){}
+setStep('qty');
+  setConn(false,'未连接');
+  toast("v6.1 已加载");
+  const d=document.getElementById("lineDisplay"); if(d && !d.textContent) d.textContent="";
+})();</script>
+</body>
+</html>
