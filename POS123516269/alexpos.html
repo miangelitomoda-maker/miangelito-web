@@ -18,6 +18,10 @@
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
     }
     *{box-sizing:border-box}
+
+    input, button{ -webkit-tap-highlight-color: transparent; }
+    .keypad button, .dockMinus, .btnShareBill{ touch-action: manipulation; }
+
     body{margin:0;background:var(--bg);color:var(--text)}
     .wrap{max-width:520px;margin:0 auto;padding:12px 12px calc(var(--kpH) + env(safe-area-inset-bottom));}
     .top{
@@ -225,6 +229,8 @@
       font-variant-numeric:tabular-nums;
       min-width:0;
     }
+  .dockInput.hint{ color:#16a34a; font-weight:700; }
+
 
   
     /* ===== v6.2 KPI as button-like chips ===== */
@@ -332,7 +338,7 @@
   flex:0 0 auto;
 }
 .dockMinus:active{transform:translateY(1px)}
-/* Make + and 回车 larger (use freed space after moving -) */
+/* Make + and Enter larger (use freed space after moving -) */
 .kbtnPlus{
   /* Force + to the RIGHT side */
   grid-column: 5;
@@ -369,7 +375,7 @@
     <div class="top">
       <div class="row connRow">
         <div class="ttl">Alex · POS</div>
-        <div class="pill"><span class="dot" id="dotConn"></span><span id="connLabel">未连接</span></div>
+        <div class="pill"><span class="dot" id="dotConn"></span><span id="connLabel">Sin conexión</span></div>
       </div>
 <div class="kpis">
         <div class="kpi">
@@ -380,7 +386,7 @@
           <div class="k">Piezas</div>
           <div class="v">
             <div class="piecesPill" id="kPieces">0</div>
-            <button class="btnShareBill" id="btnShareBill" type="button">Enviar WhatsApp</button>
+            <button class="btnShareBill" id="btnShareBill" type="button">Colgar</button><button class="btnShareBill" id="btnOpenHold" type="button">Abrir</button>
 </div>
         </div>
       </div>
@@ -392,40 +398,40 @@
         <div class="mini">Ver más</div>
       </div>
       <div class="list" id="list"></div>
-      <div class="mini" id="emptyHint" style="display:none;margin-top:10px">请添加Artículo</div>
+      <div class="mini" id="emptyHint" style="display:none;margin-top:10px">Añadir Ropa</div>
     </div>
   </div>
 
   <div class="posDock">
       <div class="dockInputBar">
-        <div class="dockInputLabel">输入</div>
-        <input id="line" class="dockInput" readonly inputmode="none" placeholder="Piezas → 按 + → Precio → 回车" />
+        <div class="dockInputLabel">Entrada</div>
+        <input id="line" class="dockInput" readonly tabindex="0" inputmode="none" placeholder="Piezas → + → Precio → Enter" />
         <button class="dockMinus" id="btnMinus" type="button" aria-label="正负号">-</button>
       </div>
 
     
     <div class="keypad" id="keypad">
       <!-- 左侧单手操作：撤销 / 清空 / 入账（对齐 7/4/1/0 列） -->
-      <button class="kbtn kbtnAction kbtnUndo" id="btnUndo" type="button">撤销</button>
+      <button class="kbtn kbtnAction kbtnUndo" id="btnUndo" type="button">Deshacer</button>
       <button class="kbtn" data-k="7">7</button>
       <button class="kbtn" data-k="8">8</button>
       <button class="kbtn" data-k="9">9</button>
       <button class="kbtn" data-k="bk">⌫</button>
 
-      <button class="kbtn kbtnAction kbtnClear" id="btnClear" type="button">清空</button>
+      <button class="kbtn kbtnAction kbtnClear" id="btnClear" type="button">Vaciar</button>
       <button class="kbtn" data-k="4">4</button>
       <button class="kbtn" data-k="5">5</button>
       <button class="kbtn" data-k="6">6</button>
       <button class="kbtn kbtnPlus" data-k="plus">+</button>
 
-      <button class="kbtn kbtnPay kbtnAction" id="btnPay" type="button">入账</button>
+      <button class="kbtn kbtnPay kbtnAction" id="btnPay" type="button">Cobrar</button>
       <button class="kbtn" data-k="1">1</button>
       <button class="kbtn" data-k="2">2</button>
       <button class="kbtn" data-k="3">3</button>
 
       <button class="kbtn" data-k="0">0</button>
       <button class="kbtn" data-k="dot">.</button>
-      <button class="kbtn kbtnOk" data-k="ok">回车</button>
+      <button class="kbtn kbtnOk" data-k="ok">Enter</button>
     </div>
 
   </div>
@@ -440,20 +446,20 @@
       <div class="sheetBody">
         <div class="sheetGrid">
           <div class="field">
-            <label>应收</label>
+            <label>Total</label>
             <input id="fTotal" readonly />
           </div>
           <div class="field">
-            <label>Pagado（可空：默认刚好付清）</label>
+            <label>Pagado（可空：默认Pago exacto）</label>
             <input id="fPaid" inputmode="decimal" placeholder="例如 20" />
           </div>
         </div>
         <div class="mini" id="payHint" style="margin-top:10px">Cambio：<b id="fChange">0.00</b> €</div>
       </div>
       <div class="sheetBtns">
-        <button class="btn" id="btnExact">刚好付清</button>
-        <button class="btn" id="btnSaveNoPrint">保存（不打印）</button>
-        <button class="btn primary" id="btnSave">保存</button>
+        <button class="btn" id="btnExact">Pago exacto</button>
+        <button class="btn" id="btnSaveNoPrint" style="background:#25D366;color:#fff;border-color:#25D366">Colgar</button><button class="btnShareBill" id="btnOpenHold" type="button">Abrir</button>
+        <button class="btn primary" id="btnSave">Guardar</button>
       </div>
     </div>
   </div>
@@ -515,13 +521,7 @@
     const n = Number(s);
     return Number.isFinite(n) ? n : NaN;
   }
-  function toast(msg){
-    const t = $('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    clearTimeout(toast._tm);
-    toast._tm = setTimeout(()=>t.classList.remove('show'), 1200);
-  }
+  function toast(msg){ return; }
   function setConn(ok, label){
     const dot = $('dotConn');
     dot.classList.remove('ok','bad');
@@ -600,7 +600,7 @@ if(Number.isFinite(i)){
     if(step === 'qty'){
       entry.placeholder = '...';
     }else{
-      entry.placeholder = '输入单价';
+      entry.placeholder = 'EntradaPrecio（可小数）→ Enter';
     }
     entry.value = '';
   }
@@ -626,7 +626,7 @@ if(Number.isFinite(i)){
       if(!Number.isFinite(n) || n === 0){ toast('Piezas不对'); return; }
       tmpQty = n;
       setStep('price');
-      toast('输入Precio');
+      toast('EntradaPrecio');
       return;
     }
     if(step === 'price'){
@@ -647,6 +647,32 @@ if(Number.isFinite(i)){
   function setEntryTarget(el){
     entryEl = el || $('line');
   }
+
+  // ===== Focus keeper (commercial stability on iPhone) =====
+  // Keep focus on the correct input so the on-screen keypad stays responsive.
+  function wantFocusEl(){
+    // Payment sheet open -> focus paid input; else focus main entry line.
+    const m = $('mask');
+    if(m && m.style.display === 'flex') return $('fPaid');
+    return $('line');
+  }
+  function keepFocus(){
+    const el = wantFocusEl();
+    if(!el) return;
+    // Don't steal focus while user is selecting text in paid field
+    if(document.activeElement === el) return;
+    // If a button is being pressed, refocus after the click/tap finishes
+    if(document.activeElement && document.activeElement.tagName === 'BUTTON'){
+      setTimeout(()=>{ try{ el.focus({preventScroll:true}); }catch(e){ try{ el.focus(); }catch(_){} } }, 0);
+      return;
+    }
+    try{ el.focus({preventScroll:true}); }catch(e){ try{ el.focus(); }catch(_){} }
+  }
+  // Run lightly; fast enough for iOS quirks but not battery-heavy.
+  setInterval(keepFocus, 250);
+  window.addEventListener('focus', ()=>setTimeout(keepFocus, 0));
+  document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) setTimeout(keepFocus, 0); });
+
   function setEntry(v){
     const el = entryEl || $('line');
     el.value = v;
@@ -729,7 +755,7 @@ if(btnMinus){
   const mask = $('mask');
   function openPay(){
     const { total } = calc();
-    if(total === 0){ toast('没有Artículo'); return; }
+    if(total === 0){ toast('No hay ropa en el ticket'); return; }
     $('fTotal').value = money(total);
     $('fPaid').value = '';
     $('fChange').textContent = '0.00';
@@ -761,7 +787,7 @@ if(btnMinus){
     return {
       ts: now.toLocaleString('es-ES'),
       billNo,
-      items: items.map((it,i)=>({ name:`Artículo ${i+1}`, qty:it.qty, price:it.price, amount:it.amount })),
+      items: items.map((it,i)=>({ name:`Ropa ${i+1}`, qty:it.qty, price:it.price, amount:it.amount })),
       total, paid, change, sumQty, kinds
     };
   }
@@ -813,7 +839,7 @@ if(btnMinus){
       <h1>Mi Angelito Moda</h1>
       <div class="meta">Ticket Nº: ${esc(p.billNo)}<br/>Fecha: ${esc(p.ts)}</div>
       <table>
-        <thead><tr><th>#</th><th>Artículo</th><th style="text-align:right">Piezas</th><th style="text-align:right">Precio</th><th style="text-align:right">Importe</th></tr></thead>
+        <thead><tr><th>#</th><th>Ropa</th><th style="text-align:right">Piezas</th><th style="text-align:right">Precio</th><th style="text-align:right">Importe</th></tr></thead>
         <tbody>${rows}</tbody>
       </table>
       <div class="sum">Piezas: <b>${esc(p.sumQty)}</b><br/>Total: <b>€ ${money(p.total)}</b><br/>Pagado: € ${money(p.paid)}<br/>Cambio: € ${money(p.change)}</div>
@@ -888,27 +914,99 @@ if(btnMinus){
     const total = toNumber($('fTotal').value);
     const raw = String($('fPaid').value||'').trim();
     const paid = raw ? toNumber(raw) : (total > 0 ? total : 0);
-    if(!Number.isFinite(paid)) return toast('Pagado不对');
+    if(!Number.isFinite(paid)) return;
+
+    // 入账
     finalize(paid, {print:false});
+
+    // 打开 WhatsApp 发送账单
+    if(lastBill){
+      shareWhatsapp(lastBill);
+    }
   });
   $('btnSave').addEventListener('click', ()=>{
     const total = toNumber($('fTotal').value);
     const raw = String($('fPaid').value||'').trim();
     const paid = raw ? toNumber(raw) : (total > 0 ? total : 0);
     if(!Number.isFinite(paid)) return toast('Pagado不对');
-    // 手机端打印：弹出新窗口 -> AirPrint/保存为PDF
+    // 手机端打印：弹出新窗口 -> AirPrint/Guardar为PDF
     finalize(paid, {print:true});
   });
 
-  // Share bill (WhatsApp)
+  // Share bill (WhatsApp) — 默认“已入账并清单清空”
   const btnShare = document.getElementById('btnShareBill');
   if(btnShare){
     btnShare.addEventListener('click', (e)=>{
       e.preventDefault();
-      if(!lastBill){ toast('请先Cobro入账，再Enviar WhatsApp'); return; }
-      shareWhatsapp(lastBill);
+      if(!items.length) return;
+
+      // 挂单：保存当前清单到本地
+      let holds = [];
+      try{
+        holds = JSON.parse(localStorage.getItem('pos_holds')||'[]');
+      }catch(e){ holds = []; }
+
+      holds.push({
+        ts: Date.now(),
+        items: items
+      });
+
+      localStorage.setItem('pos_holds', JSON.stringify(holds));
+
+      // 清空当前单
+      items = [];
+      saveCur();
+      render();
+      tmpQty = null;
+      setStep('qty');
     });
   }
+
+  
+  // ===== Abrir cuenta colgada =====
+  const btnOpenHold = document.getElementById('btnOpenHold');
+  if(btnOpenHold){
+    btnOpenHold.addEventListener('click', ()=>{
+
+      let holds = [];
+      try{
+        holds = JSON.parse(localStorage.getItem('pos_holds') || '[]');
+      }catch(e){}
+
+      if(!holds.length){
+        alert("No hay cuentas colgadas");
+        return;
+      }
+
+      let txt = "Cuentas guardadas:\n\n";
+
+      holds.forEach((h,i)=>{
+        let piezas = 0;
+        let total = 0;
+
+        (h.items||[]).forEach(it=>{
+          piezas += Number(it.qty||0);
+          total += Number(it.amount||0);
+        });
+
+        txt += `${i+1}. ${piezas} piezas   €${total.toFixed(2)}\n`;
+      });
+
+      const n = prompt(txt + "\nNúmero para abrir:");
+      const idx = Number(n) - 1;
+
+      if(!holds[idx]) return;
+
+      items = holds[idx].items || [];
+      holds.splice(idx,1);
+
+      localStorage.setItem("pos_holds", JSON.stringify(holds));
+
+      saveCur();
+      render();
+    });
+  }
+
 
   // init
   loadCur();
@@ -923,8 +1021,8 @@ if(btnMinus){
     }
   }catch(e){}
 setStep('qty');
-  setConn(false,'未连接');
-  toast("v6 listo");
+  setConn(false,'Sin conexión');
+  
   const d=document.getElementById("lineDisplay"); if(d && !d.textContent) d.textContent="";
 })();</script>
 </body>
