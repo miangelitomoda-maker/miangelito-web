@@ -1,0 +1,524 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Mi Angelito Moda · POS</title>
+  <style>
+    :root{
+      --kpH:320px;
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --text:#0f172a;
+      --muted:#64748b;
+      --line:rgba(15,23,42,.10);
+      --shadow:0 10px 30px rgba(15,23,42,.08);
+      --radius:18px;
+      --radius2:14px;
+      --listRows: 8;
+      --listRowH: 24px;
+      --listGap: 2px;
+      --listPadY: 4px;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    }
+
+    *{box-sizing:border-box}
+    input, button{ -webkit-tap-highlight-color: transparent; }
+    .keypad button, .dockMinus, .btnShareBill{ touch-action: manipulation; }
+
+    body{margin:0;background:var(--bg);color:var(--text)}
+
+    .wrap{
+      max-width:520px;
+      margin:0 auto;
+      padding:12px 12px calc(var(--kpH) + env(safe-area-inset-bottom));
+    }
+
+    .top{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:12px;
+      box-shadow:none;
+    }
+
+    .row{display:flex;gap:10px;align-items:center}
+    .ttl{font-weight:950;font-size:18px;line-height:1}
+    .pill{
+      margin-left:auto;
+      display:inline-flex;align-items:center;gap:8px;
+      border:1px solid var(--line);border-radius:999px;
+      padding:8px 10px;background:#fff;font-size:11px;color:var(--muted);
+      white-space:nowrap;
+    }
+    .dot{width:8px;height:8px;border-radius:999px;background:#94a3b8}
+    .dot.ok{background:#22c55e}
+    .dot.bad{background:#ef4444}
+
+    .connRow{display:none !important}
+
+    .kpis{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      margin-top:10px;
+    }
+    .kpi{
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:10px 12px;
+      height:56px;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      box-shadow:none;
+    }
+    .kpi .k{font-size:12px;color:var(--muted);font-weight:900;line-height:1}
+    .kpi .v{margin-top:6px;font-size:20px;font-weight:950;font-variant-numeric:tabular-nums;line-height:1}
+    .kpiRight .v{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+    }
+
+    .piecesPill{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      height:34px;
+      min-width:46px;
+      padding:0 10px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:#fff;
+      font-size:18px;
+      font-weight:950;
+      font-variant-numeric:tabular-nums;
+      user-select:none;
+    }
+
+    .btnShareBill{
+      height:34px;
+      padding:0 10px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:#fff;
+      font-weight:950;
+      font-size:12px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:6px;
+      -webkit-tap-highlight-color:transparent;
+      user-select:none;
+      white-space:nowrap;
+    }
+    .btnShareBill:active{transform:translateY(1px)}
+
+    .card{
+      margin-top:12px;
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:12px;
+      box-shadow:var(--shadow);
+    }
+
+    .mini{font-size:12px;color:var(--muted)}
+
+    .list{
+      margin-top:6px;
+      display:flex;
+      flex-direction:column;
+      gap:var(--listGap);
+    }
+
+    .it{
+      border:1px solid var(--line);
+      border-radius:8px;
+      background:#fff;
+      padding:2px 6px;
+      display:flex;
+      align-items:center;
+      gap:6px;
+      min-height:var(--listRowH);
+      height:var(--listRowH);
+      flex:0 0 var(--listRowH);
+    }
+
+    .lineRow{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      width:100%;
+      font-size:12px;
+      min-height:20px;
+    }
+
+    .lName{
+      font-weight:800;
+      min-width:46px;
+    }
+
+    .lMid{
+      color:var(--muted);
+      font-size:11px;
+      font-weight:700;
+      font-variant-numeric:tabular-nums;
+      flex:1;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .lAmt{
+      font-weight:900;
+      font-size:12px;
+      font-variant-numeric:tabular-nums;
+      white-space:nowrap;
+    }
+
+    .xDel{
+      width:22px;
+      height:22px;
+      border-radius:6px;
+      border:1px solid var(--line);
+      background:#fff;
+      font-size:11px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    #list{
+      height: calc(
+        (var(--listRows) * var(--listRowH)) +
+        ((var(--listRows) - 1) * var(--listGap)) +
+        (var(--listPadY) * 2)
+      );
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding-top: var(--listPadY);
+      padding-bottom: var(--listPadY);
+      padding-right: 2px;
+      scroll-behavior: smooth;
+    }
+
+    .posDock{
+      position:fixed;left:0;right:0;bottom:0;
+      max-width:520px;margin:0 auto;
+      padding:12px 12px calc(12px + env(safe-area-inset-bottom));
+      background:rgba(255,255,255,.92);
+      backdrop-filter:saturate(140%) blur(14px);
+      border-top:1px solid var(--line);
+      z-index:9990;
+    }
+
+    .dockInputBar{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-bottom:10px;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:10px 12px;
+      box-shadow:0 10px 30px rgba(15,23,42,.06);
+    }
+
+    .dockInputLabel{
+      font-size:12px;
+      font-weight:950;
+      color:var(--muted);
+      white-space:nowrap;
+    }
+
+    .dockInputWrap{
+      position:relative;
+      flex:1;
+      min-width:0;
+    }
+
+    .dockInput{
+      width:100%;
+      height:44px;
+      border-radius:14px;
+      border:2px solid rgba(15,23,42,.18);
+      padding:0 78px 0 12px;
+      font-size:22px;
+      font-weight:950;
+      background:#f8fafc;
+      outline:none;
+      font-variant-numeric:tabular-nums;
+      min-width:0;
+    }
+
+    .dockStepHint{
+      position:absolute;
+      right:8px;
+      top:50%;
+      transform:translateY(-50%);
+      height:24px;
+      padding:0 8px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:12px;
+      font-weight:900;
+      color:var(--muted);
+      pointer-events:none;
+      white-space:nowrap;
+      opacity:.95;
+    }
+
+    .dockMinus{
+      width:56px;
+      height:44px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:#fff;
+      font-weight:950;
+      font-size:20px;
+      -webkit-tap-highlight-color:transparent;
+      user-select:none;
+      flex:0 0 auto;
+    }
+    .dockMinus:active{transform:translateY(1px)}
+
+    .keypad{
+      display:grid;
+      grid-template-columns: 1.05fr repeat(4, 1fr);
+      gap:10px;
+    }
+
+    .kbtn{
+      height:56px;border-radius:18px;
+      border:1px solid var(--line);
+      background:#fff;
+      font-weight:950;
+      font-size:20px;
+      -webkit-tap-highlight-color:transparent;
+      user-select:none;
+      touch-action: manipulation;
+    }
+    .kbtn:active{transform:translateY(1px)}
+
+    .kbtnAction{
+      font-size:14px;
+      font-weight:950;
+      letter-spacing:.5px;
+    }
+
+    .kbtnPay{
+      background:#111827;
+      color:#fff;
+      border-color:#111827;
+      font-size:15px;
+    }
+
+    .kbtnPlus{
+      grid-column: 5;
+      grid-row: 2 / span 2;
+      height:auto;
+      font-size:24px;
+    }
+
+    .kbtnOk{
+      grid-column: 4 / 6;
+      font-size:18px;
+      background:#111827;
+      color:#fff;
+      border-color:#111827;
+    }
+
+    .kbtnUndo{ grid-column:1; grid-row:1; }
+    .kbtnClear{ grid-column:1; grid-row:2; }
+    .kbtnPay{ grid-column:1; grid-row:3 / span 2; height:auto; }
+
+    .toast{
+      position:fixed;left:50%;bottom:20px;transform:translateX(-50%);
+      background:#111827;color:#fff;padding:10px 12px;border-radius:14px;
+      font-weight:900;font-size:13px;z-index:20000;box-shadow:0 16px 40px rgba(2,6,23,.35);
+      max-width:92vw;text-align:center;opacity:0;pointer-events:none;
+      transition:opacity .18s;
+    }
+    .toast.show{opacity:1}
+
+    .mask{
+      position:fixed;top:0;left:0;right:0;bottom:var(--kpH);
+      display:none;z-index:9999;align-items:flex-end;justify-content:center;
+      background:rgba(2,6,23,.55);padding:12px
+    }
+
+    .sheet{
+      width:min(520px, 100%);
+      background:#fff;border-radius:22px 22px 0 0;border:1px solid var(--line);
+      box-shadow:0 -20px 60px rgba(2,6,23,.25);overflow:hidden
+    }
+
+    .sheetHead{
+      display:flex;justify-content:space-between;align-items:center;
+      padding:14px 14px 10px;border-bottom:1px solid var(--line)
+    }
+
+    .sheetHead .h{font-weight:950}
+
+    .x{
+      width:42px;height:42px;border-radius:14px;border:1px solid var(--line);
+      background:#fff;font-weight:950
+    }
+
+    .sheetBody{padding:12px 14px}
+
+    .sheetGrid{
+      display:grid;grid-template-columns:1fr 1fr;gap:10px
+    }
+
+    .field label{
+      display:block;font-size:12px;color:var(--muted);margin-bottom:6px
+    }
+
+    .field input{
+      width:100%;height:54px;border-radius:16px;border:1px solid var(--line);
+      padding:0 12px;font-size:18px;font-weight:900;outline:none;
+      font-variant-numeric:tabular-nums;
+    }
+
+    .sheetBtns{
+      display:grid;grid-template-columns:1fr 1fr 1.4fr;
+      gap:10px;padding:12px 14px 14px;border-top:1px solid var(--line)
+    }
+
+    .btn{
+      height:52px;border-radius:16px;border:1px solid var(--line);background:#fff;
+      font-weight:900;font-size:15px;display:flex;align-items:center;justify-content:center;
+      user-select:none;-webkit-tap-highlight-color:transparent;cursor:pointer
+    }
+
+    .btn.primary{background:#111827;color:#fff;border-color:#111827}
+    .btn:active{transform:translateY(1px)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div class="row connRow">
+        <div class="ttl">Alex · POS</div>
+        <div class="pill"><span class="dot" id="dotConn"></span><span id="connLabel">Sin conexión</span></div>
+      </div>
+
+      <div class="kpis">
+        <div class="kpi">
+          <div class="k">Total</div>
+          <div class="v" id="kTotal">€ 0.00</div>
+        </div>
+        <div class="kpi kpiRight">
+          <div class="k">Piezas</div>
+          <div class="v">
+            <div class="piecesPill" id="kPieces">0</div>
+            <button class="btnShareBill" id="btnShareBill" type="button">Cuentas</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="row" style="justify-content:space-between">
+        <div style="font-weight:950">Nota</div>
+      </div>
+      <div class="list" id="list"></div>
+      <div class="mini" id="emptyHint" style="display:none;margin-top:10px">Añadir Ropa</div>
+    </div>
+  </div>
+
+  <div class="posDock">
+    <div class="dockInputBar">
+      <div class="dockInputLabel">输入框</div>
+      <div class="dockInputWrap">
+        <input id="line" class="dockInput" readonly tabindex="0" inputmode="none" placeholder="" />
+        <div id="lineStepHint" class="dockStepHint">件数</div>
+      </div>
+      <button class="dockMinus" id="btnMinus" type="button" aria-label="正负号">-</button>
+    </div>
+
+    <div class="keypad" id="keypad">
+      <button class="kbtn kbtnAction kbtnUndo" id="btnUndo" type="button">Deshacer</button>
+      <button class="kbtn" data-k="7">7</button>
+      <button class="kbtn" data-k="8">8</button>
+      <button class="kbtn" data-k="9">9</button>
+      <button class="kbtn" data-k="bk">⌫</button>
+
+      <button class="kbtn kbtnAction kbtnClear" id="btnClear" type="button">Vaciar</button>
+      <button class="kbtn" data-k="4">4</button>
+      <button class="kbtn" data-k="5">5</button>
+      <button class="kbtn" data-k="6">6</button>
+      <button class="kbtn kbtnPlus" data-k="plus">+</button>
+
+      <button class="kbtn kbtnPay kbtnAction" id="btnPay" type="button">Cobrar</button>
+      <button class="kbtn" data-k="1">1</button>
+      <button class="kbtn" data-k="2">2</button>
+      <button class="kbtn" data-k="3">3</button>
+
+      <button class="kbtn" data-k="0">0</button>
+      <button class="kbtn" data-k="dot">.</button>
+      <button class="kbtn kbtnOk" data-k="ok">Enter</button>
+    </div>
+  </div>
+
+  <div class="mask" id="mask">
+    <div class="sheet" role="dialog" aria-modal="true" aria-label="Cobro">
+      <div class="sheetHead">
+        <div class="h">Cobro</div>
+        <button class="x" id="btnClose">✕</button>
+      </div>
+      <div class="sheetBody">
+        <div class="sheetGrid">
+          <div class="field">
+            <label>Total</label>
+            <input id="fTotal" readonly />
+          </div>
+          <div class="field">
+            <label>Pagado</label>
+            <input id="fPaid" inputmode="decimal" placeholder="0.00" />
+          </div>
+        </div>
+        <div class="mini" id="payHint" style="margin-top:10px">Cambio：<b id="fChange">0.00</b> €</div>
+      </div>
+      <div class="sheetBtns">
+        <button class="btn" id="btnExact">Pago exacto</button>
+        <button class="btn" id="btnSaveNoPrint" style="background:#25D366;color:#fff;border-color:#25D366">Enviar WhatsApp</button>
+        <button class="btn primary" id="btnSave">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="mask" id="maskHold">
+    <div class="sheet" role="dialog" aria-modal="true" aria-label="Cuentas colgadas">
+      <div class="sheetHead">
+        <div class="h">Cuentas</div>
+        <button class="x" id="btnHoldClose">✕</button>
+      </div>
+      <div class="sheetBody">
+        <div class="mini" style="margin-bottom:10px">Toca una cuenta para abrirla</div>
+        <div id="holdList" class="list" style="margin-top:0"></div>
+        <div class="mini" id="holdEmpty" style="display:none;margin-top:10px">No hay cuentas colgadas</div>
+      </div>
+      <div class="sheetBtns">
+        <button class="btn" id="btnHoldSave">Colgar cuenta actual</button>
+        <button class="btn" id="btnHoldClearAll">Borrar colgadas</button>
+        <button class="btn primary" id="btnHoldClose2">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="./js/config.js"></script>
+  <script src="./js/app.js"></script>
+</body>
+</html>
