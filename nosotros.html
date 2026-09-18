@@ -409,7 +409,40 @@
     color:rgba(255,255,255,.5);
     font-size:13px;
   }
-  </style>
+  
+/* ================= BOTTOM CONTACT DOCK (mobile) ================= */
+.dock{
+  position:fixed; left:0; right:0; bottom:0;
+  z-index:9998;
+  display:none;
+  gap:10px;
+  padding:10px 12px calc(10px + env(safe-area-inset-bottom));
+  background:rgba(10,10,15,.94);
+  border-top:1px solid rgba(255,255,255,.14);
+}
+.dock__btn{
+  flex:1;
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  min-height:48px;
+  border-radius:14px;
+  font-size:15px; font-weight:700;
+  text-decoration:none;
+  border:1px solid rgba(255,255,255,.16);
+}
+.dock__btn--wa{
+  background:linear-gradient(135deg,#25D366,#128C7E);
+  color:#fff; border-color:transparent;
+}
+.dock__btn--tel{ background:rgba(255,255,255,.08); color:#fff; }
+.dock__btn svg{ width:20px; height:20px; fill:currentColor; }
+
+@media (max-width:768px){
+  .dock{display:flex}
+  .wa-float,.wa-tip,.wa-btn{display:none !important}
+  body{padding-bottom:calc(68px + env(safe-area-inset-bottom))}
+}
+
+</style>
 <style id="cookie-consent">
   .cc[hidden], .cm[hidden]{ display:none !important; }
   .cc{
@@ -875,6 +908,13 @@
 })();
 </script>
 
+
+
+<!-- BOTTOM CONTACT DOCK -->
+<div class="dock">
+  <a class="dock__btn dock__btn--wa" href="https://wa.me/34681677777?text=Hola%2C%20soy%20profesional%20y%20quiero%20informaci%C3%B3n%20sobre%20compra%20al%20por%20mayor.%20Mi%20ciudad%20es%20_____%20y%20busco%20estilo%20_____." target="_blank" rel="noopener"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16.02 27.3h-.01c-1.9 0-3.77-.51-5.4-1.49l-.39-.23-4.01 1.05 1.07-3.91-.25-.4c-1.06-1.68-1.62-3.62-1.62-5.61 0-5.89 4.79-10.68 10.69-10.68 2.85 0 5.53 1.11 7.55 3.13 2.02 2.02 3.13 4.7 3.13 7.55 0 5.89-4.79 10.68-10.76 10.68z"/></svg>WhatsApp</a>
+  <a class="dock__btn dock__btn--tel" href="tel:+34611877611"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8c1.2 2.4 3.2 4.4 5.6 5.6l2.1-2.1c.3-.3.7-.4 1-.2 1.2.4 2.5.6 3.7.6.6 0 1 .4 1 1V19c0 .6-.4 1-1 1C10.6 20 4 13.4 4 5c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.2.2 2.5.6 3.7.1.4 0 .8-.2 1l-2.3 2.1z"/></svg>Llamar</a>
+</div>
 
 </body>
 </html>
