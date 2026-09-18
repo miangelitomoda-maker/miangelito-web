@@ -42,20 +42,22 @@
   <meta name="description" content="Conoce Mi Angelito Moda: almacén mayorista de moda italiana en Crevillente. Stock real, novedades frecuentes, preparación rápida y atención profesional para tiendas.">
 
   <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
-  <link rel="canonical" href="https://www.miangelitomoda.com/nosotros.html">
+  <link rel="canonical" href="https://www.miangelitomoda.com/nosotros">
 
   <meta property="og:type" content="website">
   <meta property="og:locale" content="es_ES">
   <meta property="og:site_name" content="Mi Angelito Moda">
   <meta property="og:title" content="Sobre Nosotros | Mi Angelito Moda · Almacén mayorista">
   <meta property="og:description" content="Almacén mayorista de moda italiana en Crevillente. Stock real, novedades y atención profesional para tiendas.">
-  <meta property="og:url" content="https://www.miangelitomoda.com/nosotros.html">
-  <meta property="og:image" content="https://www.miangelitomoda.com/logo.jpg">
+  <meta property="og:url" content="https://www.miangelitomoda.com/nosotros">
+  <meta property="og:image" content="https://www.miangelitomoda.com/og-image.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
 
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Sobre Nosotros | Mi Angelito Moda">
   <meta name="twitter:description" content="Almacén de ropa italiana · Venta al por mayor para tiendas · Crevillente (Alicante).">
-  <meta name="twitter:image" content="https://www.miangelitomoda.com/logo.jpg">
+  <meta name="twitter:image" content="https://www.miangelitomoda.com/og-image.jpg">
 
   <!-- Schema（复用你首页的，只把 url 调整为 nosotros） -->
   <script type="application/ld+json">
@@ -64,7 +66,7 @@
     "@type": "ClothingStore",
     "name": "Mi Angelito Moda",
     "description": "Mayorista de moda en Crevillente. Almacén de ropa italiana para tiendas (venta al por mayor).",
-    "url": "https://www.miangelitomoda.com/nosotros.html",
+    "url": "https://www.miangelitomoda.com/nosotros",
     "telephone": "+34 681 677 777",
     "address": {
       "@type": "PostalAddress",
@@ -95,6 +97,7 @@
   }
 
   *{box-sizing:border-box}
+  img{max-width:100%;height:auto}
   html,body{margin:0;padding:0}
 
   body{
@@ -115,7 +118,7 @@
     padding:46px 26px 28px;
     background:
       linear-gradient(180deg,rgba(0,0,0,.40),rgba(0,0,0,.72)),
-      url('interior-1.png') center/cover no-repeat;
+      url('/img/interior-1.webp') center/cover no-repeat;
     border:1px solid var(--line);
     text-align:center;
     position:relative;
@@ -501,7 +504,7 @@
   <!-- HERO -->
   <section class="hero" id="top">
     <div class="logo">
-      <img src="logo.jpg" alt="Mi Angelito Moda · Almacén mayorista en Crevillente">
+      <img src="/img/logo.webp" alt="Mi Angelito Moda · Almacén mayorista en Crevillente" width="360" height="360" decoding="async">
     </div>
     <h1>Sobre Nosotros</h1>
     <div class="sub">
@@ -520,7 +523,7 @@
     <div class="cta">
       <a class="btn primary" href="https://wa.me/34681677777">💬 WhatsApp</a>
       <a class="btn primary" href="tel:+34611877611">📞 Llamar</a>
-      <a class="btn primary" href="/catalogo.html">🆕 Ver Catálogo</a>
+      <a class="btn primary" href="/catalogo">🆕 Ver Catálogo</a>
     </div>
   </section>
 
@@ -530,7 +533,12 @@
 
     <div class="info-pro">
       <div class="info-media">
-        <img src="fachada.png" alt="Fachada · Mi Angelito Moda · Almacén mayorista Crevillente">
+        <img src="/img/fachada-800.webp"
+         srcset="/img/fachada-800.webp 800w, /img/fachada.webp 1600w"
+         sizes="(min-width:900px) 520px, 100vw"
+         width="800" height="533"
+         loading="lazy" decoding="async"
+         alt="Fachada del almacén Mi Angelito Moda · Crevillente">
         <div style="margin-top:6px;font-size:13px;color:rgba(255,255,255,.65);text-align:center;">
           Fachada · Acceso y parking delante
         </div>
@@ -608,7 +616,7 @@
     <div class="steps">
       <div class="step">
         <b>1) Selección</b>
-        Elige modelos por <a href="/catalogo.html"><u>catálogo</u></a>, redes sociales o visita al almacén.
+        Elige modelos por <a href="/catalogo"><u>catálogo</u></a>, redes sociales o visita al almacén.
         <span class="tag">Catálogo + novedades</span>
       </div>
       <div class="step">
@@ -651,7 +659,7 @@
 
     <div class="cta" style="margin-top:16px">
       <a class="btn primary" href="https://wa.me/34681677777?text=Hola%2C%20soy%20profesional%20y%20me%20gustar%C3%ADa%20informaci%C3%B3n%20sobre%20compra%20al%20por%20mayor.%20Mi%20ciudad%20es%20_____%20y%20busco%20estilo%20_____.">✅ Soy profesional · Quiero info</a>
-      <a class="btn" href="/catalogo.html">🆕 Ver catálogo</a>
+      <a class="btn" href="/catalogo">🆕 Ver catálogo</a>
     </div>
   </section>
 
@@ -686,17 +694,37 @@
     <div class="meta" style="text-align:center;">✨ Almacén · Showroom · Selección</div>
 
     <div class="grid">
-      <div class="card"><img src="interior-2.png" alt="Showroom · Mi Angelito Moda"><div class="cap">Showroom · Colecciones</div></div>
-      <div class="card"><img src="interior-3.png" alt="Variedad · Mayorista de moda"><div class="cap">Variedad · Modelos</div></div>
-      <div class="card"><img src="interior-1.png" alt="Detalles del showroom"><div class="cap">Detalles · Exposición</div></div>
-      <div class="card"><img src="interior-4.png" alt="Selección · Mi Angelito Moda"><div class="cap">Selección · Tendencias</div></div>
+      <div class="card"><img src="/img/interior-2-800.webp"
+         srcset="/img/interior-2-800.webp 800w, /img/interior-2.webp 1600w"
+         sizes="(min-width:560px) 50vw, 100vw"
+         width="800" height="533"
+         loading="lazy" decoding="async"
+         alt="Showroom de ropa italiana al por mayor · Mi Angelito Moda"><div class="cap">Showroom · Colecciones</div></div>
+      <div class="card"><img src="/img/interior-3-800.webp"
+         srcset="/img/interior-3-800.webp 800w, /img/interior-3.webp 1600w"
+         sizes="(min-width:560px) 50vw, 100vw"
+         width="800" height="533"
+         loading="lazy" decoding="async"
+         alt="Variedad de modelos en el almacén mayorista de moda"><div class="cap">Variedad · Modelos</div></div>
+      <div class="card"><img src="/img/interior-1-800.webp"
+         srcset="/img/interior-1-800.webp 800w, /img/interior-1.webp 1600w"
+         sizes="(min-width:560px) 50vw, 100vw"
+         width="800" height="533"
+         loading="lazy" decoding="async"
+         alt="Detalles de la exposición del showroom mayorista"><div class="cap">Detalles · Exposición</div></div>
+      <div class="card"><img src="/img/interior-4-800.webp"
+         srcset="/img/interior-4-800.webp 800w, /img/interior-4.webp 1600w"
+         sizes="(min-width:560px) 50vw, 100vw"
+         width="800" height="533"
+         loading="lazy" decoding="async"
+         alt="Selección de moda italiana al por mayor · Mi Angelito Moda"><div class="cap">Selección · Tendencias</div></div>
     </div>
   </section>
 
   <footer>© <span id="y"></span> Mi Angelito Moda<div style="margin-top:10px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
-  <a href="/aviso-legal.html" style="color:rgba(255,255,255,.72);text-decoration:none;border-bottom:1px dotted rgba(255,255,255,.35);">Aviso Legal</a>
-  <a href="/privacidad.html" style="color:rgba(255,255,255,.72);text-decoration:none;border-bottom:1px dotted rgba(255,255,255,.35);">Privacidad</a>
-  <a href="/cookies.html" style="color:rgba(255,255,255,.72);text-decoration:none;border-bottom:1px dotted rgba(255,255,255,.35);">Cookies</a>
+  <a href="/aviso-legal" style="color:rgba(255,255,255,.72);text-decoration:none;border-bottom:1px dotted rgba(255,255,255,.35);">Aviso Legal</a>
+  <a href="/privacidad" style="color:rgba(255,255,255,.72);text-decoration:none;border-bottom:1px dotted rgba(255,255,255,.35);">Privacidad</a>
+  <a href="/cookies" style="color:rgba(255,255,255,.72);text-decoration:none;border-bottom:1px dotted rgba(255,255,255,.35);">Cookies</a>
   <a href="javascript:void(0)" onclick="miangelitoOpenCookieSettings()" style="color:rgba(255,255,255,.72);text-decoration:none;border-bottom:1px dotted rgba(255,255,255,.35);">Cambiar cookies</a>
 </div>
 </footer>
@@ -721,7 +749,7 @@
     <div class="cc__text">
       Usamos cookies necesarias para el funcionamiento del sitio y, con tu consentimiento, cookies analíticas (Google Analytics)
       para medir visitas y mejorar la experiencia. Puedes aceptar, rechazar o configurar tus preferencias.
-      <a href="/cookies.html">Más información</a>.
+      <a href="/cookies">Más información</a>.
     </div>
 
     <div class="cc__actions">
